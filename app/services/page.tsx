@@ -11,6 +11,7 @@ import {
   VscExtensions,
   VscPackage,
   VscSymbolNumeric,
+  VscGitCompare,
 } from "react-icons/vsc";
 
 export default function ServicesPage() {
@@ -24,6 +25,7 @@ export default function ServicesPage() {
     { icon: VscExtensions, name: tx("Tools", "工具", "ツール"), files: 2, size: "~1K", color: "var(--orange)", desc: tx("StreamingToolExecutor + orchestration", "StreamingToolExecutor + 编排", "StreamingToolExecutor + オーケストレーション") },
     { icon: VscPackage, name: tx("Plugins", "插件", "プラグイン"), files: 8, size: "~10K", color: "var(--green)", desc: tx("Plugin install + marketplace", "插件安装 + 市场", "プラグイン導入 + マーケットプレイス") },
     { icon: VscSymbolNumeric, name: tx("Tokens", "Token", "トークン"), files: 1, size: "~2K", color: "var(--accent)", desc: tx("Multi-provider token counting", "多提供商 token 计数", "複数プロバイダーのトークン計数") },
+    { icon: VscGitCompare, name: tx("Bridge/Remote", "桥接/远程", "ブリッジ/リモート"), files: 20, size: "~35K", color: "var(--pink)", desc: tx("Remote sessions, work dispatch, reconnect logic", "远程会话、任务分发、重连逻辑", "リモートセッション、作業ディスパッチ、再接続ロジック") },
   ];
   return (
     <div className="page-shell">
@@ -175,8 +177,65 @@ checkStatsigFeatureGate_CACHED_MAY_BE_STALE()
         />
       </Card>
 
+      <Card title={tx("Bridge & Remote Execution", "桥接与远程执行", "ブリッジとリモート実行")} className="mb-6" accent="var(--pink)">
+        <p className="text-sm text-text-secondary mb-4">
+          {tx(
+            "The newer repo has a substantial bridge/remote layer that the older analysis pages barely mentioned. bridgeMain.ts is effectively a miniature control plane: it polls for work, spawns or reconnects sessions, heartbeats active jobs, refreshes ingress tokens, manages worktrees, and tears sessions down safely.",
+            "新版本仓库里有一整层桥接/远程执行基础设施，而旧页面几乎没提。bridgeMain.ts 本质上是一个迷你控制平面：轮询任务、生成或重连会话、对活跃任务心跳保活、刷新入口令牌、管理 worktree，并在结束时安全回收。",
+            "新しいリポジトリには大きな bridge/remote 層がありますが、既存ページではほとんど触れていませんでした。bridgeMain.ts は小さな control plane のようなもので、作業のポーリング、セッション生成/再接続、heartbeat、トークン更新、worktree 管理、安全な終了処理を担います。"
+          )}
+        </p>
+        <CodeBlock
+          code={`// bridge/bridgeMain.ts
+runBridgeLoop(config, environmentId, secret, api, spawner, logger, signal)
+  → poll bridge API for work
+  → spawn local session or reconnect existing session
+  → send heartbeatWork() for active jobs
+  → refresh ingress/JWT tokens
+  → create/remove agent worktrees
+  → wake capacity when sessions finish
+  → stop or reconnect timed-out sessions
+
+// related files:
+sessionRunner.ts        // child session spawning
+workSecret.ts           // SDK / worker registration secrets
+bridgeApi.ts            // typed bridge API client
+remote/*.ts             // session manager + websocket transport`}
+        />
+      </Card>
+
+      <Card title={tx("Speculation & Prompt Suggestions", "推测与提示建议", "推測とプロンプト提案")} className="mb-6" accent="var(--accent)">
+        <p className="text-sm text-text-secondary mb-4">
+          {tx(
+            "Another service family worth studying is PromptSuggestion. It is no longer just a UI nicety: speculation.ts creates copy-on-write overlays under /tmp, forks a cheap background agent using cache-safe params, pre-executes likely next steps, and can copy successful writes back into the main working directory.",
+            "另一个值得研究的服务族是 PromptSuggestion。它已经不只是 UI 小功能：speculation.ts 会在 /tmp 下创建 copy-on-write overlay，使用 cache-safe params fork 一个廉价后台代理，预执行可能的下一步，并在成功时把写入结果拷回主工作目录。",
+            "もう一つ注目すべきサービス群が PromptSuggestion です。もはや単なる UI 補助ではなく、speculation.ts は /tmp に copy-on-write overlay を作り、cache-safe params で軽量 fork agent を走らせ、次の一手を先回り実行し、成功した書き込みを本作業ディレクトリへ戻すことまであります。"
+          )}
+        </p>
+        <CodeBlock
+          code={`// services/PromptSuggestion/speculation.ts
+getOverlayPath(id) → /tmp/.../speculation/<pid>/<id>
+prepareMessagesForInjection(messages)
+runForkedAgent(cacheSafeParams, ...)
+copyOverlayToMain(overlayPath, writtenPaths, cwd)
+
+guards:
+- stop at write tools outside the overlay rules
+- stop on denied tools or non-read-only bash
+- cap to 20 turns / 100 messages
+- log speculation outcome + time saved`}
+        />
+      </Card>
+
       {/* Tool Orchestration */}
       <Card title={tx("Tool Orchestration Service", "工具编排服务", "ツールオーケストレーションサービス")}>
+        <p className="text-sm text-text-secondary mb-4">
+          {tx(
+            "There are really two orchestration layers. toolOrchestration.ts handles already-buffered tool blocks in ordered batches; StreamingToolExecutor handles the earlier phase where tool_use blocks are still arriving over the wire and must be launched optimistically without breaking ordering guarantees.",
+            "实际上有两层编排。toolOrchestration.ts 负责处理已经缓冲好的 tool blocks，并按批次有序执行；StreamingToolExecutor 则负责更早的阶段，在 tool_use blocks 仍从流中到达时就乐观启动执行，同时不破坏顺序保证。",
+            "実際には2層のオーケストレーションがあります。toolOrchestration.ts は既にバッファ済みの tool block を順序付きバッチで処理し、StreamingToolExecutor は tool_use block がまだストリームで到着中の段階から楽観的に起動しつつ順序保証を守ります。"
+          )}
+        </p>
         <CodeBlock
           code={`// services/tools/ — Two key files:
 
@@ -190,7 +249,8 @@ checkStatsigFeatureGate_CACHED_MAY_BE_STALE()
 //    addTool() → enqueue as tool_use blocks arrive
 //    processQueue() → respect concurrency constraints
 //    getCompletedResults() → yield finished results
-//    discard() → cleanup on streaming fallback`}
+//    discard() → cleanup on streaming fallback
+//    siblingAbortController → kill sibling subprocesses on bash error`}
         />
       </Card>
     </div>

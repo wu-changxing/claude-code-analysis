@@ -84,6 +84,13 @@ export default function QueryLoopPage() {
   transition?: Continue                  // why previous iteration continued
 }`}
         />
+        <p className="mt-4 text-sm text-text-secondary">
+          {tx(
+            "The important detail is that query() carries recovery state between iterations. It doesn't just stream once and stop: it remembers whether auto-compact already fired, whether reactive compact was attempted, whether output tokens were escalated, and why the previous loop continued.",
+            "关键点在于 query() 会在多次迭代之间携带恢复状态。它不是简单流式输出一次就结束，而是持续记住：是否已经触发过 auto-compact、是否尝试过 reactive compact、是否提升过输出 token 上限，以及上一轮为什么会继续。",
+            "重要なのは、query() が反復間で回復状態を持ち回ることです。単に1回ストリーミングして終わるのではなく、auto-compact を既に使ったか、reactive compact を試したか、出力 token 上限を上げたか、前回なぜ継続したかを覚えています。"
+          )}
+        </p>
       </Card>
 
       {/* Flow Steps */}
@@ -214,6 +221,60 @@ class StreamingToolExecutor {
             </div>
           ))}
         </div>
+      </Card>
+
+      <Card title={tx("Token Budget Continuation", "Token 预算续写", "トークン予算の継続判定")} className="mb-6" accent="var(--purple)">
+        <p className="text-sm text-text-secondary mb-4">
+          {tx(
+            "Newer Claude Code versions don't only stop on model limits. They also track a per-turn token budget and can proactively inject a continuation nudge before the assistant appears done, then stop once progress shows diminishing returns.",
+            "较新的 Claude Code 版本不只是等到模型极限才停止。它还会跟踪每一轮的 token 预算，在助手看似将要结束前主动注入续写提示；一旦收益开始递减，就会停下。",
+            "新しい Claude Code はモデル上限だけで止まりません。ターン単位の token budget も追跡し、まだ続ける価値がある間は継続メッセージを注入し、効果が薄くなったら停止します。"
+          )}
+        </p>
+        <CodeBlock
+          code={`// query/tokenBudget.ts
+COMPLETION_THRESHOLD = 0.9
+DIMINISHING_THRESHOLD = 500
+
+checkTokenBudget(tracker, agentId, budget, globalTurnTokens)
+
+// continue when:
+// - main thread only (no subagent)
+// - budget exists and > 0
+// - turn is still below 90% of budget
+// - token gain is still meaningful
+
+// stop when:
+// - diminishing returns detected
+// - or a prior continuation already happened and the turn is now wrapping up
+
+// tracker remembers:
+continuationCount
+lastDeltaTokens
+lastGlobalTurnTokens
+startedAt`}
+        />
+      </Card>
+
+      <Card title={tx("Stop Hooks & Background Work", "停止 Hook 与后台任务", "停止フックとバックグラウンド処理")} className="mb-6" accent="var(--accent)">
+        <p className="text-sm text-text-secondary mb-4">
+          {tx(
+            "The loop's 'done' path is not really the end. handleStopHooks() can still prevent continuation, summarize hook output, snapshot cache-safe params for fork reuse, kick off prompt suggestions, extract memories, and run auto-dream style background maintenance.",
+            "循环走到“完成”分支并不意味着真正结束。handleStopHooks() 仍然可能阻止继续、汇总 hook 输出、保存 cache-safe 参数以供 fork 复用、触发 prompt suggestion、抽取 memories，以及运行 auto-dream 之类的后台维护。",
+            "ループが「完了」に見えても本当の終点ではありません。handleStopHooks() は継続を止めたり、hook 出力を要約したり、fork 再利用用の cache-safe params を保存したり、prompt suggestion、memory extraction、auto-dream 的な保守処理を起動できます。"
+          )}
+        </p>
+        <CodeBlock
+          code={`// query/stopHooks.ts
+handleStopHooks(...)
+  → saveCacheSafeParams(createCacheSafeParams(stopHookContext))
+  → executePromptSuggestion(stopHookContext)
+  → executeExtractMemories(stopHookContext)
+  → executeAutoDream(stopHookContext)
+  → executeStopHooks(permissionMode, signal, ...)
+  → emit hook progress / attachment messages
+  → optionally prevent continuation`}
+        />
       </Card>
 
       {/* Exit Conditions */}

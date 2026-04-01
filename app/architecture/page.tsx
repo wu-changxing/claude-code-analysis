@@ -66,12 +66,21 @@ export default function ArchitecturePage() {
 ├── memdir/            # Memory directory system (~/.claude/projects/)
 ├── skills/            # Skill loading & bundled skills
 ├── commands/          # 90+ slash commands (/compact, /model, etc.)
+├── bridge/            # Remote session bridge / control plane
+├── remote/            # Remote session manager + websocket adapters
 ├── components/        # Ink UI components (React for terminal)
 ├── ink/               # Terminal rendering engine (custom fork)
 ├── hooks/             # React hooks + permission hooks
 ├── utils/             # Utilities (bash, git, permissions, etc.)
 └── types/             # TypeScript type definitions`}
         />
+        <p className="mt-4 text-sm text-text-secondary">
+          {tx(
+            "The important update from the current source tree is that Claude Code is no longer just a local REPL plus tools. It now has explicit bridge/remote subsystems, richer prompt-suggestion/speculation services, and much more session infrastructure around the original query loop.",
+            "当前源码树最重要的新变化是：Claude Code 已经不只是本地 REPL 加一组工具。它现在有明确的 bridge/remote 子系统、更完整的 prompt-suggestion/speculation 服务，以及围绕原始查询循环构建的大量会话基础设施。",
+            "現在のソースツリーで重要なのは、Claude Code がもはや「ローカル REPL + ツール」だけではないことです。bridge/remote サブシステム、より厚い prompt-suggestion/speculation サービス、そして元の query loop を取り巻く多くのセッション基盤が加わっています。"
+          )}
+        </p>
       </Card>
 
       {/* Key Abstractions */}
@@ -317,6 +326,13 @@ export default function ArchitecturePage() {
 │  completed | prompt_too_long | aborted | token_budget_completed   │
 └───────────────────────────────────────────────────────────────────┘`}
         />
+        <p className="mt-4 text-sm text-text-secondary">
+          {tx(
+            "A second top-level flow now exists beside the local REPL path: bridge/remote execution. In that mode, a bridge loop polls for work, spawns or reconnects sessions, and lets the same QueryEngine/query() core run inside managed remote capacity. Architecturally, that means the agent loop is the center, but not the whole product anymore.",
+            "现在除了本地 REPL 路径之外，还存在第二条顶层流程：bridge/remote 执行。在该模式下，bridge loop 负责轮询任务、生成或重连会话，并让同一套 QueryEngine/query() 核心运行在受管控的远程容量中。从架构上说，agent loop 仍然是中心，但它已经不再等于整个产品。",
+            "現在はローカル REPL の隣に、bridge/remote 実行というもう一つのトップレベル経路があります。bridge loop が作業をポーリングし、セッションを起動/再接続し、同じ QueryEngine/query() コアを管理された遠隔実行環境で動かします。つまり、agent loop は依然として中心ですが、もはや製品全体ではありません。"
+          )}
+        </p>
       </Card>
     </div>
   );

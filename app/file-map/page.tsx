@@ -121,6 +121,9 @@ export default function FileMapPage() {
             ["constants/prompts.ts", tx("Tool definitions + system prompt (800+ lines)", "工具定义 + 系统提示（800+ 行）", "ツール定義 + システムプロンプト（800行超）")],
             ["entrypoints/cli.tsx", tx("CLI bootstrap + fast-path handling", "CLI 启动与快速路径处理", "CLI ブートストラップ + fast-path 処理")],
             ["entrypoints/sdk/", tx("SDK mode for headless use", "无头使用的 SDK 模式", "ヘッドレス利用向け SDK モード")],
+            ["bridge/", tx("Remote work polling, spawning, reconnect, capacity management", "远程任务轮询、生成、重连与容量管理", "リモート作業のポーリング、起動、再接続、容量管理")],
+            ["remote/", tx("Remote session manager and websocket/session adapters", "远程会话管理器与 websocket/会话适配器", "リモートセッション管理と websocket/セッションアダプタ")],
+            ["services/PromptSuggestion/", tx("Prompt suggestion, speculation overlays, next-step prediction", "提示建议、推测 overlay、下一步预测", "プロンプト提案、推測 overlay、次手予測")],
           ]}
         />
       </Card>

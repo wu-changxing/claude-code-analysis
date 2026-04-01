@@ -81,7 +81,7 @@ export function StarModal() {
               >
                 <span className="h-4 w-4 shrink-0 text-center text-sm leading-none">𝕏</span>
                 <span className="flex-1">Follow @ConnectOnionAI</span>
-                <span className="text-xs text-text-muted">Aaron's updates</span>
+                <span className="text-xs text-text-muted">Aaron&apos;s updates</span>
               </a>
 
               {/* Dismiss */}

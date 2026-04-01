@@ -159,6 +159,37 @@ type: user | feedback | project | reference
 - Templates loaded from prompts directory
 - Feature-gated (tengu_passport_quail)`}
         />
+        <p className="mt-4 text-sm text-text-secondary">
+          {tx(
+            "What matters conceptually is that memory extraction lives on the stop-hook side of the architecture, not inside the main sampling loop. That keeps the user-visible turn fast while still letting Claude Code do post-turn bookkeeping with cheap forked agents.",
+            "从概念上最重要的是：memory extraction 位于架构中的 stop-hook 一侧，而不在主采样循环内部。这保证了用户可见的回合保持快速，同时仍允许 Claude Code 用廉价的 forked agents 做回合后的整理工作。",
+            "概念的に重要なのは、memory extraction がメインの sampling loop の中ではなく、stop-hook 側に置かれていることです。これによりユーザーに見えるターンは速いまま、ターン後の整理を軽量 forked agent で行えます。"
+          )}
+        </p>
+      </Card>
+
+      <Card title={tx("Cache-Safe Fork Context", "可缓存的 Fork 上下文", "キャッシュ安全な Fork 文脈")} className="mb-6" accent="var(--green)">
+        <p className="text-sm text-text-secondary mb-4">
+          {tx(
+            "A newer pattern in the real codebase is that the stop-hook stage snapshots the exact context needed for cheap background forks. saveCacheSafeParams(createCacheSafeParams(...)) captures the system prompt, contexts, and tool schema so later subagents can reuse prompt caching instead of rebuilding from scratch.",
+            "真实代码库中的一个新模式是：stop-hook 阶段会快照出廉价后台 fork 所需的精确上下文。saveCacheSafeParams(createCacheSafeParams(...)) 会捕获 system prompt、上下文以及工具 schema，以便后续子代理复用 prompt cache，而不是从头构建。",
+            "実コードベースの新しいパターンとして、stop-hook 段階で安価なバックグラウンド fork に必要な正確な文脈をスナップショットしています。saveCacheSafeParams(createCacheSafeParams(...)) が system prompt、context、tool schema を保存し、後続サブエージェントがゼロから組み立てずに prompt cache を再利用できるようにします。"
+          )}
+        </p>
+        <CodeBlock
+          code={`// query/stopHooks.ts
+const stopHookContext = {
+  messages, systemPrompt, userContext, systemContext, toolUseContext
+}
+
+saveCacheSafeParams(createCacheSafeParams(stopHookContext))
+
+// downstream consumers:
+// - promptSuggestion
+// - autoDream
+// - extractMemories
+// - /btw / side-question style forked queries`}
+        />
       </Card>
 
       {/* State Management */}
