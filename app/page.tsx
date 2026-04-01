@@ -380,6 +380,53 @@ export default function HomePage() {
           </div>
         ))}
       </motion.div>
+
+      {/* About Banner */}
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.6 }}
+        className="mt-10 p-5 rounded-xl bg-bg-secondary border border-border"
+      >
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm font-semibold text-text-primary mb-1">
+              {lang === "zh" ? "Claude Code 源码解析与重写" : "Claude Code Pattern Study & Rewrite"}
+            </p>
+            <p className="text-[11px] text-text-muted">
+              {lang === "zh"
+                ? "由 @ConnectOnionAI 出品 — 开源 AI 代理框架"
+                : "By @ConnectOnionAI — Open-source AI Agent Framework"}
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <a
+              href="https://x.com/ConnectOnionAI"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-3 py-1.5 rounded-lg text-[11px] font-medium bg-text-primary text-bg-primary hover:opacity-90 transition-opacity"
+            >
+              𝕏 Follow
+            </a>
+            <a
+              href="https://openonion.ai"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-3 py-1.5 rounded-lg text-[11px] font-medium border border-border text-text-secondary hover:text-text-primary hover:bg-bg-tertiary transition-colors"
+            >
+              OpenOnion.ai
+            </a>
+            <a
+              href="https://docs.connectonion.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-3 py-1.5 rounded-lg text-[11px] font-medium border border-border text-text-secondary hover:text-text-primary hover:bg-bg-tertiary transition-colors"
+            >
+              Docs
+            </a>
+          </div>
+        </div>
+      </motion.div>
     </div>
   );
 }

@@ -118,24 +118,44 @@ export function Sidebar() {
             </button>
           ))}
         </div>
-        <a
-          href="https://github.com/openonion/claude-code"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-[12px] text-text-muted hover:text-text-primary hover:bg-bg-tertiary/60 transition-all"
-        >
-          <VscGithubInverted className="w-3.5 h-3.5" />
-          {t("footer.source", lang)}
-        </a>
-        <a
-          href="https://x.com/ConnectOnionAI"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-[12px] text-text-muted hover:text-text-primary hover:bg-bg-tertiary/60 transition-all"
-        >
-          <span className="text-[11px]">𝕏</span>
-          @ConnectOnionAI
-        </a>
+        <div className="space-y-0.5">
+          <a
+            href="https://github.com/openonion/claude-code"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-[12px] text-text-muted hover:text-text-primary hover:bg-bg-tertiary/60 transition-all"
+          >
+            <VscGithubInverted className="w-3.5 h-3.5" />
+            {t("footer.source", lang)}
+          </a>
+          <a
+            href="https://x.com/ConnectOnionAI"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-[12px] text-text-muted hover:text-text-primary hover:bg-bg-tertiary/60 transition-all"
+          >
+            <span className="text-[11px]">𝕏</span>
+            @ConnectOnionAI
+          </a>
+          <a
+            href="https://openonion.ai"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-[12px] text-text-muted hover:text-text-primary hover:bg-bg-tertiary/60 transition-all"
+          >
+            <span className="text-[11px]">🧅</span>
+            OpenOnion.ai
+          </a>
+          <a
+            href="https://docs.connectonion.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-[12px] text-text-muted hover:text-text-primary hover:bg-bg-tertiary/60 transition-all"
+          >
+            <span className="text-[11px]">📚</span>
+            Docs
+          </a>
+        </div>
         <p className="px-3 text-[10px] text-text-muted leading-relaxed">
           {t("footer.edu", lang)}
         </p>
