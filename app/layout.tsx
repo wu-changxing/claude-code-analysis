@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import { headers } from "next/headers";
 import "./globals.css";
 import { Sidebar } from "@/components/Sidebar";
+import { StarModal } from "@/components/StarModal";
 import { LangProvider } from "@/lib/LangContext";
 import { coerceLang, LANG_COOKIE_KEY, parsePreferredLang } from "@/lib/i18n";
 
@@ -65,6 +66,7 @@ export default async function RootLayout({
           <main className="min-h-screen min-w-0 pt-16 lg:ml-64 lg:pt-0">
             {children}
           </main>
+          <StarModal />
         </LangProvider>
       </body>
     </html>
