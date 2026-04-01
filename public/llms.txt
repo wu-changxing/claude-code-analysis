@@ -1,0 +1,54 @@
+# Claude Code Analysis
+
+> Deep dive into the internals of @anthropic-ai/claude-code v2.1.88
+
+This site provides an interactive analysis and learning platform for understanding Claude Code's internal architecture, tools, services, and agent execution loop. Source extracted from cli.js.map of the npm package.
+
+## Overview
+
+Claude Code is a terminal-based AI coding assistant built with TypeScript and Ink (React for CLI). It contains ~1800 source files, 50+ tools, 90+ slash commands, and 20+ services.
+
+The core execution loop is an async generator state machine:
+1. User Input → System Prompt Assembly → API Stream
+2. Model Response (text + tool_use blocks)
+3. Tool Execution (read=parallel, write=serial)
+4. Results → Continue if tools called, else done
+
+## Sections
+
+- [Architecture](https://cc.openonion.ai/architecture): High-level system design, directory map, technology stack, and data flow
+- [Query Loop](https://cc.openonion.ai/query-loop): The core agentic cycle in query.ts (~1700 lines) — context projection, auto-compaction, API streaming, tool execution, recovery, continuation decisions
+- [Tools](https://cc.openonion.ai/tools): 50+ built-in tools — BashTool (AST security, sandbox, ML classifier), FileEditTool (fuzzy find/replace), AgentTool (subagent spawning), MCPTool (external tools), and more
+- [Permissions](https://cc.openonion.ai/permissions): 5-layer security system — input validation, tool-specific rules, ML classifier, permission hooks, user UI dialog. 6 permission modes (default, plan, acceptEdits, bypassPermissions, dontAsk, auto)
+- [Agents](https://cc.openonion.ai/agents): Subagent spawning with CacheSafeParams for zero-cost cache sharing, worktree isolation, remote execution, coordinator mode for multi-worker orchestration
+- [Services](https://cc.openonion.ai/services): Compaction (4 strategies for context window management), MCP integration (470KB, 4 transports), LSP, analytics (Datadog + GrowthBook), memory extraction
+- [Context & Memory](https://cc.openonion.ai/context): System prompt assembly (CLAUDE.md, git status, tools, env), auto-memory system (~/.claude/projects/), 4 memory types (user, feedback, project, reference), AppState store
+- [File Map](https://cc.openonion.ai/file-map): Complete directory structure with key files — QueryEngine.ts, query.ts, Tool.ts, and all tool/service/utility paths
+
+## Key Architecture Concepts
+
+### Query Loop (query.ts)
+The main agentic loop is a state machine that: (1) projects context (snip, microcompact, collapse), (2) auto-compacts if threshold exceeded, (3) streams API call with concurrent tool execution via StreamingToolExecutor, (4) recovers from errors (collapse drain, reactive compact, max-token escalation), (5) executes tools (read-only parallel up to 10, write serial), (6) processes attachments, (7) decides to continue or exit.
+
+### Tool System (Tool.ts)
+Every tool implements Tool<Input, Output, Progress> via buildTool() factory. Tools declare isConcurrencySafe(), isReadOnly(), isDestructive(). The orchestrator partitions tool calls into batches — read-only tools run in parallel, write tools run serially.
+
+### Permission System
+5 layers: validateInput() → checkPermissions() → ML Classifier → Hooks → User UI. BashTool has the most complex security — tree-sitter AST parsing, dangerous pattern detection (102KB), ML classifier integration, read-only validation (68KB).
+
+### Agent System (AgentTool)
+Subagents spawn via QueryEngine with CacheSafeParams frozen at fork time. Identical system prompt bytes = automatic prompt cache hit (zero-cost fork). Supports local (in-process), worktree (git isolation), and remote (CCR) execution.
+
+### Compaction
+4 strategies: Microcompact (every API call, inline), Autocompact (threshold trigger, full summary via forked agent), History Snipping (remove oldest), Context Collapse (incremental, experimental). Token budget: model_context - max_output - 13K buffer.
+
+### Memory System (memdir/)
+Persistent project-scoped memory at ~/.claude/projects/<path>/memory/. 4 types: user (role/preferences), feedback (corrections/validations), project (ongoing work), reference (external pointers). MEMORY.md index (200 lines max). Auto-extraction via background forked agent.
+
+## Source
+
+- npm package: @anthropic-ai/claude-code v2.1.88
+- Extracted from: cli.js.map (source map bundled with npm package)
+- Language: TypeScript
+- UI Framework: Ink (React for terminal)
+- For educational and reference purposes only
