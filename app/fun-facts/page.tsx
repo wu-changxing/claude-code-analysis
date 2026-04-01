@@ -589,6 +589,47 @@ Stats: DEBUGGING, PATIENCE, CHAOS, WISDOM, SNARK
         </p>
       </Card>
 
+      {/* Frustration Detection - THE FIND */}
+      <Card title={lang === "zh" ? "挫败感检测器：Claude 知道你在骂它" : lang === "ja" ? "フラストレーション検知：Claudeはあなたが怒っているのを知っている" : "Frustration Detector: Claude Knows You're Swearing"} className="mb-6" accent="var(--red)">
+        <p className="text-sm text-text-secondary mb-4">
+          {lang === "zh"
+            ? "Claude Code 有一个正则表达式专门检测你什么时候生气了。是的，真的。"
+            : "Claude Code has a regex that detects when you're angry. Yes, really."}
+        </p>
+        <CodeBlock filename="userPromptKeywords.ts" code={`const negativePattern =
+  /\\b(wtf|wth|ffs|omfg|shit(ty|tiest)?|dumbass|
+  horrible|awful|piss(ed|ing)? off|
+  piece of (shit|crap|junk)|
+  what the (fuck|hell)|
+  fucking? (broken|useless|terrible|awful)|
+  fuck you|screw (this|you)|
+  so frustrating|this sucks|damn it)\\b/`} />
+        <div className="mt-4 grid grid-cols-3 gap-2">
+          <div className="p-3 rounded-xl bg-red/5 border border-red/20 text-center">
+            <div className="text-lg mb-1">😤</div>
+            <div className="text-xs font-semibold text-red">{lang === "zh" ? "检测" : "Detect"}</div>
+            <p className="text-[10px] text-text-muted">{lang === "zh" ? "匹配愤怒关键词" : "Match anger keywords"}</p>
+          </div>
+          <div className="p-3 rounded-xl bg-orange/5 border border-orange/20 text-center">
+            <div className="text-lg mb-1">📋</div>
+            <div className="text-xs font-semibold text-orange">{lang === "zh" ? "触发" : "Trigger"}</div>
+            <p className="text-[10px] text-text-muted">{lang === "zh" ? "弹出反馈调查" : "Show feedback survey"}</p>
+          </div>
+          <div className="p-3 rounded-xl bg-accent/5 border border-accent/20 text-center">
+            <div className="text-lg mb-1">📤</div>
+            <div className="text-xs font-semibold text-accent">{lang === "zh" ? "上传" : "Upload"}</div>
+            <p className="text-[10px] text-text-muted">{lang === "zh" ? "分享会话记录（征得同意后）" : "Share transcript (with consent)"}</p>
+          </div>
+        </div>
+        <p className="text-[11px] text-text-muted mt-3 italic">
+          {lang === "zh"
+            ? "当 Anthropic 员工对 Claude 说脏话时，系统会弹出 '要不要分享这次对话记录？' 这是内部 dogfooding 专用功能，外部构建中已移除。所以你可以放心骂。"
+            : lang === "ja"
+            ? "Anthropic社員がClaudeに悪態をつくと「このトランスクリプトを共有しますか？」と表示される。内部ドッグフーディング専用で、外部ビルドでは除去済み。"
+            : "When Anthropic employees swear at Claude, it pops up 'Want to share this transcript?' It's an internal dogfooding feature — removed from external builds. So you can swear freely."}
+        </p>
+      </Card>
+
       {/* Excluded Strings - The Build Police */}
       <Card title={lang === "zh" ? "构建警察：excluded-strings.txt" : lang === "ja" ? "ビルドポリス：excluded-strings.txt" : "The Build Police: excluded-strings.txt"} className="mb-6" accent="var(--red)">
         <p className="text-sm text-text-secondary mb-4">
