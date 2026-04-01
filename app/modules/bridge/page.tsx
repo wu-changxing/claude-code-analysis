@@ -1,6 +1,6 @@
 "use client";
 
-import { PageHeader, Card, FileCard, FlowStep, InsightCallout, RelatedPages } from "@/components/Section";
+import { PageHeader, Card, FileCard, FlowStep, InsightCallout, RelatedPages, CodeBlock } from "@/components/Section";
 import { useTx } from "@/components/T";
 import { ghTree } from "@/lib/sourceLinks";
 
@@ -18,7 +18,6 @@ const AGENT_TOOL_FLOW = [
   { number: 5, title: "Results returned to parent", description: "When the subagent finishes, its output SDKMessages are formatted as a tool_result and injected into the parent's conversation.", color: "var(--purple)" },
 ];
 
-// Side-by-side comparison data
 const MODE_COMPARISON = [
   {
     aspect: "Entry point",
@@ -53,6 +52,46 @@ const MODE_COMPARISON = [
     sdk: "Programmatic approval callback",
   },
 ];
+
+const SDK_EXAMPLE_BASIC = `import { runClaude } from "@anthropic-ai/claude-code";
+
+// Minimal SDK usage — async iterator of events
+for await (const message of runClaude({
+  messages: [{ role: "user", content: "List the files in /tmp" }],
+  tools: ["BashTool", "FileReadTool"],
+})) {
+  if (message.type === "text") process.stdout.write(message.text);
+  if (message.type === "tool_result") console.log(message.tool, message.output);
+}`;
+
+const SDK_EXAMPLE_SESSION = `import { createSession } from "@anthropic-ai/claude-code";
+
+// Stateful session — continue a conversation
+const session = await createSession({
+  tools: ["BashTool", "FileReadTool", "FileEditTool"],
+  cwd: process.cwd(),
+});
+
+// First turn
+await session.send("Read package.json and summarize the project");
+
+// Follow-up in same context
+await session.send("Now update the description field");`;
+
+const SDK_EXAMPLE_SUBAGENT = `// AgentTool internally does this:
+import { streamQuery } from "@anthropic-ai/claude-code/internal";
+
+// Fork parent state for subagent
+const subagentEngine = new QueryEngine({
+  ...parentEngine.getForkedState(),
+  messages: [],  // fresh history
+});
+
+// Run headlessly — same 7-phase loop, no terminal output
+for await (const event of subagentEngine.query(subagentTask)) {
+  results.push(event);
+}
+// Results injected back as tool_result in parent conversation`;
 
 export default function BridgeModulePage() {
   const tx = useTx();
@@ -108,26 +147,21 @@ export default function BridgeModulePage() {
               {tx("Terminal Mode", "终端模式")}
             </div>
             <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-purple shrink-0" style={{ background: "var(--purple)" }} />
-                <code className="text-[10px] text-text-secondary">entrypoints/cli.tsx</code>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full shrink-0 bg-green" style={{ background: "var(--green)" }} />
-                <code className="text-[10px] text-text-secondary">QueryEngine (shared)</code>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full shrink-0" style={{ background: "var(--purple)" }} />
-                <code className="text-[10px] text-text-secondary">Ink REPL.tsx UI</code>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full shrink-0" style={{ background: "var(--purple)" }} />
-                <code className="text-[10px] text-text-secondary">Terminal permission dialog</code>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full shrink-0" style={{ background: "var(--purple)" }} />
-                <code className="text-[10px] text-text-secondary">ANSI → stdout</code>
-              </div>
+              {[
+                { label: "entrypoints/cli.tsx", color: "var(--purple)" },
+                { label: "QueryEngine (shared)", color: "var(--green)", shared: true },
+                { label: "Ink REPL.tsx UI", color: "var(--purple)" },
+                { label: "Terminal permission dialog", color: "var(--purple)" },
+                { label: "ANSI → stdout", color: "var(--purple)" },
+              ].map((row) => (
+                <div key={row.label} className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full shrink-0" style={{ background: row.color }} />
+                  <code className="text-[10px] text-text-secondary">{row.label}</code>
+                  {row.shared && (
+                    <span className="text-[9px] font-bold px-1 py-0.5 rounded" style={{ background: "color-mix(in srgb, var(--green) 15%, transparent)", color: "var(--green)" }}>shared</span>
+                  )}
+                </div>
+              ))}
             </div>
           </div>
 
@@ -139,31 +173,26 @@ export default function BridgeModulePage() {
               {tx("SDK / Headless Mode", "SDK / 无界面模式")}
             </div>
             <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full shrink-0" style={{ background: "var(--pink)" }} />
-                <code className="text-[10px] text-text-secondary">entrypoints/sdk/ → Bridge</code>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full shrink-0" style={{ background: "var(--green)" }} />
-                <code className="text-[10px] text-text-secondary">QueryEngine (shared)</code>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full shrink-0" style={{ background: "var(--pink)" }} />
-                <code className="text-[10px] text-text-secondary">No UI</code>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full shrink-0" style={{ background: "var(--pink)" }} />
-                <code className="text-[10px] text-text-secondary">Programmatic callback</code>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full shrink-0" style={{ background: "var(--pink)" }} />
-                <code className="text-[10px] text-text-secondary">SDKMessage async iterator</code>
-              </div>
+              {[
+                { label: "entrypoints/sdk/ → Bridge", color: "var(--pink)" },
+                { label: "QueryEngine (shared)", color: "var(--green)", shared: true },
+                { label: "No UI", color: "var(--pink)" },
+                { label: "Programmatic callback", color: "var(--pink)" },
+                { label: "SDKMessage async iterator", color: "var(--pink)" },
+              ].map((row) => (
+                <div key={row.label} className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full shrink-0" style={{ background: row.color }} />
+                  <code className="text-[10px] text-text-secondary">{row.label}</code>
+                  {row.shared && (
+                    <span className="text-[9px] font-bold px-1 py-0.5 rounded" style={{ background: "color-mix(in srgb, var(--green) 15%, transparent)", color: "var(--green)" }}>shared</span>
+                  )}
+                </div>
+              ))}
             </div>
           </div>
         </div>
 
-        {/* Shared section highlight */}
+        {/* Shared core */}
         <div
           className="rounded-xl px-4 py-3 border border-border/60 flex items-center gap-3"
           style={{ background: "color-mix(in srgb, var(--green) 8%, var(--bg-secondary))", borderColor: "color-mix(in srgb, var(--green) 25%, var(--border))" }}
@@ -206,25 +235,33 @@ export default function BridgeModulePage() {
         </div>
       </Card>
 
-      {/* API Surface */}
+      {/* SDK code examples */}
       <Card
-        id="api"
-        title={tx("SDK API Surface — Key Entry Points", "SDK API 入口点")}
+        id="examples"
+        title={tx("SDK Usage — 3 Entry Points", "SDK 用法 — 3 个入口点")}
         className="mb-6"
         accent="var(--accent)"
-        summary={tx("The three functions external callers use to drive Claude Code programmatically.", "外部调用者用于以编程方式驱动 Claude Code 的三个函数。")}
+        summary={tx("Real code showing how to use Claude Code as a library. Three patterns for three use cases.", "展示如何将 Claude Code 作为库使用的真实代码。三种模式对应三种用例。")}
       >
-        <div className="space-y-3">
-          {SDK_ENTRY_POINTS.map((ep) => (
-            <div
-              key={ep.name}
-              className="rounded-xl p-3 border border-border/60"
-              style={{ borderLeft: `3px solid ${ep.color}`, background: `color-mix(in srgb, ${ep.color} 6%, var(--bg-tertiary))` }}
-            >
-              <code className="text-sm font-bold mb-1 block" style={{ color: ep.color }}>{ep.name}</code>
-              <p className="text-[10px] text-text-muted leading-relaxed">{ep.desc}</p>
+        <div className="space-y-4">
+          <div>
+            <div className="text-[10px] font-bold uppercase tracking-wider mb-2" style={{ color: "var(--pink)" }}>
+              {tx("runClaude() — One-shot async iterator", "runClaude() — 一次性异步迭代器")}
             </div>
-          ))}
+            <CodeBlock code={SDK_EXAMPLE_BASIC} language="typescript" filename="runClaude.ts" />
+          </div>
+          <div>
+            <div className="text-[10px] font-bold uppercase tracking-wider mb-2" style={{ color: "var(--accent)" }}>
+              {tx("createSession() — Stateful conversation", "createSession() — 有状态对话")}
+            </div>
+            <CodeBlock code={SDK_EXAMPLE_SESSION} language="typescript" filename="createSession.ts" />
+          </div>
+          <div>
+            <div className="text-[10px] font-bold uppercase tracking-wider mb-2" style={{ color: "var(--green)" }}>
+              {tx("Subagent spawning — how AgentTool works", "子代理生成 — AgentTool 的工作原理")}
+            </div>
+            <CodeBlock code={SDK_EXAMPLE_SUBAGENT} language="typescript" filename="subagent.ts" />
+          </div>
         </div>
       </Card>
 
@@ -250,6 +287,28 @@ export default function BridgeModulePage() {
         >
           <strong className="text-text-primary">{tx("Claude Code is its own subagent runtime", "Claude Code 是自己的子代理运行时")}</strong>
           {" — "}{tx("The same code that powers your interactive terminal also powers every subagent it spawns. There is no separate subagent engine.", "驱动你交互式终端的代码，同样驱动它生成的每一个子代理。没有单独的子代理引擎。")}
+        </div>
+      </Card>
+
+      {/* SDK API surface */}
+      <Card
+        id="api"
+        title={tx("SDK API Surface — Key Entry Points", "SDK API 入口点")}
+        className="mb-6"
+        accent="var(--accent)"
+        summary={tx("The three functions external callers use to drive Claude Code programmatically.", "外部调用者用于以编程方式驱动 Claude Code 的三个函数。")}
+      >
+        <div className="space-y-3">
+          {SDK_ENTRY_POINTS.map((ep) => (
+            <div
+              key={ep.name}
+              className="rounded-xl p-3 border border-border/60"
+              style={{ borderLeft: `3px solid ${ep.color}`, background: `color-mix(in srgb, ${ep.color} 6%, var(--bg-tertiary))` }}
+            >
+              <code className="text-sm font-bold mb-1 block" style={{ color: ep.color }}>{ep.name}</code>
+              <p className="text-[10px] text-text-muted leading-relaxed">{ep.desc}</p>
+            </div>
+          ))}
         </div>
       </Card>
 

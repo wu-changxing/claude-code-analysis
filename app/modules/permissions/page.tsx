@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { PageHeader, Card, FileCard } from "@/components/Section";
+import { PageHeader, Card, FileCard, InsightCallout, RelatedPages } from "@/components/Section";
 import { useTx } from "@/components/T";
 import { ghTree } from "@/lib/sourceLinks";
 
@@ -10,20 +10,23 @@ const FIVE_LAYERS = [
     layer: "1",
     name: "Mode Check",
     color: "var(--accent)",
+    width: "100%",
     desc: "Is the session in default, acceptEdits, or bypassPermissions mode? Mode determines whether a dialog is shown at all.",
     outcome: "bypassPermissions → skip user prompt. default → show dialog.",
   },
   {
     layer: "2",
     name: "Session Rules",
-    color: "var(--orange)",
+    color: "var(--green)",
+    width: "85%",
     desc: "Has the user already approved this tool/command pattern in this session? Stored as PermissionRule objects in LoopState.",
     outcome: "Rule match → auto-approve. No match → continue to layer 3.",
   },
   {
     layer: "3",
     name: "AST Analysis (yoloClassifier)",
-    color: "var(--red)",
+    color: "var(--orange)",
+    width: "70%",
     desc: "bashParser.ts builds a Tree-sitter AST of the command. Pattern classifier detects recursive deletes, root path access, network calls, injection chains.",
     outcome: "HIGH RISK → blocked with explanation. LOW RISK → continue to layer 4.",
   },
@@ -31,6 +34,7 @@ const FIVE_LAYERS = [
     layer: "4",
     name: "Path Allowlist",
     color: "var(--red)",
+    width: "55%",
     desc: "File paths are validated against the project root allowlist. Paths outside allowed roots are blocked — even in bypassPermissions mode.",
     outcome: "Path outside roots → BLOCKED. Path inside roots → continue to layer 5.",
   },
@@ -38,9 +42,19 @@ const FIVE_LAYERS = [
     layer: "5",
     name: "User Prompt",
     color: "var(--purple)",
+    width: "40%",
     desc: "A terminal dialog renders in the REPL: Allow once / Always allow / Never. The user decides. 'Always allow' stores a new PermissionRule in session state.",
     outcome: "User decides: allow (once or always) or deny.",
   },
+];
+
+const PERMISSION_MODES = [
+  { name: "default", risk: 1, color: "var(--green)", desc: "Normal mode — all 5 layers active. User dialogs shown for every novel tool action." },
+  { name: "acceptEdits", risk: 2, color: "var(--green)", desc: "Auto-approves file edits. Still prompts for bash commands, network, and destructive ops." },
+  { name: "autoAccept", risk: 3, color: "var(--orange)", desc: "Accepts most tool calls automatically. Skips session-rule layer. Destructive ops still prompt." },
+  { name: "plan", risk: 3, color: "var(--orange)", desc: "Planning mode — Claude describes actions but doesn't execute them without explicit approval." },
+  { name: "bypassPermissions", risk: 4, color: "var(--red)", desc: "Skips user dialogs. yoloClassifier still runs. Path allowlist still enforced. Intended for CI pipelines." },
+  { name: "dangerouslySkipPermissions", risk: 5, color: "var(--red)", desc: "All permission checks disabled. No classifier. No path check. Only use in fully sandboxed environments." },
 ];
 
 const RULE_MATCHING = [
@@ -97,24 +111,106 @@ export default function PermissionsModulePage() {
         ]}
       />
 
-      {/* yoloClassifier */}
+      {/* The 5-layer funnel — dramatic visual */}
       <Card
-        id="yolo"
-        title={tx("The yoloClassifier — AI Asking AI", "yoloClassifier — AI 询问 AI")}
+        id="funnel"
+        title={tx("The 5-Layer Security Funnel", "5 层安全漏斗")}
         className="mb-6"
         accent="var(--red)"
-        summary={tx("When running in headless/CI mode, Claude Code doesn't blindly allow everything. It calls an actual ML classifier literally named 'yolo'.", "在无界面/CI 模式下，Claude Code 不会盲目允许所有操作。它调用一个字面上名为 'yolo' 的 ML 分类器。")}
+        summary={tx(
+          "Every tool call passes through 5 narrowing layers. Each layer is more specific and can veto the call. Most calls are stopped before reaching layer 5.",
+          "每次工具调用都会经过 5 层逐渐收窄的安全检查。每层都可以否决调用。大多数调用在到达第 5 层之前就被拦截。"
+        )}
+      >
+        <div className="flex flex-col items-center gap-2 py-2">
+          {FIVE_LAYERS.map((l, idx) => (
+            <div key={l.layer} className="w-full flex flex-col items-center gap-1">
+              <div
+                className="rounded-xl px-4 py-3 flex items-start gap-3 transition-all"
+                style={{
+                  width: l.width,
+                  background: `color-mix(in srgb, ${l.color} 8%, var(--bg-secondary))`,
+                  border: `1.5px solid color-mix(in srgb, ${l.color} 30%, var(--border))`,
+                }}
+              >
+                <div
+                  className="w-7 h-7 rounded-lg text-[11px] font-bold flex items-center justify-center shrink-0 text-white"
+                  style={{ background: l.color }}
+                >
+                  {l.layer}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-xs font-bold mb-0.5" style={{ color: l.color }}>{l.name}</div>
+                  <p className="text-[10px] text-text-muted leading-relaxed hidden sm:block">{l.desc}</p>
+                  <div
+                    className="mt-1 text-[9px] px-2 py-0.5 rounded-full inline-block font-medium"
+                    style={{ background: `color-mix(in srgb, ${l.color} 12%, var(--bg-tertiary))`, color: l.color }}
+                  >
+                    {l.outcome}
+                  </div>
+                </div>
+              </div>
+              {idx < FIVE_LAYERS.length - 1 && (
+                <div className="flex justify-center">
+                  <div className="w-px h-3 bg-border" />
+                </div>
+              )}
+            </div>
+          ))}
+          <div
+            className="mt-2 w-1/4 rounded-xl px-4 py-3 text-center text-xs font-bold"
+            style={{ background: "color-mix(in srgb, var(--red) 12%, var(--bg-secondary))", border: "2px solid var(--red)", color: "var(--red)" }}
+          >
+            {tx("BLOCKED or ALLOWED", "拦截或放行")}
+          </div>
+        </div>
+        {/* Mobile descriptions */}
+        <div className="mt-4 space-y-2 sm:hidden">
+          {FIVE_LAYERS.map((l) => (
+            <p key={l.layer} className="text-[10px] text-text-muted leading-relaxed">
+              <span className="font-semibold" style={{ color: l.color }}>Layer {l.layer}: </span>
+              {l.desc}
+            </p>
+          ))}
+        </div>
+      </Card>
+
+      {/* yoloClassifier Hall of Fame */}
+      <Card
+        id="yolo"
+        title={tx("Hall of Fame: Best Variable Names in Production Code", "生产代码最佳变量命名荣誉榜")}
+        className="mb-6"
+        accent="var(--red)"
+        summary={tx("There is a function in production Claude Code literally called yoloClassifier. Here's what it actually does.", "生产环境的 Claude Code 中确实有一个叫 yoloClassifier 的函数。这是它实际做的事。")}
       >
         <div
-          className="rounded-xl p-4 mb-3"
-          style={{ background: "color-mix(in srgb, var(--red) 8%, var(--bg-secondary))", border: "1px solid color-mix(in srgb, var(--red) 30%, transparent)" }}
+          className="rounded-xl p-4 mb-4 flex flex-col sm:flex-row gap-4"
+          style={{ background: "color-mix(in srgb, var(--red) 6%, var(--bg-tertiary))", border: "1px solid color-mix(in srgb, var(--red) 20%, var(--border))" }}
         >
-          <p className="text-[11px] text-text-muted leading-relaxed">
-            {tx(
-              "When Claude Code runs in bypassPermissions mode (e.g. CI pipelines, --dangerously-skip-permissions), it doesn't blindly allow everything. Instead, it calls yoloClassifier.ts — an actual classifier that sends the bash command to Claude API with a safety prompt. Claude assesses whether the command is safe to run. The name 'yolo' is literally in the source code.",
-              "当 Claude Code 在 bypassPermissions 模式（如 CI 流水线、--dangerously-skip-permissions）下运行时，它不会盲目允许所有操作。相反，它调用 yoloClassifier.ts——一个将 bash 命令发送给 Claude API 并附带安全提示的真正分类器。Claude 评估该命令是否可以安全运行。'yolo' 这个名字字面上就在源代码中。"
-            )}
-          </p>
+          <div className="flex-1 min-w-0">
+            <code className="text-base font-bold block mb-1" style={{ color: "var(--red)" }}>yoloClassifier</code>
+            <code className="text-[10px] text-text-muted block mb-2">utils/permissions/yoloClassifier.ts · ~8KB</code>
+            <p className="text-[11px] text-text-muted leading-relaxed">
+              {tx(
+                "When Claude Code runs headlessly (CI mode, --dangerously-skip-permissions), it can't ask a human for permission. Instead, yoloClassifier sends the bash command to the Claude API with a safety assessment prompt. Claude-asking-Claude decides if it's safe. The name is literally in the source code.",
+                "当 Claude Code 在无界面模式下运行（CI 模式、--dangerously-skip-permissions）时，无法向人类请求权限。因此 yoloClassifier 会将 bash 命令发送给 Claude API 进行安全评估。Claude 询问 Claude 来决定是否安全。这个名字字面上就在源代码里。"
+              )}
+            </p>
+          </div>
+          <div className="shrink-0">
+            <div
+              className="rounded-lg px-3 py-2 text-center"
+              style={{ background: "color-mix(in srgb, var(--orange) 12%, var(--bg-secondary))", border: "1px solid color-mix(in srgb, var(--orange) 30%, var(--border))" }}
+            >
+              <div className="text-[9px] text-text-muted uppercase tracking-wider mb-1">{tx("Why 'yolo'?", "为什么叫 'yolo'？")}</div>
+              <div className="text-[10px] font-semibold" style={{ color: "var(--orange)" }}>
+                {tx("You Only Live Once", "只活一次")}
+              </div>
+              <div className="text-[9px] text-text-muted mt-1">
+                {tx("It runs when you've already said 'skip all checks'", "当你已经说了'跳过所有检查'时运行")}
+              </div>
+            </div>
+          </div>
         </div>
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
           {[
@@ -129,6 +225,47 @@ export default function PermissionsModulePage() {
             >
               <div className="text-[9px] text-text-muted uppercase tracking-wider mb-1">{item.label}</div>
               <code className="text-[10px]" style={{ color: item.color }}>{item.value}</code>
+            </div>
+          ))}
+        </div>
+      </Card>
+
+      {/* Permission modes — risk spectrum */}
+      <Card
+        id="modes"
+        title={tx("Permission Modes — Risk Spectrum", "权限模式 — 风险谱")}
+        className="mb-6"
+        accent="var(--orange)"
+        summary={tx("6 modes from safest to most dangerous. Each removes one or more security layers.", "6 种模式，从最安全到最危险。每种模式都会移除一个或多个安全层。")}
+      >
+        {/* Gradient bar */}
+        <div className="mb-4">
+          <div className="h-2 rounded-full w-full" style={{ background: "linear-gradient(to right, var(--green), var(--orange), var(--red))" }} />
+          <div className="flex justify-between mt-1">
+            <span className="text-[9px] text-text-muted">{tx("Safe", "安全")}</span>
+            <span className="text-[9px] text-text-muted">{tx("Dangerous", "危险")}</span>
+          </div>
+        </div>
+        <div className="space-y-2">
+          {PERMISSION_MODES.map((m) => (
+            <div
+              key={m.name}
+              className="flex flex-col sm:flex-row sm:items-center gap-2 rounded-lg p-3 border border-border/50"
+              style={{ borderLeft: `3px solid ${m.color}`, background: `color-mix(in srgb, ${m.color} 4%, var(--bg-tertiary))` }}
+            >
+              <div className="flex items-center gap-3 shrink-0">
+                <div className="flex gap-0.5">
+                  {[1, 2, 3, 4, 5].map((i) => (
+                    <div
+                      key={i}
+                      className="w-2 h-4 rounded-sm"
+                      style={{ background: i <= m.risk ? m.color : "var(--bg-primary)", border: `1px solid ${i <= m.risk ? m.color : "var(--border)"}` }}
+                    />
+                  ))}
+                </div>
+                <code className="text-[10px] font-bold min-w-[180px]" style={{ color: m.color }}>{m.name}</code>
+              </div>
+              <p className="text-[10px] text-text-muted leading-relaxed">{m.desc}</p>
             </div>
           ))}
         </div>
@@ -242,26 +379,11 @@ export default function PermissionsModulePage() {
         </div>
       </Card>
 
-      {/* Related pages */}
-      <Card title={tx("Related Pages", "相关页面")} className="mb-6" accent="var(--accent)">
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {[
-            { href: "/modules/tools", label: "Tools Module", color: "var(--orange)", desc: "Every tool calls checkPermissions() before invoke(). BashTool passes through all 5 layers above." },
-            { href: "/modules/utils", label: "Utils Module", color: "var(--accent)", desc: "yoloClassifier and permission rules live in utils/permissions/ — part of the Utils module." },
-            { href: "/permissions", label: "Permissions Deep Dive", color: "var(--red)", desc: "The main site's full permissions analysis including live examples and the full mode reference." },
-          ].map((rel) => (
-            <Link
-              key={rel.href}
-              href={rel.href}
-              className="rounded-xl border border-border/60 p-3 hover:border-border hover:bg-bg-tertiary/30 transition-all group"
-              style={{ borderLeft: `3px solid ${rel.color}` }}
-            >
-              <div className="text-xs font-semibold text-text-primary mb-1 group-hover:underline">{rel.label}</div>
-              <p className="text-[10px] text-text-muted leading-relaxed">{rel.desc}</p>
-            </Link>
-          ))}
-        </div>
-      </Card>
+      <RelatedPages pages={[
+        { href: "/modules/tools", title: "Tools Module", color: "var(--orange)", desc: "Every tool calls checkPermissions() before invoke(). BashTool passes through all 5 layers above." },
+        { href: "/modules/utils", title: "Utils Module", color: "var(--accent)", desc: "yoloClassifier and permission rules live in utils/permissions/ — part of the Utils module." },
+        { href: "/permissions", title: "Permissions Deep Dive", color: "var(--red)", desc: "The main site's full permissions analysis including live examples and the full mode reference." },
+      ]} />
     </div>
   );
 }

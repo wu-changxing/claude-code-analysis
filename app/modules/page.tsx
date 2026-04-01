@@ -14,6 +14,7 @@ import {
   VscGitMerge,
 } from "react-icons/vsc";
 
+// Complexity score = files × avg_file_size_proxy (subjective but consistent)
 const MODULES = (tx: (en: string, zh: string, ja: string) => string) => [
   {
     id: "query-engine",
@@ -21,6 +22,9 @@ const MODULES = (tx: (en: string, zh: string, ja: string) => string) => [
     icon: VscServerProcess,
     color: "var(--green)",
     badge: tx("15 files · 15K lines", "15 个文件 · 1.5 万行", "15ファイル · 1.5万行"),
+    complexity: 95, // high avg file size, very dense logic
+    complexityLabel: tx("Very High", "极高", "非常に高い"),
+    why: tx("15 files each averaging 1000+ lines — orchestrates the entire agent loop in minimal code", "15 个文件每个平均 1000+ 行——用最少代码编排整个 agent loop", "15ファイル各1000行超 — 最小限のコードでエージェントループ全体を制御"),
     desc: tx("The orchestrator — every user message passes through here, running the 7-phase agent loop.", "编排核心层——每条用户消息都会经过这里，运行 7 阶段 agent loop。", "オーケストレーター層。すべてのユーザーメッセージがここを通り、7段階の agent loop を回ります。"),
     deps: ["tools", "services", "utils", "commands", "permissions", "components"],
     dependents: [],
@@ -32,6 +36,9 @@ const MODULES = (tx: (en: string, zh: string, ja: string) => string) => [
     icon: VscExtensions,
     color: "var(--orange)",
     badge: tx("140 files · 65K lines", "140 个文件 · 6.5 万行", "140ファイル · 6.5万行"),
+    complexity: 88,
+    complexityLabel: tx("High", "高", "高い"),
+    why: tx("43 independent tool implementations, each with schema, permissions, and result rendering", "43 个独立工具实现，每个都有 schema、权限和结果渲染", "43の独立したツール実装、それぞれschema・権限・レンダリングを持つ"),
     desc: tx("43 tools implementing a unified interface — from BashTool to AgentTool, each with its own schema and permissions.", "43 个工具实现统一接口——从 BashTool 到 AgentTool，每个都有自己的 schema 与权限逻辑。", "43個のツールが共通インターフェースを実装。BashTool から AgentTool まで、それぞれ独自の schema と権限を持ちます。"),
     deps: ["permissions", "services", "utils"],
     dependents: ["query-engine"],
@@ -43,6 +50,9 @@ const MODULES = (tx: (en: string, zh: string, ja: string) => string) => [
     icon: VscDatabase,
     color: "var(--green)",
     badge: tx("110 files · 80K lines", "110 个文件 · 8 万行", "110ファイル · 8万行"),
+    complexity: 92,
+    complexityLabel: tx("Very High", "极高", "非常に高い"),
+    why: tx("470KB MCP client alone. 8 subsystems. The API client streams tokens from 3 providers.", "仅 MCP 客户端就 470KB。8 个子系统。API 客户端从 3 个提供商流式传输 token。", "MCPクライアントだけで470KB。8サブシステム。3プロバイダーからトークンをストリーム。"),
     desc: tx("Background infrastructure: API client, MCP runtime (470KB!), context compaction, LSP, memory extraction.", "后台基础设施：API 客户端、MCP runtime（470KB!）、上下文压缩、LSP、记忆提取。", "バックグラウンド基盤。API クライアント、MCP runtime（470KB!）、コンテキスト圧縮、LSP、メモリ抽出。"),
     deps: ["utils"],
     dependents: ["query-engine", "tools", "components"],
@@ -54,6 +64,9 @@ const MODULES = (tx: (en: string, zh: string, ja: string) => string) => [
     icon: VscShield,
     color: "var(--red)",
     badge: tx("30 files · 20K lines", "30 个文件 · 2 万行", "30ファイル · 2万行"),
+    complexity: 72,
+    complexityLabel: tx("Medium-High", "中高", "中高"),
+    why: tx("5 security layers, 4 rule matching types, real HackerOne CVEs patched — small but dense", "5 层安全检查，4 种规则匹配类型，修复了真实的 HackerOne CVE——小而密", "5層の安全機構、4種のルールマッチング、実際のCVE修正 — 小さいが密度が高い"),
     desc: tx("5 security layers between you and disaster, including a classifier literally named yoloClassifier.", "你和灾难之间隔着 5 层安全检查，其中一个分类器真的就叫 yoloClassifier。", "あなたと災害の間に5層の安全機構があり、その中には本当に yoloClassifier という分類器があります。"),
     deps: ["utils"],
     dependents: ["tools", "query-engine"],
@@ -65,6 +78,9 @@ const MODULES = (tx: (en: string, zh: string, ja: string) => string) => [
     icon: VscSymbolStructure,
     color: "var(--purple)",
     badge: tx("346 files · 40K lines", "346 个文件 · 4 万行", "346ファイル · 4万行"),
+    complexity: 78,
+    complexityLabel: tx("High", "高", "高い"),
+    why: tx("346 files but avg ~115 lines — many small focused components. REPL.tsx alone is 5005 lines.", "346 个文件但平均约 115 行——许多小而专注的组件。REPL.tsx 单文件就 5005 行。", "346ファイルで平均約115行 — 多くの小さなコンポーネント。REPL.tsxだけで5005行。"),
     desc: tx("React for the terminal — Ink + Yoga flexbox engine powering the entire REPL visual experience.", "终端里的 React——由 Ink + Yoga flexbox 引擎驱动整个 REPL 的视觉体验。", "ターミナル向け React 層。Ink + Yoga flexbox エンジンが REPL 全体の表示を支えます。"),
     deps: ["utils"],
     dependents: [],
@@ -76,6 +92,9 @@ const MODULES = (tx: (en: string, zh: string, ja: string) => string) => [
     icon: VscTerminalBash,
     color: "var(--orange)",
     badge: tx("110 files · 8K lines", "110 个文件 · 8000 行", "110ファイル · 8000行"),
+    complexity: 38,
+    complexityLabel: tx("Low-Medium", "中低", "低〜中"),
+    why: tx("110 files but only 8K total — avg ~73 lines per file. Each command is simple and self-contained.", "110 个文件但总共只有 8K 行——平均每个文件约 73 行。每个命令简单且自包含。", "110ファイルで8K行 — 平均73行/ファイル。各コマンドはシンプルで自己完結。"),
     desc: tx("101 slash commands — from /compact and /model to /stickers and /color. Each owns its own directory.", "101 个斜杠命令——从 /compact、/model 到 /stickers、/color。每个命令都有自己的目录。", "101 個のスラッシュコマンド。/compact や /model から /stickers や /color まで、それぞれ専用ディレクトリを持ちます。"),
     deps: ["services", "utils"],
     dependents: ["query-engine"],
@@ -87,6 +106,9 @@ const MODULES = (tx: (en: string, zh: string, ja: string) => string) => [
     icon: VscGitMerge,
     color: "var(--pink)",
     badge: tx("12 files · 13K lines", "12 个文件 · 1.3 万行", "12ファイル · 1.3万行"),
+    complexity: 82,
+    complexityLabel: tx("High", "高", "高い"),
+    why: tx("Only 12 files but avg ~1083 lines each — dense WebSocket adapters and multi-worker coordination", "只有 12 个文件但平均每个约 1083 行——密集的 WebSocket 适配器和多工作者协调", "12ファイルで平均約1083行 — 密なWebSocketアダプターとマルチワーカー協調"),
     desc: tx("The SDK bridge — exposes Claude Code as a headless programmatic API for subagents and remote execution.", "SDK bridge 层——把 Claude Code 暴露为可无头调用的程序化 API，用于子代理与远程执行。", "SDK bridge 層。Claude Code をサブエージェントや遠隔実行向けのヘッドレス API として公開します。"),
     deps: ["query-engine"],
     dependents: [],
@@ -98,6 +120,9 @@ const MODULES = (tx: (en: string, zh: string, ja: string) => string) => [
     icon: VscCode,
     color: "var(--accent)",
     badge: tx("220 files · 60K lines", "220 个文件 · 6 万行", "220ファイル · 6万行"),
+    complexity: 85,
+    complexityLabel: tx("High", "高", "高い"),
+    why: tx("5 files are larger than most npm packages. messages.ts (5512 lines) is a complete message library.", "5 个文件比大多数 npm 包都大。messages.ts（5512 行）是一个完整的消息库。", "5ファイルが多くのnpmパッケージより大きい。messages.ts（5512行）は完全なメッセージライブラリ。"),
     desc: tx("The foundation layer — Bash AST parser, message manipulation, session storage. No inbound dependencies.", "基础层——Bash AST 解析、消息处理、会话存储。没有内部入向依赖。", "基盤層。Bash AST パーサ、メッセージ操作、セッション保存を含み、内部入向依存を持ちません。"),
     deps: [],
     dependents: ["tools", "services", "permissions", "components", "commands", "query-engine"],
@@ -215,6 +240,17 @@ function ModuleCard({ mod }: { mod: ReturnType<typeof MODULES>[0] }) {
         </span>
       </div>
       <p className="text-[11px] text-text-muted leading-relaxed mb-3">{mod.desc}</p>
+      {/* Complexity score */}
+      <div className="mb-3 flex items-center gap-2">
+        <span className="text-[9px] text-text-muted uppercase tracking-wider shrink-0">{tx("complexity", "复杂度", "複雑度")}</span>
+        <div className="flex-1 h-1.5 rounded-full bg-bg-tertiary overflow-hidden">
+          <div
+            className="h-full rounded-full"
+            style={{ width: `${mod.complexity}%`, background: mod.color }}
+          />
+        </div>
+        <span className="text-[9px] font-mono shrink-0" style={{ color: mod.color }}>{mod.complexityLabel}</span>
+      </div>
       {mod.deps.length > 0 && (
         <div className="flex flex-wrap gap-1">
           <span className="text-[9px] text-text-muted uppercase tracking-wider">{tx("deps:", "依赖:", "依存:")}</span>
@@ -360,9 +396,28 @@ function DependencyGraph() {
         </div>
 
       </div>
-      <p className="text-center text-[10px] text-text-muted pt-3 italic">
-        {tx("Arrows show dependency direction (A → B means A depends on B)", "箭头表示依赖方向（A → B 表示 A 依赖 B）", "矢印は依存方向（A → B は A が B に依存）")}
-      </p>
+      {/* Legend */}
+      <div className="flex flex-wrap items-center justify-center gap-4 pt-3 border-t border-border/40 mt-3">
+        <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1">
+            <div className="w-8 h-px bg-border" />
+            <div className="w-0 h-0 border-l-[4px] border-t-[3px] border-b-[3px] border-l-current border-t-transparent border-b-transparent text-border" />
+          </div>
+          <span className="text-[9px] text-text-muted">{tx("A → B = A depends on B", "A → B 表示 A 依赖 B", "A → B = A が B に依存")}</span>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <div className="w-3 h-3 rounded border-2" style={{ borderColor: "var(--green)", background: "color-mix(in srgb, var(--green) 10%, transparent)" }} />
+          <span className="text-[9px] text-text-muted">{tx("Top tier", "顶层", "上位層")}</span>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <div className="w-3 h-3 rounded border-2" style={{ borderColor: "var(--orange)", background: "color-mix(in srgb, var(--orange) 10%, transparent)" }} />
+          <span className="text-[9px] text-text-muted">{tx("Capabilities", "能力层", "機能層")}</span>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <div className="w-3 h-3 rounded border-2" style={{ borderColor: "var(--accent)", background: "color-mix(in srgb, var(--accent) 10%, transparent)" }} />
+          <span className="text-[9px] text-text-muted">{tx("Foundation", "基础层", "基盤層")}</span>
+        </div>
+      </div>
     </div>
   );
 }
@@ -424,7 +479,7 @@ export default function ModulesIndexPage() {
         <div className="relative">
           {/* Connecting line */}
           <div className="absolute left-[15px] top-4 bottom-4 w-px bg-gradient-to-b from-border via-border to-transparent" />
-          <div className="space-y-1.5 pl-0">
+          <div className="space-y-2 pl-0">
             {readingOrder.map(({ step, id, reason }) => {
               const mod = modules.find((m) => m.id === id)!;
               const Icon = mod.icon;
@@ -432,10 +487,11 @@ export default function ModulesIndexPage() {
                 <Link
                   key={id}
                   href={`/modules/${id}`}
-                  className="relative flex items-start gap-3 rounded-lg p-3 border border-border/60 hover:border-border hover:bg-bg-tertiary/30 transition-all group"
+                  className="relative flex items-start gap-3 rounded-xl p-4 border border-border/60 hover:border-border hover:bg-bg-tertiary/30 transition-all group"
+                  style={{ background: `color-mix(in srgb, ${mod.color} 3%, var(--bg-secondary))` }}
                 >
                   <div
-                    className="relative z-10 w-7 h-7 rounded-full text-[10px] font-bold flex items-center justify-center shrink-0 border-2"
+                    className="relative z-10 w-8 h-8 rounded-full text-[11px] font-bold flex items-center justify-center shrink-0 border-2"
                     style={{
                       background: `color-mix(in srgb, ${mod.color} 15%, var(--bg-primary))`,
                       borderColor: mod.color,
@@ -445,12 +501,15 @@ export default function ModulesIndexPage() {
                     {step}
                   </div>
                   <div className="flex-1 min-w-0 pt-0.5">
-                    <div className="flex flex-wrap items-center gap-2 mb-0.5">
-                      <Icon className="w-3 h-3 shrink-0" style={{ color: mod.color }} />
-                      <span className="text-xs font-semibold text-text-primary group-hover:text-accent transition-colors">{mod.name}</span>
+                    <div className="flex flex-wrap items-center gap-2 mb-1.5">
+                      <Icon className="w-3.5 h-3.5 shrink-0" style={{ color: mod.color }} />
+                      <span className="text-sm font-semibold text-text-primary group-hover:underline" style={{ color: mod.color }}>{mod.name}</span>
                       <span className="tag-pill">{mod.badge}</span>
                     </div>
-                    <p className="text-[10px] text-text-muted leading-relaxed">{reason}</p>
+                    <p className="text-[11px] text-text-muted leading-relaxed mb-1.5">{reason}</p>
+                    <p className="text-[10px] leading-relaxed" style={{ color: `color-mix(in srgb, ${mod.color} 60%, var(--text-muted))` }}>
+                      {tx("Why: ", "为何: ", "理由: ")}{mod.why}
+                    </p>
                   </div>
                 </Link>
               );

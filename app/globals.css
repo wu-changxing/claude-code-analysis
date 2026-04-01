@@ -543,3 +543,30 @@ pre .comment { color: #6b7280; font-style: italic; }
 .insight-card:hover::after {
   transform: scaleX(1);
 }
+
+/* Module-specific color classes */
+.module-color-query-engine { color: var(--green); border-color: var(--green); }
+.module-color-tools        { color: var(--orange); border-color: var(--orange); }
+.module-color-services     { color: var(--green); border-color: var(--green); }
+.module-color-permissions  { color: var(--red); border-color: var(--red); }
+.module-color-components   { color: var(--purple); border-color: var(--purple); }
+.module-color-commands     { color: var(--orange); border-color: var(--orange); }
+.module-color-bridge       { color: var(--pink); border-color: var(--pink); }
+.module-color-utils        { color: var(--accent); border-color: var(--accent); }
+
+/* Module background variants */
+.module-bg-query-engine { background: color-mix(in srgb, var(--green) 8%, var(--bg-tertiary)); }
+.module-bg-tools        { background: color-mix(in srgb, var(--orange) 8%, var(--bg-tertiary)); }
+.module-bg-services     { background: color-mix(in srgb, var(--green) 8%, var(--bg-tertiary)); }
+.module-bg-permissions  { background: color-mix(in srgb, var(--red) 8%, var(--bg-tertiary)); }
+.module-bg-components   { background: color-mix(in srgb, var(--purple) 8%, var(--bg-tertiary)); }
+.module-bg-commands     { background: color-mix(in srgb, var(--orange) 8%, var(--bg-tertiary)); }
+.module-bg-bridge       { background: color-mix(in srgb, var(--pink) 8%, var(--bg-tertiary)); }
+.module-bg-utils        { background: color-mix(in srgb, var(--accent) 8%, var(--bg-tertiary)); }
+
+/* Insight callout — mobile padding fix */
+@media (max-width: 639px) {
+  .insight-callout {
+    padding: 10px 12px;
+  }
+}

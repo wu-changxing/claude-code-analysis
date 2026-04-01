@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { PageHeader, Card, FileCard, InsightCallout, RelatedPages, StatBadge } from "@/components/Section";
 import { useTx } from "@/components/T";
 import { ghBlob, ghTree } from "@/lib/sourceLinks";
@@ -12,6 +11,14 @@ const MESSAGES_BREAKDOWN = [
   { section: "Tool Result Formatting", lines: 900, color: "var(--purple)", desc: "Converts tool outputs into the format the LLM expects next turn — text, JSON, error messages" },
   { section: "Attachment Injection", lines: 700, color: "var(--pink)", desc: "Injects image/PDF content into message turns using multi-content blocks" },
   { section: "Type Definitions", lines: 1300, color: "var(--text-muted)", desc: "Message, ContentBlock, SDKMessage — TypeScript types for the entire message system" },
+];
+
+const BASH_AST_PIPELINE = [
+  { step: "Raw Command", detail: "rm -rf /tmp/../etc", color: "var(--text-muted)", icon: "⌨️" },
+  { step: "Tokenize", detail: "['rm', '-rf', '/tmp/../etc']", color: "var(--accent)", icon: "✂️" },
+  { step: "Parse Tree", detail: "AST via Tree-sitter (not regex)", color: "var(--green)", icon: "🌳" },
+  { step: "Security Analysis", detail: "recursive_delete=true, path_traversal=true", color: "var(--orange)", icon: "🔍" },
+  { step: "Allow / Deny", detail: "BLOCK: recursive delete detected", color: "var(--red)", icon: "🚫" },
 ];
 
 const BASH_PARSER_FEATURES = [
@@ -79,63 +86,62 @@ export default function UtilsModulePage() {
         )}
       </InsightCallout>
 
-      {/* Dependency diagram — who depends on utils */}
+      {/* Star dependency diagram */}
       <Card
         id="dependents"
-        title={tx("Who Depends on Utils? Everyone.", "谁依赖 Utils？所有人。")}
+        title={tx("The 'Everything Depends on Me' Diagram", "'所有人都依赖我'图")}
         className="mb-6"
         accent="var(--accent)"
         summary={tx(
-          "Every other module in Claude Code imports from utils/. This diagram shows the dependency flow.",
-          "Claude Code 中每个其他模块都从 utils/ 导入。此图展示依赖流。"
+          "7 modules point inward. Utils points at nothing. This is the rarest shape in software — a true foundation layer.",
+          "7 个模块向内指向 Utils。Utils 不指向任何东西。这是软件中最罕见的形态——真正的基础层。"
         )}
       >
-        {/* Visual dependency diagram */}
-        <div className="flex flex-col items-center gap-3">
-          {/* Dependents row */}
-          <div className="flex flex-wrap justify-center gap-2 w-full">
-            {DEPENDENTS.map((dep) => (
-              <div
-                key={dep.name}
-                className="rounded-lg px-3 py-2 text-center border border-border/60 min-w-[90px]"
-                style={{ background: `color-mix(in srgb, ${dep.color} 8%, var(--bg-tertiary))`, borderColor: `color-mix(in srgb, ${dep.color} 25%, var(--border))` }}
-              >
-                <div className="text-[10px] font-semibold" style={{ color: dep.color }}>{dep.name}</div>
-              </div>
-            ))}
-          </div>
-          {/* Arrows pointing down */}
-          <div className="flex items-center gap-1 text-text-muted text-[10px]">
-            <div className="flex gap-4">
-              {DEPENDENTS.map((dep) => (
-                <div key={dep.name} className="w-[2px] h-5 rounded" style={{ background: `color-mix(in srgb, ${dep.color} 40%, var(--border))` }} />
-              ))}
+        {/* Star diagram */}
+        <div className="flex flex-col items-center py-4">
+          <div className="relative w-full max-w-sm mx-auto" style={{ height: 260 }}>
+            {/* Center utils box */}
+            <div
+              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-xl border-2 px-5 py-3 text-center z-10"
+              style={{ borderColor: "var(--accent)", background: "color-mix(in srgb, var(--accent) 12%, var(--bg-secondary))" }}
+            >
+              <div className="text-sm font-bold" style={{ color: "var(--accent)" }}>utils/</div>
+              <div className="text-[9px] text-text-muted mt-0.5">220 files</div>
             </div>
+            {/* Radial satellites */}
+            {DEPENDENTS.map((dep, i) => {
+              const total = DEPENDENTS.length;
+              const angle = (i / total) * 2 * Math.PI - Math.PI / 2;
+              const r = 105;
+              const cx = 50 + (r * Math.cos(angle) / 1.6);
+              const cy = 50 + (r * Math.sin(angle) / 1.6);
+              return (
+                <div
+                  key={dep.name}
+                  className="absolute rounded-lg px-2 py-1.5 text-center border border-border/60 -translate-x-1/2 -translate-y-1/2"
+                  style={{
+                    left: `${cx}%`,
+                    top: `${cy}%`,
+                    background: `color-mix(in srgb, ${dep.color} 8%, var(--bg-tertiary))`,
+                    borderColor: `color-mix(in srgb, ${dep.color} 25%, var(--border))`,
+                    minWidth: 72,
+                  }}
+                >
+                  <div className="text-[9px] font-semibold" style={{ color: dep.color }}>{dep.name}</div>
+                </div>
+              );
+            })}
           </div>
-          <div className="text-[9px] text-text-muted uppercase tracking-widest">imports from</div>
-          {/* Utils box */}
-          <div
-            className="rounded-xl border-2 px-8 py-4 text-center w-full max-w-xs"
-            style={{ borderColor: "var(--accent)", background: "color-mix(in srgb, var(--accent) 10%, var(--bg-secondary))" }}
-          >
-            <div className="text-sm font-bold text-accent mb-1">utils/</div>
-            <div className="flex flex-wrap gap-1.5 justify-center">
-              <StatBadge value="220" label=" files" color="var(--accent)" />
-              <StatBadge value="~60K" label=" lines" color="var(--green)" />
-              <StatBadge value="0" label=" inbound deps" color="var(--text-muted)" />
-            </div>
-          </div>
-          {/* No outbound */}
-          <div className="text-[10px] text-text-muted italic mt-1">
-            {tx("↑ Zero dependencies on other modules", "↑ 对其他模块零依赖")}
+          <div className="text-[10px] text-text-muted italic text-center mt-2">
+            {tx("All 7 arrows point inward → utils has no outbound arrows", "所有 7 个箭头都指向内部 → utils 没有向外的箭头")}
           </div>
         </div>
         {/* Detail rows */}
-        <div className="mt-4 space-y-1">
+        <div className="mt-2 space-y-1">
           {DEPENDENTS.map((dep) => (
             <div key={dep.name} className="flex items-center gap-3 rounded-lg px-3 py-1.5 bg-bg-tertiary/20">
               <div className="w-2 h-2 rounded-full shrink-0" style={{ background: dep.color }} />
-              <span className="text-[10px] font-medium text-text-primary w-24 shrink-0">{dep.name}</span>
+              <span className="text-[10px] font-medium text-text-primary w-28 shrink-0">{dep.name}</span>
               <span className="text-[10px] text-text-muted">{dep.desc}</span>
             </div>
           ))}
@@ -145,32 +151,36 @@ export default function UtilsModulePage() {
       {/* Why giant files */}
       <Card
         id="giant"
-        title={tx("The Giant Files — Why So Big?", "超大文件 — 为何如此之大？")}
+        title={tx("The Giant Files — Bar Chart", "超大文件 — 柱状图")}
         className="mb-6"
         accent="var(--accent)"
         summary={tx(
-          "Several utils files are larger than most npm packages. They're kept inline to avoid package overhead and benefit from tight type integration.",
-          "几个 utils 文件比大多数 npm 包都大。它们保持内联以避免包管理开销，并受益于紧密的类型集成。"
+          "Several utils files are larger than most npm packages. Each bar is proportional to actual line count.",
+          "几个 utils 文件比大多数 npm 包都大。每个条形与实际行数成比例。"
         )}
       >
         <div className="space-y-2">
           {GIANT_FILES.map((f) => (
-            <div key={f.name} className="flex flex-col sm:flex-row sm:items-center gap-2 rounded-lg p-3 border border-border/50">
-              <div className="flex items-center gap-3 flex-1 min-w-0">
-                <code className="text-[11px] font-semibold text-accent shrink-0">{f.name}</code>
+            <div key={f.name} className="rounded-lg p-3 border border-border/50" style={{ borderLeft: `3px solid ${f.color}` }}>
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-1.5">
+                <code className="text-[11px] font-semibold flex-1 min-w-0" style={{ color: f.color }}>{f.name}</code>
+                <span className="text-[10px] font-mono text-text-muted shrink-0">{f.lines.toLocaleString()} lines</span>
               </div>
-              <div className="flex items-center gap-3 shrink-0 sm:w-72">
-                <div className="flex-1 h-2 rounded-full bg-bg-tertiary overflow-hidden">
-                  <div
-                    className="h-full rounded-full"
-                    style={{ width: `${(f.lines / maxLines) * 100}%`, background: f.color }}
-                  />
-                </div>
-                <span className="text-[10px] font-mono text-text-muted w-14 text-right shrink-0">{f.lines.toLocaleString()} ln</span>
+              <div className="w-full h-2.5 rounded-full bg-bg-primary overflow-hidden border border-border/30 mb-1.5">
+                <div
+                  className="h-full rounded-full transition-all"
+                  style={{ width: `${(f.lines / maxLines) * 100}%`, background: f.color }}
+                />
               </div>
-              <p className="text-[10px] text-text-muted leading-relaxed sm:max-w-xs">{f.purpose}</p>
+              <p className="text-[10px] text-text-muted leading-relaxed">{f.purpose}</p>
             </div>
           ))}
+        </div>
+        <div
+          className="mt-3 rounded-lg p-3 text-[11px] text-text-muted"
+          style={{ background: "color-mix(in srgb, var(--accent) 6%, var(--bg-secondary))", border: "1px solid color-mix(in srgb, var(--accent) 20%, var(--border))" }}
+        >
+          {tx("These files aren't accidents — each is a complete domain (message pipeline, bash parsing, session storage) kept inline to avoid package overhead and benefit from tight TypeScript type integration.", "这些文件不是偶然的——每一个都是一个完整的域（消息管道、bash 解析、会话存储），保持内联以避免包管理开销并受益于紧密的 TypeScript 类型集成。")}
         </div>
       </Card>
 
@@ -203,19 +213,49 @@ export default function UtilsModulePage() {
         </div>
       </Card>
 
-      {/* Bash parser */}
+      {/* Bash AST pipeline */}
       <Card
-        id="bash"
-        title={tx("Bash AST Parser — Security via Structural Analysis", "Bash AST 解析器 — 通过结构化分析实现安全")}
+        id="bash-pipeline"
+        title={tx("Bash AST Pipeline — From Command to Security Decision", "Bash AST 管道 — 从命令到安全决策")}
         className="mb-6"
         accent="var(--red)"
         summary={tx(
-          "bashParser.ts isn't regex — it's a full Tree-sitter AST parser. This matters: you can't fool an AST parser with string tricks that fool regex.",
-          "bashParser.ts 不是正则表达式 — 它是完整的 Tree-sitter AST 解析器。这很重要：你无法用愚弄正则表达式的字符串技巧来愚弄 AST 解析器。"
+          "bashParser.ts isn't regex — it's a full Tree-sitter AST parser. Here's the pipeline from raw string to allow/deny.",
+          "bashParser.ts 不是正则表达式——它是完整的 Tree-sitter AST 解析器。这是从原始字符串到允许/拒绝的管道。"
         )}
         links={[{ label: "utils/bash/", href: ghTree("utils/bash") }]}
       >
-        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+        {/* Horizontal flow */}
+        <div className="overflow-x-auto pb-2">
+          <div className="flex items-center gap-2 min-w-max">
+            {BASH_AST_PIPELINE.map((step, idx) => (
+              <div key={step.step} className="flex items-center gap-2">
+                <div
+                  className="rounded-xl p-3 flex flex-col items-center gap-1.5 w-36 text-center"
+                  style={{ background: `color-mix(in srgb, ${step.color} 8%, var(--bg-secondary))`, border: `1.5px solid color-mix(in srgb, ${step.color} 25%, var(--border))` }}
+                >
+                  <span className="text-xl">{step.icon}</span>
+                  <div className="text-[10px] font-bold" style={{ color: step.color }}>{step.step}</div>
+                  <code className="text-[9px] text-text-muted text-center leading-relaxed break-all">{step.detail}</code>
+                </div>
+                {idx < BASH_AST_PIPELINE.length - 1 && (
+                  <div className="text-text-muted text-sm font-bold shrink-0">→</div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div
+          className="mt-4 rounded-lg p-3 text-[11px] text-text-muted"
+          style={{ background: "color-mix(in srgb, var(--red) 6%, var(--bg-secondary))", border: "1px solid color-mix(in srgb, var(--red) 20%, var(--border))" }}
+        >
+          <strong className="text-text-primary">{tx("Why AST, not regex?", "为什么用 AST，而不是正则？")}</strong>
+          {" — "}{tx("Regex can be fooled by comments, strings, and quoted arguments. An AST parser understands the actual command structure — 'rm' inside a string literal is not the same as 'rm' as a command.", "正则表达式可以被注释、字符串和引用参数欺骗。AST 解析器理解实际命令结构——字符串字面量中的 'rm' 与作为命令的 'rm' 不同。")}
+        </div>
+
+        {/* Security features grid */}
+        <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
           {BASH_PARSER_FEATURES.map((f) => (
             <div
               key={f.name}

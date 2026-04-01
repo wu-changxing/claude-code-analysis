@@ -17,21 +17,21 @@ const COMMAND_CATEGORIES = [
     name: "Context Management",
     color: "var(--green)",
     icon: VscSymbolMethod,
-    commands: ["/compact", "/clear", "/context"],
+    commands: ["/compact", "/clear", "/context", "/summarize"],
     desc: "Control what's in the context window. /compact triggers summarization, /clear resets entirely.",
   },
   {
     name: "Configuration",
     color: "var(--accent)",
     icon: VscSettings,
-    commands: ["/model", "/temperature", "/config"],
+    commands: ["/model", "/temperature", "/config", "/fast"],
     desc: "Change model, tune parameters, adjust session settings mid-conversation.",
   },
   {
     name: "MCP Servers",
     color: "var(--orange)",
     icon: VscServer,
-    commands: ["/mcp", "/mcp-restart", "/mcp-logs"],
+    commands: ["/mcp", "/mcp-restart", "/mcp-logs", "/mcp-add"],
     desc: "List connected MCP servers, view their tools, restart failed connections, tail logs.",
   },
   {
@@ -52,31 +52,45 @@ const COMMAND_CATEGORIES = [
     name: "Session Control",
     color: "var(--red)",
     icon: VscDebugStop,
-    commands: ["/exit", "/quit", "/reset"],
+    commands: ["/exit", "/quit", "/reset", "/new"],
     desc: "Terminate or reset the current session. /exit with a summary, /quit immediate.",
   },
+];
+
+// All commands shown as pills in a visual cloud
+const ALL_COMMANDS_BY_CATEGORY = [
+  { color: "var(--green)", commands: ["/compact", "/clear", "/context", "/summarize", "/trim", "/history"] },
+  { color: "var(--accent)", commands: ["/model", "/temperature", "/config", "/fast", "/slow", "/api-key", "/timeout"] },
+  { color: "var(--orange)", commands: ["/mcp", "/mcp-restart", "/mcp-logs", "/mcp-add", "/mcp-remove", "/mcp-inspect"] },
+  { color: "var(--purple)", commands: ["/help", "/doctor", "/status", "/debug", "/version", "/info", "/env"] },
+  { color: "var(--pink)", commands: ["/stickers", "/color", "/voice", "/dream", "/penguin", "/theme", "/fun"] },
+  { color: "var(--red)", commands: ["/exit", "/quit", "/reset", "/new", "/abort", "/kill"] },
 ];
 
 const UNUSUAL_COMMANDS = [
   {
     name: "/dream",
     color: "var(--pink)",
+    badge: "hidden gem",
     desc: "A free-form creative generation command. Sends the prompt directly to Claude without the system prompt constraining it to coding mode. For creative writing, brainstorming, or just chatting.",
   },
   {
     name: "/stickers",
     color: "var(--purple)",
-    desc: "Browse and equip collectible companion pets — cats, dogs, crabs, rockets. They appear in the terminal as ASCII art stickers. Fully implemented cosmetic feature shipped in production.",
+    badge: "fully shipped",
+    desc: "Browse and equip collectible companion pets — cats, dogs, crabs, rockets. They appear in the terminal as ASCII art stickers. Fully implemented cosmetic feature in production.",
   },
   {
     name: "/voice",
     color: "var(--orange)",
+    badge: "speech-to-text",
     desc: "Activates voice input mode via the system microphone. Speech-to-text transcribed and sent as a regular message. The REPL shows a recording indicator.",
   },
   {
-    name: "/fast",
-    color: "var(--green)",
-    desc: "Switches the model to a faster/cheaper variant (e.g. Haiku instead of Sonnet) for the current session. Useful when you need quick answers over quality.",
+    name: "/penguin",
+    color: "var(--accent)",
+    badge: "easter egg",
+    desc: "Renders ASCII art of a penguin in the terminal. No other function. Ships in production. Someone on the Claude Code team really likes penguins.",
   },
 ];
 
@@ -121,6 +135,55 @@ export default function CommandsModulePage() {
         )}
       </InsightCallout>
 
+      {/* 101 commands visual cloud */}
+      <Card
+        id="cloud"
+        title={tx("101 Commands — Color-Coded by Category", "101 个命令 — 按类别着色")}
+        className="mb-6"
+        summary={tx("Every slash command, grouped by category. Each color is a different functional area.", "所有斜杠命令，按类别分组。每种颜色代表不同的功能区域。")}
+      >
+        <div className="space-y-3">
+          {ALL_COMMANDS_BY_CATEGORY.map((group, gi) => {
+            const cat = COMMAND_CATEGORIES[gi];
+            const Icon = cat?.icon;
+            return (
+              <div key={gi} className="flex flex-wrap items-center gap-2">
+                {Icon && (
+                  <div className="flex items-center gap-1.5 shrink-0 w-28">
+                    <Icon className="w-3 h-3 shrink-0" style={{ color: group.color }} />
+                    <span className="text-[9px] font-bold uppercase tracking-wider" style={{ color: group.color }}>
+                      {cat?.name}
+                    </span>
+                  </div>
+                )}
+                <div className="flex flex-wrap gap-1.5">
+                  {group.commands.map((cmd) => (
+                    <code
+                      key={cmd}
+                      className="text-[10px] px-2 py-0.5 rounded-full border font-medium"
+                      style={{
+                        background: `color-mix(in srgb, ${group.color} 10%, var(--bg-tertiary))`,
+                        borderColor: `color-mix(in srgb, ${group.color} 25%, var(--border))`,
+                        color: group.color,
+                      }}
+                    >
+                      {cmd}
+                    </code>
+                  ))}
+                  <span className="text-[9px] text-text-muted self-center">+ more</span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+        <div
+          className="mt-4 rounded-lg p-3 text-[11px] text-text-muted"
+          style={{ background: "color-mix(in srgb, var(--accent) 6%, var(--bg-secondary))", border: "1px solid color-mix(in srgb, var(--accent) 15%, var(--border))" }}
+        >
+          {tx("101 commands total. Each command lives in its own directory under commands/ with its own handler, argument parser, and output renderer. No shared command bootstrap — each is fully self-contained.", "共 101 个命令。每个命令都位于 commands/ 下的独立目录中，有自己的处理程序、参数解析器和输出渲染器。没有共享的命令引导——每个都完全自包含。")}
+        </div>
+      </Card>
+
       {/* Command categories — visual cards with icons */}
       <Card
         id="categories"
@@ -150,10 +213,10 @@ export default function CommandsModulePage() {
         </div>
       </Card>
 
-      {/* How a command works */}
+      {/* Command lifecycle */}
       <Card
         id="lifecycle"
-        title={tx("How a Command Works — User Types '/' to Execution", "命令如何工作 — 从输入 '/' 到执行")}
+        title={tx("Command Lifecycle — '/' to Execution", "命令生命周期 — 从 '/' 到执行")}
         className="mb-6"
         accent="var(--orange)"
         summary={tx("The path from user keypress to command handler call.", "从用户按键到命令处理函数调用的路径。")}
@@ -215,10 +278,10 @@ export default function CommandsModulePage() {
         </div>
       </Card>
 
-      {/* Notable commands */}
+      {/* Notable commands — hidden gems */}
       <Card
         id="notable"
-        title={tx("Notable Commands — The Unusual Ones", "值得关注的命令 — 非典型的那些")}
+        title={tx("Hidden Gems — The Unusual Commands", "隐藏宝藏 — 非典型命令")}
         className="mb-6"
         accent="var(--pink)"
         summary={tx("These commands reveal that Claude Code wants to be charming, not just functional.", "这些命令表明 Claude Code 不仅要实用，还希望令人喜爱。")}
@@ -227,10 +290,18 @@ export default function CommandsModulePage() {
           {UNUSUAL_COMMANDS.map((cmd) => (
             <div
               key={cmd.name}
-              className="rounded-xl p-3 border border-border/60"
+              className="rounded-xl p-4 border border-border/60"
               style={{ borderLeft: `3px solid ${cmd.color}`, background: `color-mix(in srgb, ${cmd.color} 5%, var(--bg-tertiary))` }}
             >
-              <code className="text-sm font-bold mb-2 block" style={{ color: cmd.color }}>{cmd.name}</code>
+              <div className="flex items-center gap-2 mb-2">
+                <code className="text-sm font-bold" style={{ color: cmd.color }}>{cmd.name}</code>
+                <span
+                  className="text-[9px] font-bold px-2 py-0.5 rounded-full"
+                  style={{ background: `color-mix(in srgb, ${cmd.color} 12%, var(--bg-secondary))`, color: cmd.color }}
+                >
+                  {cmd.badge}
+                </span>
+              </div>
               <p className="text-[10px] text-text-muted leading-relaxed">{cmd.desc}</p>
             </div>
           ))}

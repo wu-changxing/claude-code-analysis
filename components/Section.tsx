@@ -40,12 +40,12 @@ export function RelatedPages({
   return (
     <div className="mb-6">
       <div className="text-[10px] font-semibold uppercase tracking-wider text-text-muted mb-3">Related Pages</div>
-      <div className="flex gap-3 overflow-x-auto pb-1 sm:grid sm:grid-cols-2 sm:overflow-visible lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
         {pages.map((page) => (
           <Link
             key={page.href}
             href={page.href}
-            className="shrink-0 w-56 sm:w-auto rounded-xl border border-border/60 p-3 hover:border-border hover:bg-bg-tertiary/30 transition-all group"
+            className="rounded-xl border border-border/60 p-3 hover:border-border hover:bg-bg-tertiary/30 transition-all group"
             style={{ borderLeft: `3px solid ${page.color ?? "var(--accent)"}` }}
           >
             <div className="text-xs font-semibold text-text-primary mb-1 group-hover:underline">{page.title}</div>
