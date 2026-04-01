@@ -1,6 +1,27 @@
 "use client";
 
 import { PageHeader, Card, CodeBlock, Table } from "@/components/Section";
+import {
+  VscDatabase,
+  VscPlug,
+  VscServerProcess,
+  VscGraphLine,
+  VscLightbulb,
+  VscExtensions,
+  VscPackage,
+  VscSymbolNumeric,
+} from "react-icons/vsc";
+
+const SERVICE_CARDS = [
+  { icon: VscDatabase, name: "Compaction", files: 13, size: "~15K", color: "var(--accent)", desc: "4-level context window management" },
+  { icon: VscPlug, name: "MCP", files: 25, size: "470KB", color: "var(--green)", desc: "External tool integration (4 transports)" },
+  { icon: VscServerProcess, name: "LSP", files: 6, size: "~5K", color: "var(--orange)", desc: "Language Server Protocol" },
+  { icon: VscGraphLine, name: "Analytics", files: 6, size: "~8K", color: "var(--purple)", desc: "Datadog + GrowthBook pipeline" },
+  { icon: VscLightbulb, name: "Memory", files: 5, size: "~6K", color: "var(--pink)", desc: "Auto-extraction + session memory" },
+  { icon: VscExtensions, name: "Tools", files: 2, size: "~1K", color: "var(--orange)", desc: "StreamingToolExecutor + orchestration" },
+  { icon: VscPackage, name: "Plugins", files: 8, size: "~10K", color: "var(--green)", desc: "Plugin install + marketplace" },
+  { icon: VscSymbolNumeric, name: "Tokens", files: 1, size: "~2K", color: "var(--accent)", desc: "Multi-provider token counting" },
+];
 
 export default function ServicesPage() {
   return (
@@ -13,21 +34,16 @@ export default function ServicesPage() {
 
       {/* Service Overview */}
       <Card title="Service Overview" className="mb-6">
-        <Table
-          headers={["Service", "Path", "Size", "Purpose"]}
-          rows={[
-            ["Compaction", "services/compact/", "13 files", "Context window management"],
-            ["MCP", "services/mcp/", "25 files, 470KB", "External tool integration"],
-            ["LSP", "services/lsp/", "6 files", "Language Server Protocol"],
-            ["Analytics", "services/analytics/", "6+ files", "Event pipeline (Datadog + 1P)"],
-            ["ExtractMemories", "services/extractMemories/", "2 files", "Auto-memory background agent"],
-            ["SessionMemory", "services/SessionMemory/", "3 files", "Periodic conversation notes"],
-            ["API", "services/api/", "Multiple files", "Claude API client + streaming"],
-            ["Plugins", "services/plugins/", "Multiple files", "Plugin installation/management"],
-            ["TokenEstimation", "services/", "1 file", "Multi-provider token counting"],
-            ["ToolOrchestration", "services/tools/", "2 files", "Tool batching + streaming executor"],
-          ]}
-        />
+        <div className="grid grid-cols-4 gap-3">
+          {SERVICE_CARDS.map((s) => (
+            <div key={s.name} className="p-3 rounded-xl bg-bg-tertiary/30 border border-border/50">
+              <s.icon className="w-4 h-4 mb-2" style={{ color: s.color }} />
+              <div className="text-xs font-semibold text-text-primary mb-0.5">{s.name}</div>
+              <div className="text-[10px] text-text-muted mb-1.5">{s.files} files &middot; {s.size}</div>
+              <p className="text-[10px] text-text-muted">{s.desc}</p>
+            </div>
+          ))}
+        </div>
       </Card>
 
       {/* Compaction */}

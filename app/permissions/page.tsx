@@ -1,6 +1,22 @@
 "use client";
 
 import { PageHeader, Card, CodeBlock, FlowStep } from "@/components/Section";
+import {
+  VscShield,
+  VscLock,
+  VscKey,
+  VscEye,
+  VscCheck,
+  VscClose,
+} from "react-icons/vsc";
+import {
+  HiOutlineShieldCheck,
+  HiOutlineShieldExclamation,
+  HiOutlineCpuChip,
+  HiOutlineAdjustmentsHorizontal,
+  HiOutlineUserCircle,
+  HiOutlineCheckBadge,
+} from "react-icons/hi2";
 
 export default function PermissionsPage() {
   return (
@@ -13,24 +29,34 @@ export default function PermissionsPage() {
 
       {/* Permission Modes */}
       <Card title="Permission Modes" className="mb-6">
-        <div className="space-y-3">
+        <div className="grid grid-cols-3 gap-3">
           {[
-            { mode: "default", desc: "Ask user for each potentially unsafe operation", color: "var(--accent)" },
-            { mode: "plan", desc: "All tools require explicit plan approval", color: "var(--purple)" },
-            { mode: "acceptEdits", desc: "Auto-approve file edits without asking", color: "var(--green)" },
-            { mode: "bypassPermissions", desc: "Auto-approve everything (dangerous)", color: "var(--red)" },
-            { mode: "dontAsk", desc: "Auto-deny everything", color: "var(--orange)" },
-            { mode: "auto", desc: "ML classifier-based auto-approval (ant-only)", color: "var(--pink)" },
-          ].map(({ mode, desc, color }) => (
-            <div key={mode} className="flex items-start gap-3 p-3 rounded bg-bg-tertiary/30">
-              <span className="w-2 h-2 rounded-full mt-1.5 shrink-0" style={{ background: color }} />
-              <div>
-                <code className="text-accent text-sm">{mode}</code>
-                <p className="text-xs text-text-secondary mt-0.5">{desc}</p>
+            { mode: "default", desc: "Ask user for each potentially unsafe operation", color: "var(--accent)", icon: HiOutlineUserCircle, safety: "Safe" },
+            { mode: "plan", desc: "All tools require explicit plan approval first", color: "var(--purple)", icon: HiOutlineAdjustmentsHorizontal, safety: "Safe" },
+            { mode: "acceptEdits", desc: "Auto-approve file edits without asking", color: "var(--green)", icon: HiOutlineCheckBadge, safety: "Moderate" },
+            { mode: "bypassPermissions", desc: "Auto-approve everything (dangerous!)", color: "var(--red)", icon: HiOutlineShieldExclamation, safety: "Dangerous" },
+            { mode: "dontAsk", desc: "Auto-deny everything silently", color: "var(--orange)", icon: VscClose, safety: "Restrictive" },
+            { mode: "auto", desc: "ML 'yoloClassifier' auto-approval", color: "var(--pink)", icon: HiOutlineCpuChip, safety: "AI-gated" },
+          ].map(({ mode, desc, color, icon: Icon, safety }) => (
+            <div key={mode} className="p-4 rounded-xl bg-bg-tertiary/30 border border-border/50">
+              <div className="flex items-center gap-2 mb-2">
+                <Icon className="w-5 h-5" style={{ color }} />
+                <code className="text-sm font-semibold text-text-primary">{mode}</code>
               </div>
+              <p className="text-[11px] text-text-muted mb-2">{desc}</p>
+              <span className="inline-block px-1.5 py-0.5 rounded text-[9px] font-medium" style={{
+                background: `color-mix(in srgb, ${color} 12%, transparent)`,
+                color,
+              }}>
+                {safety}
+              </span>
             </div>
           ))}
         </div>
+        <p className="text-[11px] text-text-muted mt-3 italic">
+          The ML classifier is literally named &quot;yoloClassifier&quot; in the source code.
+          File: utils/permissions/yoloClassifier.ts. You can&apos;t make this up.
+        </p>
       </Card>
 
       {/* 5-Layer Flow */}
@@ -68,6 +94,22 @@ export default function PermissionsPage() {
           />
         </div>
       </Card>
+
+      {/* Security Stats */}
+      <div className="grid grid-cols-4 gap-3 mb-6">
+        {[
+          { icon: VscShield, value: "5", label: "Security layers", color: "var(--accent)" },
+          { icon: VscLock, value: "300KB+", label: "BashTool security code", color: "var(--red)" },
+          { icon: VscKey, value: "6", label: "Permission modes", color: "var(--green)" },
+          { icon: VscEye, value: "3", label: "HackerOne patches", color: "var(--orange)" },
+        ].map((s) => (
+          <div key={s.label} className="bg-bg-secondary border border-border rounded-xl p-4">
+            <s.icon className="w-4 h-4 mb-2" style={{ color: s.color }} />
+            <div className="text-xl font-bold font-mono" style={{ color: s.color }}>{s.value}</div>
+            <div className="text-[10px] text-text-muted mt-0.5">{s.label}</div>
+          </div>
+        ))}
+      </div>
 
       {/* Permission Rules */}
       <Card title="Permission Rules" className="mb-6">
