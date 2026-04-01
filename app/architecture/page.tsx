@@ -15,7 +15,7 @@ import {
 export default function ArchitecturePage() {
   const tx = useTx();
   return (
-    <div className="p-8 max-w-5xl">
+    <div className="page-shell">
       <PageHeader
         title={tx("Architecture", "系统架构")}
         description={tx(
@@ -157,8 +157,8 @@ export default function ArchitecturePage() {
             { name: "React (core)", lines: 200000, color: "var(--accent)" },
             { name: "Claude Code v2.1.88", lines: 512664, color: "var(--red)", highlight: true },
           ].map((p) => (
-            <div key={p.name} className="flex items-center gap-3">
-              <span className={`text-xs w-40 shrink-0 ${p.highlight ? "font-semibold text-text-primary" : "text-text-muted"}`}>
+            <div key={p.name} className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
+              <span className={`text-xs sm:w-40 sm:shrink-0 ${p.highlight ? "font-semibold text-text-primary" : "text-text-muted"}`}>
                 {p.name}
               </span>
               <div className="flex-1 h-5 bg-bg-primary rounded-full overflow-hidden border border-border/50">
@@ -182,7 +182,8 @@ export default function ArchitecturePage() {
 
       {/* Largest Files */}
       <Card title="Top 10 Largest Files" className="mb-6" accent="var(--red)">
-        <div className="space-y-1.5">
+        <div className="overflow-x-auto">
+          <div className="min-w-[560px] space-y-1.5">
           {[
             { file: "cli/print.ts", lines: 5594, desc: "Formatted terminal output" },
             { file: "utils/messages.ts", lines: 5512, desc: "Message creation & formatting" },
@@ -208,6 +209,7 @@ export default function ArchitecturePage() {
               <span className="text-[10px] font-mono text-text-muted w-12 text-right">{f.lines.toLocaleString()}</span>
             </div>
           ))}
+          </div>
         </div>
       </Card>
 

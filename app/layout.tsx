@@ -1,18 +1,7 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Sidebar } from "@/components/Sidebar";
 import { LangProvider } from "@/lib/LangContext";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "Claude Code Analysis | Deep Dive into Claude Code Architecture",
@@ -60,14 +49,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex">
+    <html lang="en" className="h-full antialiased">
+      <body className="min-h-full bg-bg-primary text-text-primary">
         <LangProvider>
           <Sidebar />
-          <main className="flex-1 ml-64 min-h-screen">{children}</main>
+          <main className="min-h-screen min-w-0 pt-16 md:ml-64 md:pt-0">
+            {children}
+          </main>
         </LangProvider>
       </body>
     </html>

@@ -1,8 +1,11 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
+  VscChromeClose,
+  VscMenu,
   VscHome,
   VscServerProcess,
   VscExtensions,
@@ -49,29 +52,21 @@ const NAV_SECTIONS = (lang: Lang) => [
   },
 ];
 
-export function Sidebar() {
-  const pathname = usePathname();
-  const { lang, setLang } = useLang();
+function SidebarContent({
+  pathname,
+  lang,
+  setLang,
+  onNavigate,
+}: {
+  pathname: string;
+  lang: Lang;
+  setLang: (lang: Lang) => void;
+  onNavigate?: () => void;
+}) {
   const sections = NAV_SECTIONS(lang);
 
   return (
-    <aside className="fixed left-0 top-0 h-full w-64 bg-bg-secondary border-r border-border flex flex-col z-50">
-      <div className="p-5 border-b border-border">
-        <Link href="/" className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-text-primary flex items-center justify-center text-bg-primary font-bold text-sm shadow-sm">
-            CC
-          </div>
-          <div>
-            <div className="text-sm font-semibold text-text-primary">
-              Claude Code
-            </div>
-            <div className="text-[11px] text-text-muted font-mono">
-              v2.1.88 &middot; Tengu
-            </div>
-          </div>
-        </Link>
-      </div>
-
+    <>
       <nav className="flex-1 px-3 py-4 overflow-y-auto">
         {sections.map((section) => (
           <div key={section.title} className="mb-4">
@@ -85,6 +80,7 @@ export function Sidebar() {
                   <Link
                     key={href}
                     href={href}
+                    onClick={onNavigate}
                     className={`flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-[13px] transition-all ${
                       active
                         ? "bg-text-primary text-bg-primary font-medium shadow-sm"
@@ -102,8 +98,7 @@ export function Sidebar() {
       </nav>
 
       <div className="p-4 border-t border-border space-y-3">
-        {/* Language Switcher */}
-        <div className="flex items-center gap-1 px-1">
+        <div className="flex flex-wrap items-center gap-1 px-1">
           {(Object.keys(LANG_LABELS) as Lang[]).map((l) => (
             <button
               key={l}
@@ -160,6 +155,130 @@ export function Sidebar() {
           {t("footer.edu", lang)}
         </p>
       </div>
-    </aside>
+    </>
+  );
+}
+
+export function Sidebar() {
+  const pathname = usePathname();
+  const { lang, setLang } = useLang();
+  const [openPathname, setOpenPathname] = useState<string | null>(null);
+  const isOpen = openPathname === pathname;
+
+  useEffect(() => {
+    const { style } = document.body;
+    const previousOverflow = style.overflow;
+
+    style.overflow = isOpen ? "hidden" : previousOverflow;
+
+    return () => {
+      style.overflow = previousOverflow;
+    };
+  }, [isOpen]);
+
+  return (
+    <>
+      <div className="fixed inset-x-0 top-0 z-40 border-b border-border bg-bg-secondary/95 backdrop-blur md:hidden">
+        <div className="flex h-16 items-center justify-between px-4">
+          <Link
+            href="/"
+            onClick={() => setOpenPathname(null)}
+            className="flex items-center gap-3"
+          >
+            <div className="w-9 h-9 rounded-xl bg-text-primary flex items-center justify-center text-bg-primary font-bold text-sm shadow-sm">
+              CC
+            </div>
+            <div>
+              <div className="text-sm font-semibold text-text-primary">
+                Claude Code
+              </div>
+              <div className="text-[11px] text-text-muted font-mono">
+                v2.1.88
+              </div>
+            </div>
+          </Link>
+          <button
+            type="button"
+            onClick={() => setOpenPathname(pathname)}
+            aria-label="Open navigation menu"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-bg-primary text-text-primary shadow-sm transition-colors hover:bg-bg-tertiary"
+          >
+            <VscMenu className="h-4 w-4" />
+          </button>
+        </div>
+      </div>
+
+      <div
+        className={`fixed inset-0 z-50 md:hidden ${
+          isOpen ? "pointer-events-auto" : "pointer-events-none"
+        }`}
+        aria-hidden={!isOpen}
+      >
+        <div
+          className={`absolute inset-0 bg-black/30 transition-opacity ${
+            isOpen ? "opacity-100" : "opacity-0"
+          }`}
+          onClick={() => setOpenPathname(null)}
+        />
+        <aside
+          className={`absolute inset-y-0 left-0 flex h-full w-[85vw] max-w-xs flex-col border-r border-border bg-bg-secondary shadow-xl transition-transform ${
+            isOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
+        >
+          <div className="flex items-center justify-between border-b border-border p-5">
+            <Link
+              href="/"
+              onClick={() => setOpenPathname(null)}
+              className="flex items-center gap-3"
+            >
+              <div className="w-9 h-9 rounded-xl bg-text-primary flex items-center justify-center text-bg-primary font-bold text-sm shadow-sm">
+                CC
+              </div>
+              <div>
+                <div className="text-sm font-semibold text-text-primary">
+                  Claude Code
+                </div>
+                <div className="text-[11px] text-text-muted font-mono">
+                  v2.1.88 &middot; Tengu
+                </div>
+              </div>
+            </Link>
+            <button
+              type="button"
+              onClick={() => setOpenPathname(null)}
+              aria-label="Close navigation menu"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-bg-primary text-text-primary transition-colors hover:bg-bg-tertiary"
+            >
+              <VscChromeClose className="h-4 w-4" />
+            </button>
+          </div>
+          <SidebarContent
+            pathname={pathname}
+            lang={lang}
+            setLang={setLang}
+            onNavigate={() => setOpenPathname(null)}
+          />
+        </aside>
+      </div>
+
+      <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col border-r border-border bg-bg-secondary md:flex">
+        <div className="p-5 border-b border-border">
+          <Link href="/" className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-text-primary flex items-center justify-center text-bg-primary font-bold text-sm shadow-sm">
+              CC
+            </div>
+            <div>
+              <div className="text-sm font-semibold text-text-primary">
+                Claude Code
+              </div>
+              <div className="text-[11px] text-text-muted font-mono">
+                v2.1.88 &middot; Tengu
+              </div>
+            </div>
+          </Link>
+        </div>
+        <SidebarContent pathname={pathname} lang={lang} setLang={setLang} />
+      </aside>
+    </>
   );
 }

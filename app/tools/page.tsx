@@ -1,6 +1,6 @@
 "use client";
 
-import { PageHeader, Card, CodeBlock, Table } from "@/components/Section";
+import { PageHeader, Card, CodeBlock } from "@/components/Section";
 import { useTx } from "@/components/T";
 import {
   VscTerminalBash,
@@ -51,7 +51,7 @@ const TOOL_CARDS = [
 export default function ToolsPage() {
   const tx = useTx();
   return (
-    <div className="p-8 max-w-5xl">
+    <div className="page-shell">
       <PageHeader
         title={tx("Tools", "工具")}
         description={tx(

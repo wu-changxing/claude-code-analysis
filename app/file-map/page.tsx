@@ -6,7 +6,7 @@ import { useTx } from "@/components/T";
 export default function FileMapPage() {
   const tx = useTx();
   return (
-    <div className="p-8 max-w-5xl">
+    <div className="page-shell">
       <PageHeader
         title={tx("File Map", "文件地图")}
         description={tx(

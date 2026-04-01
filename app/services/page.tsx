@@ -1,6 +1,6 @@
 "use client";
 
-import { PageHeader, Card, CodeBlock, Table } from "@/components/Section";
+import { PageHeader, Card, CodeBlock } from "@/components/Section";
 import { useTx } from "@/components/T";
 import {
   VscDatabase,
@@ -27,7 +27,7 @@ const SERVICE_CARDS = [
 export default function ServicesPage() {
   const tx = useTx();
   return (
-    <div className="p-8 max-w-5xl">
+    <div className="page-shell">
       <PageHeader
         title={tx("Services", "服务")}
         description={tx(

@@ -19,12 +19,12 @@ export function PageHeader({
       animate={{ opacity: 1, y: 0 }}
       className="mb-8 pb-6 border-b border-border"
     >
-      <div className="flex items-center gap-2 text-[11px] text-text-muted mb-3">
+      <div className="mb-3 flex flex-wrap items-center gap-2 text-[11px] text-text-muted">
         <span>Claude Code</span>
         <HiOutlineChevronRight className="w-3 h-3" />
         <span className="text-text-secondary">{title}</span>
       </div>
-      <div className="flex items-center gap-3 mb-2">
+      <div className="mb-2 flex flex-col items-start gap-2 sm:flex-row sm:items-center">
         <h1 className="text-2xl font-bold text-text-primary">{title}</h1>
         {badge && (
           <span className="px-2.5 py-0.5 text-[11px] rounded-full bg-bg-tertiary text-text-secondary border border-border font-mono">
@@ -57,7 +57,7 @@ export function Card({
       className={`bg-bg-secondary border border-border rounded-xl overflow-hidden ${className}`}
     >
       {title && (
-        <div className="px-5 py-3 border-b border-border flex items-center gap-2">
+        <div className="flex items-center gap-2 border-b border-border px-4 py-3 sm:px-5">
           {accent && (
             <span
               className="w-2 h-2 rounded-full shrink-0"
@@ -67,7 +67,7 @@ export function Card({
           <h3 className="text-sm font-semibold text-text-primary">{title}</h3>
         </div>
       )}
-      <div className="p-5">{children}</div>
+      <div className="p-4 sm:p-5">{children}</div>
     </motion.div>
   );
 }
@@ -88,7 +88,7 @@ export function CodeBlock({
           {filename}
         </div>
       )}
-      <pre className="!rounded-xl text-[13px] leading-relaxed overflow-x-auto pt-8">
+      <pre className="!rounded-xl overflow-x-auto pt-8 text-[12px] leading-relaxed sm:text-[13px]">
         <code className={`language-${language}`}>{code}</code>
       </pre>
     </div>
@@ -105,7 +105,7 @@ export function InfoRow({
   color?: string;
 }) {
   return (
-    <div className="flex items-center justify-between py-1.5 text-sm">
+    <div className="flex flex-col gap-1.5 py-1.5 text-sm sm:flex-row sm:items-center sm:justify-between">
       <span className="text-text-secondary">{label}</span>
       <span
         className={
@@ -161,7 +161,7 @@ export function Table({
 }) {
   return (
     <div className="overflow-x-auto">
-      <table className="w-full text-sm">
+      <table className="min-w-[640px] w-full text-sm">
         <thead>
           <tr className="border-b border-border">
             {headers.map((h) => (

@@ -15,7 +15,7 @@ import { HiOutlineArrowPath } from "react-icons/hi2";
 export default function QueryLoopPage() {
   const tx = useTx();
   return (
-    <div className="p-8 max-w-5xl">
+    <div className="page-shell">
       <PageHeader
         title={tx("Query Loop", "查询循环")}
         description={tx(

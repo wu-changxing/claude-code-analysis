@@ -123,7 +123,7 @@ const SECTIONS = (lang: "en" | "zh" | "ja") => [
   },
 ];
 
-const FLOW_STEPS = (lang: "en" | "zh" | "ja") => [
+const FLOW_STEPS = () => [
   {
     icon: HiOutlineCommandLine,
     label: { en: "User Input", zh: "用户输入", ja: "ユーザー入力" },
@@ -146,7 +146,7 @@ const FLOW_STEPS = (lang: "en" | "zh" | "ja") => [
   },
 ];
 
-const INNOVATIONS = (lang: "en" | "zh" | "ja") => [
+const INNOVATIONS = () => [
   {
     title: { en: "Streaming Tool Execution", zh: "流式工具执行", ja: "ストリーミングツール実行" },
     desc: { en: "Tools start executing while the model is still generating. StreamingToolExecutor queues tool_use blocks as they arrive.", zh: "模型还在生成时工具就开始执行。StreamingToolExecutor 在 tool_use 块到达时立即排队执行。", ja: "モデルがまだ生成中にツールが実行開始。StreamingToolExecutorがtool_useブロックを即座にキューイング。" },
@@ -168,11 +168,11 @@ export default function HomePage() {
   const { lang } = useLang();
   const stats = STATS(lang);
   const sections = SECTIONS(lang);
-  const flowSteps = FLOW_STEPS(lang);
-  const innovations = INNOVATIONS(lang);
+  const flowSteps = FLOW_STEPS();
+  const innovations = INNOVATIONS();
 
   return (
-    <div className="p-8 max-w-5xl">
+    <div className="page-shell">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: 16 }}
@@ -180,7 +180,7 @@ export default function HomePage() {
         transition={{ duration: 0.4 }}
         className="mb-10"
       >
-        <div className="flex items-start gap-4 mb-4">
+        <div className="mb-4 flex flex-col items-start gap-4 sm:flex-row">
           <div className="w-14 h-14 rounded-2xl bg-text-primary flex items-center justify-center text-bg-primary font-bold text-xl shrink-0 shadow-sm">
             CC
           </div>
@@ -195,7 +195,7 @@ export default function HomePage() {
             </p>
           </div>
         </div>
-        <p className="text-text-muted text-xs ml-[72px]">
+        <p className="text-text-muted text-xs sm:ml-[72px]">
           {t("home.desc", lang)}
         </p>
       </motion.div>
@@ -239,9 +239,12 @@ export default function HomePage() {
         <h2 className="text-xs font-semibold text-text-muted uppercase tracking-wider mb-5">
           {t("home.coreLoop", lang)}
         </h2>
-        <div className="flex items-center justify-between">
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
           {flowSteps.map((step, i) => (
-            <div key={step.label.en} className="flex items-center gap-3">
+            <div
+              key={step.label.en}
+              className="relative rounded-xl border border-border/60 bg-bg-primary/70 p-4 text-center"
+            >
               <div className="flex flex-col items-center text-center">
                 <div className="w-12 h-12 rounded-xl bg-bg-primary border border-border flex items-center justify-center mb-2 shadow-sm">
                   <step.icon className="w-5 h-5 text-text-primary" />
@@ -254,7 +257,7 @@ export default function HomePage() {
                 </span>
               </div>
               {i < flowSteps.length - 1 && (
-                <HiOutlineArrowRight className="w-4 h-4 text-text-muted mx-2 shrink-0" />
+                <HiOutlineArrowRight className="hidden xl:block absolute -right-5 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted" />
               )}
             </div>
           ))}
@@ -274,7 +277,7 @@ export default function HomePage() {
         transition={{ delay: 0.18 }}
         className="mb-10"
       >
-        <div className="flex items-center justify-between mb-4">
+        <div className="mb-4 flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between">
           <h2 className="text-xs font-semibold text-text-muted uppercase tracking-wider">
             {lang === "zh" ? "趣闻精选" : lang === "ja" ? "おもしろ事実" : "Fun Facts Highlights"}
           </h2>
@@ -388,7 +391,7 @@ export default function HomePage() {
         transition={{ delay: 0.6 }}
         className="mt-10 p-5 rounded-xl bg-bg-secondary border border-border"
       >
-        <div className="flex items-start justify-between gap-4">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
           <div>
             <p className="text-sm font-semibold text-text-primary mb-1">
               {lang === "zh" ? "Claude Code 源码解析与重写" : "Claude Code Pattern Study & Rewrite"}
@@ -404,21 +407,21 @@ export default function HomePage() {
                 : "Your coding assistant has a duck hiding inside — from anti-ptrace defense to AI dreaming, 50 design decisions you didn't know about."}
             </p>
           </div>
-          <div className="flex flex-col items-end gap-2 shrink-0">
+          <div className="flex w-full flex-col gap-2 shrink-0 sm:w-auto lg:items-end">
             <a
               href="https://x.com/ConnectOnionAI"
               target="_blank"
               rel="noopener noreferrer"
-              className="px-3 py-1.5 rounded-lg text-[11px] font-medium bg-text-primary text-bg-primary hover:opacity-90 transition-opacity w-full text-center"
+              className="w-full rounded-lg bg-text-primary px-3 py-1.5 text-center text-[11px] font-medium text-bg-primary transition-opacity hover:opacity-90 sm:w-auto"
             >
               𝕏 @ConnectOnionAI
             </a>
-            <div className="flex gap-2">
+            <div className="flex flex-col gap-2 sm:flex-row">
               <a
                 href="https://openonion.ai"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-3 py-1.5 rounded-lg text-[11px] font-medium border border-border text-text-secondary hover:text-text-primary hover:bg-bg-tertiary transition-colors"
+                className="rounded-lg border border-border px-3 py-1.5 text-center text-[11px] font-medium text-text-secondary transition-colors hover:bg-bg-tertiary hover:text-text-primary"
               >
                 OpenOnion.ai
               </a>
@@ -426,7 +429,7 @@ export default function HomePage() {
                 href="https://docs.connectonion.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-3 py-1.5 rounded-lg text-[11px] font-medium border border-border text-text-secondary hover:text-text-primary hover:bg-bg-tertiary transition-colors"
+                className="rounded-lg border border-border px-3 py-1.5 text-center text-[11px] font-medium text-text-secondary transition-colors hover:bg-bg-tertiary hover:text-text-primary"
               >
                 Docs
               </a>

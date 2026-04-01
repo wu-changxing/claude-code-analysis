@@ -28,14 +28,14 @@ export default function FunFactsPage() {
   const { lang } = useLang();
 
   return (
-    <div className="p-8 max-w-5xl">
+    <div className="page-shell">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         className="mb-8 pb-6 border-b border-border"
       >
-        <div className="flex items-center gap-3 mb-2">
+        <div className="mb-2 flex flex-wrap items-center gap-3">
           <VscHeart className="w-6 h-6 text-pink" />
           <h1 className="text-2xl font-bold text-text-primary">{t("fun.title", lang)}</h1>
           <span className="px-2.5 py-0.5 text-[11px] rounded-full bg-bg-tertiary text-text-secondary border border-border font-mono">
@@ -439,7 +439,7 @@ Stats: DEBUGGING, PATIENCE, CHAOS, WISDOM, SNARK
             "DO NOT count Claude's autonomous codebase exploration",
           ].map((c) => (
             <div key={c} className="p-2 rounded-lg bg-red/5 border border-red/20">
-              <code className="text-[11px] text-red font-mono">// {c}</code>
+              <code className="text-[11px] text-red font-mono">{`// ${c}`}</code>
             </div>
           ))}
         </div>
@@ -827,10 +827,10 @@ Stats: DEBUGGING, PATIENCE, CHAOS, WISDOM, SNARK
             "quantum", "fuzzy", "sparkling", "gentle", "mighty",
             "dragon", "unicorn", "phoenix", "octopus", "capybara",
             "nebula", "aurora", "meadow", "crystal", "starlight",
-          ].map((w) => (
+          ].map((w, index) => (
             <motion.span
               key={w}
-              whileHover={{ scale: 1.08, rotate: Math.random() * 6 - 3 }}
+              whileHover={{ scale: 1.08, rotate: ((index % 5) - 2) * 1.5 }}
               className="px-2 py-1 bg-bg-tertiary/50 rounded-lg text-xs text-text-secondary font-mono cursor-default"
             >
               {w}
@@ -843,6 +843,118 @@ Stats: DEBUGGING, PATIENCE, CHAOS, WISDOM, SNARK
             : lang === "ja"
             ? "今まさに「fuzzy-dancing-capybara」という名前の本番デバッグセッションがある。"
             : "Somewhere right now, a production debug session is named 'fuzzy-dancing-capybara.'"}
+        </p>
+      </Card>
+
+      {/* Anti-ptrace Defense */}
+      <Card title={lang === "zh" ? "反 ptrace 防御：防止被 GDB 读内存" : "Anti-ptrace Defense: Blocking GDB Memory Reads"} className="mb-6" accent="var(--red)">
+        <CodeBlock filename="upstreamproxy.ts" code={`// In CCR containers, Claude Code calls:
+prctl(PR_SET_DUMPABLE, 0)
+// via Bun FFI → libc
+
+// This prevents same-user processes from ptrace-ing
+// (debugging/attaching to) the Claude Code process.
+
+// Why? Session tokens live in heap memory.
+// A prompt injection could run: gdb -p $PPID
+// → attach to parent → dump heap → steal token
+
+// After reading /run/ccr/session_token:
+// DELETE the file. Token only exists in heap now.`} />
+        <p className="text-[11px] text-text-muted mt-3 italic">
+          {lang === "zh"
+            ? "这是操作系统级的安全工程。他们在防御的不是普通攻击者，是能让 AI 执行任意 shell 命令的 prompt injection。"
+            : "OS-level security engineering. They're defending against prompt injection that can execute arbitrary shell commands."}
+        </p>
+      </Card>
+
+      {/* Caffeinate */}
+      <Card title={lang === "zh" ? "caffeinate：Claude 不让你的 Mac 睡觉" : "caffeinate: Claude Won't Let Your Mac Sleep"} className="mb-6" accent="var(--green)">
+        <CodeBlock filename="preventSleep.ts" code={`spawn('caffeinate', ['-i', '-t', '300'], { stdio: 'ignore' })
+
+// -i = prevent idle sleep
+// -t 300 = 5 min timeout (self-healing if Node dies)
+// Restarts every 4 min (before 5 min timeout)
+// Reference counting for nested subagents`} />
+        <p className="text-[11px] text-text-muted mt-3 italic">
+          {lang === "zh"
+            ? "你让 Claude 跑 30 分钟重构任务，走开去倒咖啡。Mac 不会因为空闲而休眠。如果 Node 进程被 SIGKILL 杀死，孤儿 caffeinate 5 分钟后自动退出。"
+            : "You start a 30-min refactor, go grab coffee. Mac won't sleep. If Node gets SIGKILL'd, the orphan caffeinate exits after 5 min. Self-healing."}
+        </p>
+      </Card>
+
+      {/* Fennec Codename */}
+      <Card title={lang === "zh" ? "Opus 4.6 曾经叫 Fennec（耳廓狐）" : "Opus 4.6 Was Once Called Fennec"} className="mb-6" accent="var(--orange)">
+        <CodeBlock filename="migrateFennecToOpus.ts" code={`// Ant-only migration script reveals internal codename:
+if (model.startsWith('fennec-latest[1m]')) {
+  updateSettings({ model: 'opus[1m]' })
+} else if (model.startsWith('fennec-fast-latest')) {
+  updateSettings({ model: 'opus[1m]', fastMode: true })
+}`} />
+        <p className="text-[11px] text-text-muted mt-3 italic">
+          {lang === "zh"
+            ? "Fennec（耳廓狐）→ Opus，Penguin（企鹅）→ 快速模式。Anthropic 的工程团队用动物给功能命名。迁移脚本是产品演化的活化石。"
+            : "Fennec → Opus, Penguin → Fast Mode. Anthropic names features after animals. Migration scripts are living fossils of product evolution."}
+        </p>
+      </Card>
+
+      {/* Undercover Mode */}
+      <Card title={lang === "zh" ? "潜伏模式：Anthropic 员工匿名贡献开源" : "Undercover Mode: Anthropic Staff Go Incognito"} className="mb-6" accent="var(--purple)">
+        <CodeBlock filename="undercover.ts" code={`// UNDERCOVER MODE — CRITICAL
+// You are operating UNDERCOVER in a PUBLIC repository.
+// Do not blow your cover.
+//
+// NEVER include in commit messages:
+// - Internal model codenames (animal names)
+// - Unreleased model version numbers
+// - The phrase "Claude Code" or mention you are AI
+// - Co-Authored-By lines
+//
+// There is NO force-OFF. If we're not confident
+// we're in an internal repo, we stay undercover.`} />
+        <p className="text-[11px] text-text-muted mt-3 italic">
+          {lang === "zh"
+            ? "Anthropic 的工程师可能正在给你用的开源项目提交代码，commit 看起来完全是人写的。没有任何 AI 痕迹。没有关闭选项——安全默认值是'假装是人类'。"
+            : "Anthropic engineers may be committing to your open-source project right now, looking fully human. No AI traces. No off switch — the safe default is 'pretend to be human.'"}
+        </p>
+      </Card>
+
+      {/* date command trap */}
+      <Card title={lang === "zh" ? "`date` 命令的陷阱" : "The `date` Command Trap"} className="mb-6" accent="var(--orange)">
+        <div className="grid grid-cols-2 gap-3">
+          <div className="p-3 rounded-xl bg-green/5 border border-green/20">
+            <code className="text-xs text-green font-semibold">date +%Y-%m-%d</code>
+            <p className="text-[10px] text-text-muted mt-1">
+              {lang === "zh" ? "读取：显示当前日期 ✓" : "Read: show current date ✓"}
+            </p>
+          </div>
+          <div className="p-3 rounded-xl bg-red/5 border border-red/20">
+            <code className="text-xs text-red font-semibold">date 0101120025</code>
+            <p className="text-[10px] text-text-muted mt-1">
+              {lang === "zh" ? "写入：设置系统时间 ✗" : "Write: SET system time ✗"}
+            </p>
+          </div>
+        </div>
+        <p className="text-[11px] text-text-muted mt-3 italic">
+          {lang === "zh"
+            ? "同一个命令，参数格式不同，一个是读一个是写。BashTool 专门检查位置参数是否以 + 开头。hostname 也一样：hostname -f 是读，hostname myserver 是写。"
+            : "Same command, different format = read vs write. BashTool checks if positional arg starts with '+'. hostname too: hostname -f = read, hostname myserver = write."}
+        </p>
+      </Card>
+
+      {/* 56-char type name */}
+      <Card title={lang === "zh" ? "世界上最长的类型名（56 个字符）" : "World's Longest Type Name (56 chars)"} className="mb-6" accent="var(--accent)">
+        <CodeBlock filename="metadata.ts" code={`type AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS = never
+
+// Every telemetry string must be cast:
+// as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS
+//
+// You can't type that without thinking about what you're sending.
+// It's a speed bump — forces you to pause and verify.`} />
+        <p className="text-[11px] text-text-muted mt-3 italic">
+          {lang === "zh"
+            ? "整个代码库有几百处用到这个类型。每一处都是一个工程师做出的明确声明：'我检查过了，这不是用户的代码。'"
+            : "Used hundreds of times across the codebase. Each is an explicit declaration: 'I checked — this is not user code.'"}
         </p>
       </Card>
     </div>

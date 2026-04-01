@@ -7,11 +7,9 @@ import {
   VscLock,
   VscKey,
   VscEye,
-  VscCheck,
   VscClose,
 } from "react-icons/vsc";
 import {
-  HiOutlineShieldCheck,
   HiOutlineShieldExclamation,
   HiOutlineCpuChip,
   HiOutlineAdjustmentsHorizontal,
@@ -22,7 +20,7 @@ import {
 export default function PermissionsPage() {
   const tx = useTx();
   return (
-    <div className="p-8 max-w-5xl">
+    <div className="page-shell">
       <PageHeader
         title={tx("Permissions", "权限系统")}
         description={tx(

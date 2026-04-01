@@ -6,7 +6,7 @@ import { useTx } from "@/components/T";
 export default function ContextPage() {
   const tx = useTx();
   return (
-    <div className="p-8 max-w-5xl">
+    <div className="page-shell">
       <PageHeader
         title={tx("Context & Memory", "上下文与记忆")}
         description={tx(

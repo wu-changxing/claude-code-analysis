@@ -6,7 +6,6 @@ import {
   VscGitMerge,
   VscServerProcess,
   VscGitCompare,
-  VscCloud,
   VscLightbulb,
   VscSymbolEvent,
 } from "react-icons/vsc";
@@ -15,7 +14,7 @@ import { HiOutlineBolt, HiOutlineGlobeAlt, HiOutlineCpuChip } from "react-icons/
 export default function AgentsPage() {
   const tx = useTx();
   return (
-    <div className="p-8 max-w-5xl">
+    <div className="page-shell">
       <PageHeader
         title={tx("Agents & Subagents", "代理与子代理")}
         description={tx(
