@@ -203,7 +203,7 @@ function DependencyGraph() {
         style={{
           borderColor: mod.color,
           background: `color-mix(in srgb, ${mod.color} 10%, var(--bg-secondary))`,
-          minWidth: size === "lg" ? 140 : size === "md" ? 110 : 90,
+          minWidth: size === "lg" ? 120 : size === "md" ? 95 : 80,
         }}
       >
         <div className="flex items-center gap-1.5">

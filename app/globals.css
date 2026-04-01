@@ -374,3 +374,59 @@ pre .comment { color: #6b7280; font-style: italic; }
 .danger-badge {
   animation: danger-pulse 1.5s ease-in-out infinite;
 }
+
+/* Gradient text for hero numbers */
+.gradient-number {
+  background: linear-gradient(135deg, var(--accent), var(--purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Better link styling in content */
+.prose-link {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-thickness: 1px;
+}
+
+/* Glowing accent border for "most important" cards */
+.glow-card {
+  box-shadow: 0 0 0 1px var(--accent), 0 4px 20px color-mix(in srgb, var(--accent) 15%, transparent);
+}
+
+/* Spawning flow step cards */
+.spawn-step {
+  position: relative;
+  flex: 1;
+}
+
+/* Insight card with colored bottom border on hover */
+.insight-card {
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+}
+
+.insight-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.2s ease;
+  border-radius: 0 0 12px 12px;
+}
+
+.insight-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
+.insight-card:hover::after {
+  transform: scaleX(1);
+}

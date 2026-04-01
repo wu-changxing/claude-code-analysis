@@ -208,23 +208,68 @@ export default function HomePage() {
           {t("home.desc", lang)}
         </p>
 
-        {/* What you'll discover teaser */}
-        <div className="mb-6 rounded-xl border border-border bg-bg-secondary p-4">
-          <div className="mb-2.5 text-[10px] font-semibold uppercase tracking-widest text-text-muted">
+        {/* What you'll discover teaser — big cards */}
+        <div className="mb-6">
+          <div className="mb-3 text-[10px] font-semibold uppercase tracking-widest text-text-muted">
             {lang === "zh" ? "你将发现" : lang === "ja" ? "発見できること" : "What you'll discover"}
           </div>
-          <div className="flex flex-col gap-2 sm:flex-row sm:gap-4">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
             {[
-              { emoji: "🦆", en: "A duck lives inside Claude Code", zh: "Claude Code 里藏着一只鸭子", ja: "Claude Codeの中にアヒルがいる", color: "var(--orange)" },
-              { emoji: "🤖", en: "There's an ML classifier named yoloClassifier", zh: "有个 ML 分类器叫 yoloClassifier", ja: "yoloClassifierというML分類器がある", color: "var(--red)" },
-              { emoji: "🐧", en: "Fast Mode is secretly called Penguin Mode", zh: "快速模式内部叫企鹅模式", ja: "Fast Modeの内部名はPenguin Mode", color: "var(--accent)" },
-            ].map(({ emoji, en, zh, ja, color }) => (
-              <div key={en} className="flex items-center gap-2 flex-1">
-                <span className="text-base shrink-0">{emoji}</span>
-                <span className="text-[11px] text-text-secondary leading-tight" style={{ borderLeft: `2px solid ${color}`, paddingLeft: 8 }}>
-                  {lang === "zh" ? zh : lang === "ja" ? ja : en}
-                </span>
-              </div>
+              {
+                emoji: "🦆",
+                en: "A duck lives inside Claude Code",
+                zh: "Claude Code 里藏着一只鸭子",
+                ja: "Claude Codeの中にアヒルがいる",
+                teaser: { en: "Easter egg in the buddy pet system — 18 collectible companions with rarity tiers.", zh: "宠物伙伴系统中的彩蛋——18种可收集同伴，含稀有度等级。", ja: "バディペットシステムのイースターエッグ — 18種のコンパニオン。" },
+                href: "/fun-facts",
+                link: { en: "→ See fun facts", zh: "→ 查看趣闻", ja: "→ 楽しい事実を見る" },
+                color: "var(--orange)",
+              },
+              {
+                emoji: "🤖",
+                en: "ML classifier named yoloClassifier",
+                zh: "ML 分类器叫 yoloClassifier",
+                ja: "yoloClassifierというML分類器",
+                teaser: { en: "Real production security code. It gates whether dangerous shell commands need permission.", zh: "真实的生产安全代码，决定危险 shell 命令是否需要授权。", ja: "本番のセキュリティコード。危険なシェルコマンドの権限を判定。" },
+                href: "/permissions",
+                link: { en: "→ See permissions", zh: "→ 查看权限系统", ja: "→ 権限システムを見る" },
+                color: "var(--red)",
+              },
+              {
+                emoji: "🐧",
+                en: "Fast Mode = Penguin Mode internally",
+                zh: "快速模式内部叫企鹅模式",
+                ja: "Fast Modeの内部名はPenguin Mode",
+                teaser: { en: "Variable name: penguinModeOrgEnabled. Penguin Mode disables extended thinking.", zh: "变量名：penguinModeOrgEnabled。企鹅模式禁用扩展思考。", ja: "変数名: penguinModeOrgEnabled。拡張思考を無効化。" },
+                href: "/fun-facts",
+                link: { en: "→ See fun facts", zh: "→ 查看趣闻", ja: "→ 楽しい事実を見る" },
+                color: "var(--accent)",
+              },
+            ].map(({ emoji, en, zh, ja, teaser, href, link, color }) => (
+              <Link key={en} href={href} className="block group">
+                <div
+                  className="relative overflow-hidden rounded-xl border border-border bg-bg-secondary p-4 transition-all duration-150 group-hover:-translate-y-0.5 group-hover:shadow-md h-full flex flex-col"
+                  style={{ borderBottomColor: "var(--border)" }}
+                >
+                  <div className="flex items-start gap-3 mb-2">
+                    <span className="text-2xl shrink-0 leading-none">{emoji}</span>
+                    <div className="text-sm font-bold text-text-primary group-hover:text-accent transition-colors leading-snug">
+                      {lang === "zh" ? zh : lang === "ja" ? ja : en}
+                    </div>
+                  </div>
+                  <p className="text-[11px] text-text-muted leading-relaxed mb-3 flex-1">
+                    {lang === "zh" ? teaser.zh : lang === "ja" ? teaser.ja : teaser.en}
+                  </p>
+                  <span className="text-[10px] font-semibold" style={{ color }}>
+                    {lang === "zh" ? link.zh : lang === "ja" ? link.ja : link.en}
+                  </span>
+                  {/* Colored bottom border on hover */}
+                  <div
+                    className="absolute bottom-0 left-0 right-0 h-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
+                    style={{ background: color }}
+                  />
+                </div>
+              </Link>
             ))}
           </div>
         </div>

@@ -16,6 +16,7 @@ import {
 } from "react-icons/vsc";
 import {
   HiOutlineArrowUp,
+  HiOutlineArrowRight,
 } from "react-icons/hi2";
 import { motion } from "framer-motion";
 
@@ -75,10 +76,38 @@ export default function ServicesPage() {
   ];
 
   const mcpTransports = [
-    { name: "stdio", icon: "⚡", desc: tx("Local process communication", "本地进程通信", "ローカルプロセス通信"), color: "var(--accent)" },
-    { name: "SSE", icon: "📡", desc: tx("Server-Sent Events (HTTP streaming)", "服务器推送事件（HTTP 流）", "Server-Sent Events（HTTPストリーミング）"), color: "var(--green)" },
-    { name: "HTTP", icon: "🌐", desc: tx("Standard HTTP requests", "标准 HTTP 请求", "標準HTTPリクエスト"), color: "var(--orange)" },
-    { name: "WebSocket", icon: "🔌", desc: tx("Full-duplex communication", "全双工通信", "全二重通信"), color: "var(--purple)" },
+    {
+      name: "stdio",
+      icon: "⚡",
+      desc: tx("Local process communication", "本地进程通信", "ローカルプロセス通信"),
+      color: "var(--accent)",
+      latency: tx("Lowest — direct pipe", "最低 — 直接管道", "最低 — 直接パイプ"),
+      useCase: tx("Local tools, shell commands, filesystem access", "本地工具、shell 命令、文件系统访问", "ローカルツール、シェルコマンド、ファイルアクセス"),
+    },
+    {
+      name: "SSE",
+      icon: "📡",
+      desc: tx("Server-Sent Events (HTTP streaming)", "服务器推送事件（HTTP 流）", "Server-Sent Events（HTTPストリーミング）"),
+      color: "var(--green)",
+      latency: tx("Low — persistent HTTP stream", "低 — 持久 HTTP 流", "低 — 持続HTTPストリーム"),
+      useCase: tx("Remote servers with streaming responses", "支持流式响应的远程服务器", "ストリーミングレスポンスのリモートサーバー"),
+    },
+    {
+      name: "HTTP",
+      icon: "🌐",
+      desc: tx("Standard HTTP requests", "标准 HTTP 请求", "標準HTTPリクエスト"),
+      color: "var(--orange)",
+      latency: tx("Medium — per-request round trip", "中 — 每次请求往返", "中 — リクエスト毎のラウンドトリップ"),
+      useCase: tx("REST APIs, web services, stateless tools", "REST API、Web 服务、无状态工具", "REST API、Webサービス、ステートレスツール"),
+    },
+    {
+      name: "WebSocket",
+      icon: "🔌",
+      desc: tx("Full-duplex communication", "全双工通信", "全二重通信"),
+      color: "var(--purple)",
+      latency: tx("Low — persistent bidirectional", "低 — 持久双向连接", "低 — 持続双方向接続"),
+      useCase: tx("Real-time tools, interactive services", "实时工具、交互式服务", "リアルタイムツール、インタラクティブサービス"),
+    },
   ];
 
   return (
@@ -245,20 +274,38 @@ autocompact_threshold = effective_window - 13K buffer`}
           )}
         </p>
 
-        {/* 4 Transport Types Grid */}
-        <div className="mb-5 grid grid-cols-2 gap-3 lg:grid-cols-4">
-          {mcpTransports.map(({ name, icon, desc, color }) => (
+        {/* 4 Transport Types Grid — big cards */}
+        <div className="mb-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
+          {mcpTransports.map(({ name, icon, desc, color, latency, useCase }) => (
             <div
               key={name}
-              className="rounded-xl border p-3 text-center"
+              className="rounded-2xl border p-4 sm:p-5"
               style={{
                 background: `color-mix(in srgb, ${color} 6%, var(--bg-tertiary))`,
-                borderColor: `color-mix(in srgb, ${color} 20%, var(--border))`,
+                borderColor: `color-mix(in srgb, ${color} 25%, var(--border))`,
               }}
             >
-              <div className="text-xl mb-1">{icon}</div>
-              <div className="text-xs font-bold mb-1" style={{ color }}>{name}</div>
-              <p className="text-[10px] text-text-muted leading-relaxed">{desc}</p>
+              <div className="flex items-center gap-3 mb-3">
+                <span className="text-2xl">{icon}</span>
+                <div>
+                  <div className="text-sm font-bold" style={{ color }}>{name}</div>
+                  <div className="text-[10px] text-text-muted">{desc}</div>
+                </div>
+              </div>
+              <div className="space-y-1.5">
+                <div className="flex items-start gap-2">
+                  <span className="text-[9px] font-bold uppercase tracking-wider text-text-muted shrink-0 pt-0.5">
+                    {tx("Latency", "延迟", "レイテンシ")}
+                  </span>
+                  <span className="text-[10px] text-text-secondary">{latency}</span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <span className="text-[9px] font-bold uppercase tracking-wider text-text-muted shrink-0 pt-0.5">
+                    {tx("Use", "用途", "用途")}
+                  </span>
+                  <span className="text-[10px] text-text-secondary">{useCase}</span>
+                </div>
+              </div>
             </div>
           ))}
         </div>
@@ -291,6 +338,45 @@ elicitationHandler.ts — User prompts during tool calls`}
           { label: "index.ts", href: ghBlob("services/lsp/index.ts") },
         ]}
       >
+        {/* 3-step integration flow */}
+        <div className="mb-4 rounded-2xl border border-border bg-bg-tertiary/30 p-4">
+          <div className="text-[10px] font-bold uppercase tracking-wider text-text-muted mb-3">
+            {tx("FileEditTool → LSP integration flow", "FileEditTool → LSP 集成流程", "FileEditTool → LSP統合フロー")}
+          </div>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:gap-2">
+            {[
+              { step: "1", label: tx("FileEditTool saves", "FileEditTool 保存", "FileEditTool保存"), detail: tx("File written to disk", "文件写入磁盘", "ファイルをディスクに書込"), color: "var(--orange)" },
+              { step: "2", label: tx("Notifies LSP", "通知 LSP", "LSPに通知"), detail: tx("didChange/didSave event sent", "发送 didChange/didSave 事件", "didChange/didSaveイベント送信"), color: "var(--accent)" },
+              { step: "3", label: tx("Triggers diagnostics", "触发诊断", "診断をトリガー"), detail: tx("Errors & warnings surfaced to model", "错误和警告暴露给模型", "エラー・警告をモデルに提供"), color: "var(--green)" },
+            ].map(({ step, label, detail, color }, i) => (
+              <div key={step} className="flex sm:flex-col sm:flex-1 items-center sm:items-stretch gap-2 sm:gap-0">
+                <div
+                  className="flex-1 sm:flex-none rounded-xl border p-3"
+                  style={{
+                    background: `color-mix(in srgb, ${color} 7%, var(--bg-secondary))`,
+                    borderColor: `color-mix(in srgb, ${color} 25%, var(--border))`,
+                  }}
+                >
+                  <span
+                    className="text-[9px] font-bold w-4 h-4 rounded-full inline-flex items-center justify-center mb-1.5"
+                    style={{ background: color, color: "white" }}
+                  >
+                    {step}
+                  </span>
+                  <div className="text-[11px] font-semibold text-text-primary mb-0.5">{label}</div>
+                  <div className="text-[9px] text-text-muted">{detail}</div>
+                </div>
+                {i < 2 && (
+                  <div className="flex items-center justify-center shrink-0 sm:py-1.5">
+                    <HiOutlineArrowRight className="hidden sm:block w-4 h-4 text-border" />
+                    <HiOutlineArrowRight className="sm:hidden w-4 h-4 text-border rotate-90" />
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+
         <CodeBlock
           code={`// LSP provides IDE-like features:
 - Diagnostics (errors, warnings)
@@ -326,14 +412,39 @@ LSPTool → Direct query interface for the model`}
           { label: "index.ts", href: ghBlob("services/analytics/index.ts") },
         ]}
       >
+        {/* PII safety type callout — this is genuinely hilarious */}
+        <div
+          className="mb-5 rounded-2xl border-2 p-4"
+          style={{ borderColor: "var(--purple)", background: "color-mix(in srgb, var(--purple) 6%, var(--bg-secondary))" }}
+        >
+          <div className="text-[10px] font-bold uppercase tracking-wider text-purple mb-2">
+            {tx("Best TypeScript type name in the codebase", "代码库中最佳 TypeScript 类型名", "コードベース最高のTypeScript型名")}
+          </div>
+          <div className="overflow-x-auto">
+            <code
+              className="block text-[11px] sm:text-xs font-bold font-mono py-2 px-3 rounded-lg leading-relaxed whitespace-nowrap"
+              style={{ color: "var(--purple)", background: "color-mix(in srgb, var(--purple) 10%, var(--bg-primary))" }}
+            >
+              AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS
+            </code>
+          </div>
+          <p className="mt-2 text-[11px] text-text-muted leading-relaxed">
+            {tx(
+              "This is a real TypeScript type. The name itself is the enforcement mechanism — every analytics event must be typed with this, forcing the developer to consciously confirm they aren't accidentally logging user code or file paths. It's the most creative use of a type name for PII safety we've ever seen.",
+              "这是真实存在的 TypeScript 类型名。类型名本身就是执行机制——每个分析事件都必须用这个类型，强制开发者有意识地确认没有意外记录用户代码或文件路径。这是我们见过的最具创意的 PII 安全类型命名。",
+              "これは実際のTypeScript型名です。名前自体が実施機構になっています。すべての分析イベントをこの型でタイプする必要があり、開発者がユーザーコードやファイルパスを誤ってログしていないことを意識的に確認することを強制します。PII安全のための型名の最も創造的な使用例です。"
+            )}
+          </p>
+        </div>
+
         <CodeBlock
           code={`// Event pipeline with queue-until-sink pattern:
 logEvent(name, metadata)        → Sync event logging
 logEventAsync(name, metadata)   → Async event logging
 attachAnalyticsSink()           → Register backend (Datadog, 1P)
 
-// Safety type:
-AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS
+// The safety type — you must use this for every analytics event:
+type AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS = { ... }
 // → Enforces: no file content, no user code in analytics
 
 // PII handling:
