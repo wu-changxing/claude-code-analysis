@@ -1,8 +1,11 @@
 "use client";
 
-import { PageHeader, Card, CodeBlock, FlowStep, SectionNav } from "@/components/Section";
+import { PageHeader, Card, CodeBlock, SectionNav } from "@/components/Section";
 import { useTx } from "@/components/T";
 import { ghBlob, ghTree } from "@/lib/sourceLinks";
+import { motion } from "framer-motion";
+import { HiOutlineArrowDown } from "react-icons/hi2";
+import { VscFile, VscFolder } from "react-icons/vsc";
 
 export default function ContextPage() {
   const tx = useTx();
@@ -13,6 +16,65 @@ export default function ContextPage() {
     { id: "memory-system", label: tx("Memory System", "记忆系统", "メモリシステム"), description: tx("Persistent memory layout and file model.", "持久化记忆的目录结构与文件模型。", "永続メモリの構造。") },
     { id: "app-state", label: tx("AppState", "AppState", "AppState"), description: tx("The runtime control surface behind the UI.", "UI 背后的运行时控制面。", "UI 背後の実行時制御面。") },
   ];
+
+  const promptLayers = [
+    {
+      num: 1,
+      title: tx("Default System Prompt", "默认系统提示", "デフォルトのシステムプロンプト"),
+      size: "~2000 tokens",
+      desc: tx(
+        "Base Claude instructions. Tool definitions from all registered tools. MCP server instructions. Agent definitions. Model-specific variants (Opus: full, Sonnet: abbreviated if >50 tools).",
+        "Claude 的基础指令，工具定义（所有注册工具动态生成），MCP 服务器指令，代理定义。模型特定变体（Opus 完整版，Sonnet 在工具超过 50 个时缩略）。",
+        "Claude の基本指示。全登録ツールから動的生成されるツール定義。MCP サーバー指示。エージェント定義。モデル別バリアント（Opus：完全版、Sonnet：50ツール超で短縮）。"
+      ),
+      color: "var(--accent)",
+      cached: true,
+    },
+    {
+      num: 2,
+      title: tx("User Context", "用户上下文", "ユーザーコンテキスト"),
+      size: tx("dynamic", "动态", "動的"),
+      desc: tx(
+        "Working directory, platform, shell, git status (branch + recent commits, truncated to 2000 chars). Additional directories permissions. Project metadata. Prepended via prependUserContext().",
+        "工作目录、平台、shell、git 状态（分支 + 最近提交，截断到 2000 字符）、额外目录权限、项目元数据。通过 prependUserContext() 前置。",
+        "作業ディレクトリ、プラットフォーム、シェル、git 状態（ブランチ + 最近コミット、2000文字まで）。追加ディレクトリ権限。プロジェクト情報。prependUserContext() で付加。"
+      ),
+      color: "var(--green)",
+      cached: false,
+    },
+    {
+      num: 3,
+      title: tx("System Context", "系统上下文", "システムコンテキスト"),
+      size: tx("varies", "可变", "可変"),
+      desc: tx(
+        "Available resources, MCP server capabilities, coordinator context (if multi-agent mode). Appended via appendSystemContext().",
+        "可用资源、MCP 服务器能力，以及协调器上下文（多代理模式下）。通过 appendSystemContext() 追加。",
+        "利用可能なリソース、MCP サーバーの能力、コーディネーター文脈（マルチエージェント時）。appendSystemContext() で追加。"
+      ),
+      color: "var(--orange)",
+      cached: false,
+    },
+    {
+      num: 4,
+      title: tx("Memory Mechanics", "记忆机制", "メモリ機構"),
+      size: tx("if enabled", "若启用", "有効時"),
+      desc: tx(
+        "If auto-memory enabled, injects memory mechanics prompt with instructions for reading/writing to memory directory.",
+        "如果启用自动记忆，会注入记忆机制提示，指导如何读取/写入记忆目录。",
+        "自動メモリが有効な場合、メモリディレクトリの読み書き手順を含む専用プロンプトが挿入されます。"
+      ),
+      color: "var(--purple)",
+      cached: false,
+    },
+  ];
+
+  const claudeMdLocations = [
+    { path: "~/.claude/CLAUDE.md", label: tx("Global user instructions", "全局用户指令", "グローバルユーザー指示"), icon: VscFile, color: "var(--accent)" },
+    { path: "<project>/.claude/CLAUDE.md", label: tx("Project instructions (checked in)", "项目指令（已提交）", "プロジェクト指示（コミット済み）"), icon: VscFile, color: "var(--green)" },
+    { path: "<project>/CLAUDE.md", label: tx("Project root convenience", "项目根目录便捷位置", "プロジェクトルート（簡便）"), icon: VscFile, color: "var(--orange)" },
+    { path: "~/.claude/projects/<path>/CLAUDE.md", label: tx("Project-specific user instructions", "项目特定用户指令", "プロジェクト固有ユーザー指示"), icon: VscFile, color: "var(--purple)" },
+  ];
+
   return (
     <div className="page-shell">
       <PageHeader
@@ -32,7 +94,26 @@ export default function ContextPage() {
       />
       <SectionNav title={tx("Jump To", "跳转到", "移動先")} sections={sections} />
 
-      {/* System Prompt Assembly */}
+      {/* Key Insight */}
+      <motion.div
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="mb-6 rounded-xl border-l-4 bg-bg-secondary p-4 sm:p-5"
+        style={{ borderLeftColor: "var(--orange)" }}
+      >
+        <div className="text-[10px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: "var(--orange)" }}>
+          {tx("Key Insight", "核心洞察", "重要なポイント")}
+        </div>
+        <p className="text-sm text-text-secondary leading-relaxed">
+          {tx(
+            "The prompt is not one giant string — it's ordered sections. constants/prompts.ts defines a hard SYSTEM_PROMPT_DYNAMIC_BOUNDARY marker. Everything before that line can use global prompt caching (stable across users). Everything after can contain your git branch, CLAUDE.md content, and session data.",
+            "prompt 不是一整块超长字符串，而是有序的 section。constants/prompts.ts 里定义了一个硬性的 SYSTEM_PROMPT_DYNAMIC_BOUNDARY 标记。标记之前的内容可以使用全局 prompt 缓存（跨用户稳定），之后的内容则可以包含你的 git 分支、CLAUDE.md 内容和会话数据。",
+            "promptは巨大な1本の文字列ではなく順序付きセクションです。constants/prompts.tsにはSYSTEM_PROMPT_DYNAMIC_BOUNDARYという境界マーカーがあり、その前半はグローバルpromptキャッシュを使え、後半にはgitブランチやCLAUDE.md、セッションデータを含められます。"
+          )}
+        </p>
+      </motion.div>
+
+      {/* System Prompt Assembly — Visual Stack */}
       <Card
         id="system-prompt"
         title={tx("System Prompt Assembly", "系统提示构建", "システムプロンプト構築")}
@@ -45,48 +126,52 @@ export default function ContextPage() {
           { label: "constants/prompts.ts", href: ghBlob("constants/prompts.ts") },
         ]}
       >
-        <div className="pt-2">
-          <FlowStep
-            number={1}
-            title={tx("Default System Prompt", "默认系统提示", "デフォルトのシステムプロンプト")}
-            description={tx(
-              "Base Claude instructions (2000+ tokens). Tool definitions dynamically generated from all registered tools. MCP server instructions. Agent definitions. Skill/command discovery hints. Model-specific variants (Opus: full, Sonnet: abbreviated if >50 tools).",
-              "Claude 的基础指令（2000+ tokens）。工具定义会根据所有已注册工具动态生成，同时包含 MCP 服务器指令、代理定义、技能/命令发现提示，以及模型特定变体（Opus 完整版，Sonnet 在工具超过 50 个时缩略）。",
-              "Claude の基本指示（2000+ トークン）。全登録ツールから動的生成されるツール定義、MCP サーバー指示、エージェント定義、スキル/コマンド発見ヒント、モデル別バリアント（Opus は完全版、Sonnet は50ツール超で短縮）を含みます。"
-            )}
-            color="var(--accent)"
-          />
-          <FlowStep
-            number={2}
-            title={tx("User Context", "用户上下文", "ユーザーコンテキスト")}
-            description={tx(
-              "Working directory, platform, shell, git status (branch, recent commits, truncated to 2000 chars). Additional directories permissions. Project metadata. Prepended to messages via prependUserContext().",
-              "工作目录、平台、shell、git 状态（分支、最近提交，截断到 2000 字符）、额外目录权限以及项目元数据。通过 prependUserContext() 预置到消息前。",
-              "作業ディレクトリ、プラットフォーム、シェル、git 状態（ブランチ、最近のコミット、2000文字までに切り詰め）、追加ディレクトリ権限、プロジェクト情報。prependUserContext() によりメッセージ先頭へ付加されます。"
-            )}
-            color="var(--green)"
-          />
-          <FlowStep
-            number={3}
-            title={tx("System Context", "系统上下文", "システムコンテキスト")}
-            description={tx(
-              "Available resources, MCP server capabilities, coordinator context (if multi-agent mode). Appended via appendSystemContext().",
-              "可用资源、MCP 服务器能力，以及协调器上下文（多代理模式下）。通过 appendSystemContext() 追加。",
-              "利用可能なリソース、MCP サーバーの能力、そして必要ならコーディネーター文脈（マルチエージェント時）。appendSystemContext() で追加されます。"
-            )}
-            color="var(--orange)"
-          />
-          <FlowStep
-            number={4}
-            title={tx("Memory Mechanics", "记忆机制", "メモリ機構")}
-            description={tx(
-              "If auto-memory enabled, injects memory mechanics prompt with instructions for reading/writing to memory directory.",
-              "如果启用自动记忆，会注入记忆机制提示，指导如何读取/写入记忆目录。",
-              "自動メモリが有効な場合、メモリディレクトリの読み書き手順を含む専用プロンプトが挿入されます。"
-            )}
-            color="var(--purple)"
-          />
+        {/* Visual prompt stack */}
+        <div className="mb-5">
+          <div className="text-[10px] text-text-muted uppercase tracking-wider mb-3 font-semibold">
+            {tx("Prompt layers (bottom = sent last)", "Prompt 层（下方 = 最后发送）", "Promptレイヤー（下 = 最後に送信）")}
+          </div>
+          <div className="flex flex-col gap-0">
+            {promptLayers.map((layer, idx) => (
+              <div key={layer.num} className="flex flex-col">
+                <div
+                  className="rounded-xl border px-4 py-3 sm:px-5 sm:py-4"
+                  style={{
+                    background: `color-mix(in srgb, ${layer.color} 7%, var(--bg-secondary))`,
+                    borderColor: `color-mix(in srgb, ${layer.color} 22%, var(--border))`,
+                  }}
+                >
+                  <div className="flex flex-wrap items-start justify-between gap-2">
+                    <div className="flex items-center gap-2">
+                      <div
+                        className="w-6 h-6 rounded-md flex items-center justify-center text-[10px] font-bold text-white shrink-0"
+                        style={{ background: layer.color }}
+                      >
+                        {layer.num}
+                      </div>
+                      <span className="text-xs font-bold" style={{ color: layer.color }}>{layer.title}</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      {layer.cached && (
+                        <span className="text-[9px] px-1.5 py-0.5 rounded-full font-semibold" style={{ background: "color-mix(in srgb, var(--green) 10%, transparent)", color: "var(--green)" }}>
+                          {tx("cacheable", "可缓存", "キャッシュ可")}
+                        </span>
+                      )}
+                      <span className="text-[9px] text-text-muted font-mono">{layer.size}</span>
+                    </div>
+                  </div>
+                  <p className="mt-1.5 text-[11px] text-text-muted leading-relaxed ml-8">{layer.desc}</p>
+                </div>
+                {idx < promptLayers.length - 1 && (
+                  <div className="flex items-center ml-3 py-1">
+                    <HiOutlineArrowDown className="w-3 h-3 text-border" />
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
+
         <CodeBlock
           code={`// Final assembly in QueryEngine.ts:
 const systemPrompt = asSystemPrompt([
@@ -138,7 +223,7 @@ SYSTEM_PROMPT_DYNAMIC_BOUNDARY = "__SYSTEM_PROMPT_DYNAMIC_BOUNDARY__"
         />
       </Card>
 
-      {/* CLAUDE.md */}
+      {/* CLAUDE.md — File Tree Diagram */}
       <Card
         id="claude-md"
         title={tx("CLAUDE.md Loading", "CLAUDE.md 加载", "CLAUDE.md の読み込み")}
@@ -157,14 +242,64 @@ SYSTEM_PROMPT_DYNAMIC_BOUNDARY = "__SYSTEM_PROMPT_DYNAMIC_BOUNDARY__"
             "CLAUDE.md はプロジェクト固有の指示を提供します。複数の場所から読み込まれ、ユーザーコンテキストへ連結されます："
           )}
         </p>
-        <CodeBlock
-          code={`// Load order (all concatenated):
-1. ~/.claude/CLAUDE.md           → User's global instructions
-2. <project>/.claude/CLAUDE.md   → Project instructions (checked in)
-3. <project>/CLAUDE.md           → Project root (convenience)
-4. ~/.claude/projects/<path>/CLAUDE.md → Project-specific user instructions
 
-// Each CLAUDE.md section labeled with source path:
+        {/* File tree diagram */}
+        <div className="mb-5 rounded-xl border border-border bg-bg-tertiary/30 p-4 font-mono text-[11px]">
+          <div className="text-text-muted mb-3 text-[10px] uppercase tracking-wider font-semibold font-sans">
+            {tx("Load order (all concatenated)", "加载顺序（全部拼接）", "読み込み順（全て連結）")}
+          </div>
+          {/* ~/.claude/ */}
+          <div className="flex items-center gap-2 mb-1">
+            <VscFolder className="w-3.5 h-3.5 text-accent shrink-0" />
+            <span className="text-text-primary">~/.claude/</span>
+          </div>
+          {claudeMdLocations.slice(0, 1).map((loc) => (
+            <div key={loc.path} className="ml-5 flex items-center gap-2 mb-2">
+              <span className="text-text-muted">└─</span>
+              <loc.icon className="w-3 h-3 shrink-0" style={{ color: loc.color }} />
+              <span style={{ color: loc.color }}>CLAUDE.md</span>
+              <span className="text-text-muted text-[10px] font-sans italic">{loc.label}</span>
+            </div>
+          ))}
+          {/* project/ */}
+          <div className="flex items-center gap-2 mb-1">
+            <VscFolder className="w-3.5 h-3.5 text-green shrink-0" />
+            <span className="text-text-primary">&lt;project&gt;/</span>
+          </div>
+          <div className="ml-5 mb-1">
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-text-muted">├─</span>
+              <VscFolder className="w-3 h-3 text-green shrink-0" />
+              <span className="text-text-primary">.claude/</span>
+            </div>
+            <div className="ml-7 flex items-center gap-2 mb-2">
+              <span className="text-text-muted">└─</span>
+              <VscFile className="w-3 h-3 shrink-0" style={{ color: claudeMdLocations[1].color }} />
+              <span style={{ color: claudeMdLocations[1].color }}>CLAUDE.md</span>
+              <span className="text-text-muted text-[10px] font-sans italic">{claudeMdLocations[1].label}</span>
+            </div>
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-text-muted">└─</span>
+              <VscFile className="w-3 h-3 shrink-0" style={{ color: claudeMdLocations[2].color }} />
+              <span style={{ color: claudeMdLocations[2].color }}>CLAUDE.md</span>
+              <span className="text-text-muted text-[10px] font-sans italic">{claudeMdLocations[2].label}</span>
+            </div>
+          </div>
+          {/* ~/.claude/projects/ */}
+          <div className="flex items-center gap-2 mb-1 ml-0">
+            <VscFolder className="w-3.5 h-3.5 text-purple shrink-0" />
+            <span className="text-text-primary">~/.claude/projects/&lt;path&gt;/</span>
+          </div>
+          <div className="ml-5 flex items-center gap-2">
+            <span className="text-text-muted">└─</span>
+            <VscFile className="w-3 h-3 shrink-0" style={{ color: claudeMdLocations[3].color }} />
+            <span style={{ color: claudeMdLocations[3].color }}>CLAUDE.md</span>
+            <span className="text-text-muted text-[10px] font-sans italic">{claudeMdLocations[3].label}</span>
+          </div>
+        </div>
+
+        <CodeBlock
+          code={`// Each CLAUDE.md section labeled with source path:
 "Contents of /Users/user/.claude/CLAUDE.md (user's private global):"
 "Contents of /project/CLAUDE.md (project instructions, checked in):"
 
@@ -314,8 +449,7 @@ saveCacheSafeParams(createCacheSafeParams(stopHookContext))
             "使用类似 Zustand 的模式管理中心应用状态，并通过 ",
             "Zustand 風のパターンで中央状態を管理し、"
           )}{" "}
-          <code className="text-accent">DeepImmutable</code> for type safety:
-          {tx("", " 提供类型安全：", " により型安全性を確保しています：")}
+          <code className="text-accent">DeepImmutable</code> {tx("for type safety:", " 提供类型安全：", " により型安全性を確保しています：")}
         </p>
         <CodeBlock
           code={`// AppStateStore.ts — key state fields:

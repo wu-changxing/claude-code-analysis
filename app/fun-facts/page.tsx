@@ -103,8 +103,8 @@ export default function FunFactsPage() {
         >
           <div className="mb-5 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
             {Object.entries(BUDDY_ART).map(([name, art]) => (
-              <div key={name} className="rounded-xl p-4 text-center bg-bg-tertiary border border-border/50">
-                <div className="mb-2 whitespace-pre font-mono text-[10px] leading-tight text-text-primary sm:text-xs">{art}</div>
+              <div key={name} className="rounded-xl p-3 text-center bg-bg-tertiary border border-border/50">
+                <div className="mb-2 overflow-x-auto whitespace-pre font-mono text-[9px] leading-tight text-text-primary xs:text-[10px] sm:text-[11px]">{art}</div>
                 <span className="text-[11px] text-text-muted capitalize font-medium">{name}</span>
               </div>
             ))}
@@ -205,17 +205,36 @@ export default function FunFactsPage() {
         </p>
         <div className="flex flex-wrap gap-1.5">
           {[
-            "Lollygagging", "Beboppin'", "Boondoggling", "Flibbertigibbeting",
-            "Hullaballooing", "Clauding", "Julienning", "Prestidigitating",
-            "Razzle-dazzling", "Quantumizing", "Shenaniganing", "Symbioting",
-            "Whatchamacalliting", "Zesting", "Discombobulating", "Skedaddling",
-            "Bamboozling", "Moseying", "Dillydallying", "Gallivanting",
-          ].map((v) => (
+            { v: "Lollygagging", c: "var(--accent)" },
+            { v: "Beboppin'", c: "var(--green)" },
+            { v: "Boondoggling", c: "var(--orange)" },
+            { v: "Flibbertigibbeting", c: "var(--purple)" },
+            { v: "Hullaballooing", c: "var(--pink)" },
+            { v: "Clauding", c: "var(--accent)" },
+            { v: "Julienning", c: "var(--green)" },
+            { v: "Prestidigitating", c: "var(--orange)" },
+            { v: "Razzle-dazzling", c: "var(--red)" },
+            { v: "Quantumizing", c: "var(--purple)" },
+            { v: "Shenaniganing", c: "var(--pink)" },
+            { v: "Symbioting", c: "var(--accent)" },
+            { v: "Whatchamacalliting", c: "var(--green)" },
+            { v: "Zesting", c: "var(--orange)" },
+            { v: "Discombobulating", c: "var(--red)" },
+            { v: "Skedaddling", c: "var(--purple)" },
+            { v: "Bamboozling", c: "var(--pink)" },
+            { v: "Moseying", c: "var(--accent)" },
+            { v: "Dillydallying", c: "var(--green)" },
+            { v: "Gallivanting", c: "var(--orange)" },
+          ].map(({ v, c }) => (
             <motion.span
               key={v}
-              whileHover={{ scale: 1.05 }}
-              className="px-2.5 py-1 rounded-lg text-xs font-mono cursor-default transition-colors hover:bg-accent hover:text-white"
-              style={{ background: "var(--bg-tertiary)" }}
+              whileHover={{ scale: 1.06, y: -1 }}
+              className="px-2.5 py-1 rounded-lg text-xs font-mono cursor-default font-semibold"
+              style={{
+                background: `color-mix(in srgb, ${c} 10%, var(--bg-tertiary))`,
+                color: c,
+                border: `1px solid color-mix(in srgb, ${c} 20%, var(--border))`,
+              }}
             >
               {v}...
             </motion.span>

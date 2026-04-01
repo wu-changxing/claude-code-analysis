@@ -14,6 +14,10 @@ import {
   VscSymbolNumeric,
   VscGitCompare,
 } from "react-icons/vsc";
+import {
+  HiOutlineArrowUp,
+} from "react-icons/hi2";
+import { motion } from "framer-motion";
 
 export default function ServicesPage() {
   const tx = useTx();
@@ -25,26 +29,66 @@ export default function ServicesPage() {
     { id: "bridge-remote", label: tx("Bridge/Remote", "桥接/远程", "ブリッジ/リモート"), description: tx("Remote session control-plane logic.", "远程会话控制平面逻辑。", "リモートセッション制御プレーン。") },
     { id: "speculation", label: tx("Speculation", "推测执行", "推測実行"), description: tx("PromptSuggestion and cheap background previews.", "PromptSuggestion 与低成本后台预执行。", "PromptSuggestion と安価な先読み実行。") },
   ];
+
   const serviceCards = [
     { icon: VscDatabase, name: tx("Compaction", "压缩", "圧縮"), files: 13, size: "~15K", color: "var(--accent)", desc: tx("4-level context window management", "4 级上下文窗口管理", "4段階のコンテキストウィンドウ管理") },
     { icon: VscPlug, name: "MCP", files: 25, size: "470KB", color: "var(--green)", desc: tx("External tool integration (4 transports)", "外部工具集成（4 种传输方式）", "外部ツール統合（4つのトランスポート）") },
     { icon: VscServerProcess, name: "LSP", files: 6, size: "~5K", color: "var(--orange)", desc: tx("Language Server Protocol", "语言服务器协议", "言語サーバープロトコル") },
     { icon: VscGraphLine, name: tx("Analytics", "分析", "分析"), files: 6, size: "~8K", color: "var(--purple)", desc: tx("Datadog + GrowthBook pipeline", "Datadog + GrowthBook 流水线", "Datadog + GrowthBook パイプライン") },
     { icon: VscLightbulb, name: tx("Memory", "记忆", "メモリ"), files: 5, size: "~6K", color: "var(--pink)", desc: tx("Auto-extraction + session memory", "自动提取 + 会话记忆", "自動抽出 + セッションメモリ") },
-    { icon: VscServerProcess, name: tx("API", "API", "API"), files: 8, size: "~45K", color: "var(--accent)", desc: tx("Streaming client, retries, betas, prompt caching", "流式客户端、重试、betas、提示缓存", "ストリーミングクライアント、再試行、betas、プロンプトキャッシュ") },
+    { icon: VscServerProcess, name: "API", files: 8, size: "~45K", color: "var(--accent)", desc: tx("Streaming client, retries, betas, prompt caching", "流式客户端、重试、betas、提示缓存", "ストリーミングクライアント、再試行、betas、プロンプトキャッシュ") },
     { icon: VscExtensions, name: tx("Tools", "工具", "ツール"), files: 2, size: "~1K", color: "var(--orange)", desc: tx("StreamingToolExecutor + orchestration", "StreamingToolExecutor + 编排", "StreamingToolExecutor + オーケストレーション") },
     { icon: VscPackage, name: tx("Plugins", "插件", "プラグイン"), files: 8, size: "~10K", color: "var(--green)", desc: tx("Plugin install + marketplace", "插件安装 + 市场", "プラグイン導入 + マーケットプレイス") },
     { icon: VscSymbolNumeric, name: tx("Tokens", "Token", "トークン"), files: 1, size: "~2K", color: "var(--accent)", desc: tx("Multi-provider token counting", "多提供商 token 计数", "複数プロバイダーのトークン計数") },
     { icon: VscGitCompare, name: tx("Bridge/Remote", "桥接/远程", "ブリッジ/リモート"), files: 20, size: "~35K", color: "var(--pink)", desc: tx("Remote sessions, work dispatch, reconnect logic", "远程会话、任务分发、重连逻辑", "リモートセッション、作業ディスパッチ、再接続ロジック") },
   ];
+
+  const compactionStrategies = [
+    {
+      name: tx("Microcompact", "微压缩", "マイクロ圧縮"),
+      trigger: tx("Every API call", "每次 API 调用", "APIコール毎"),
+      desc: tx("Single-turn inline compression. Uses cached tool results. No extra API call.", "单轮内联压缩，利用缓存工具结果，无需额外 API 调用。", "単一ターンのインライン圧縮。キャッシュ済みツール結果を利用。追加API不要。"),
+      color: "var(--accent)",
+      intensity: 1,
+    },
+    {
+      name: tx("History Snipping", "历史裁剪", "履歴スニッピング"),
+      trigger: tx("Feature-gated threshold", "功能门控阈值", "機能ゲート閾値"),
+      desc: tx("Removes oldest messages below threshold. Less aggressive than autocompact.", "移除低于阈值的最旧消息，比 autocompact 温和。", "閾値以下の古いメッセージを削除。autocompactより穏やか。"),
+      color: "var(--green)",
+      intensity: 2,
+    },
+    {
+      name: tx("Autocompact", "自动压缩", "自動圧縮"),
+      trigger: tx("Token threshold trigger", "Token 阈值触发", "トークン閾値トリガー"),
+      desc: tx("Full conversation summary via forked agent. Replaces old messages. Circuit breaker: max 3 failures.", "通过 fork 代理生成完整会话摘要，替换旧消息，熔断器：最多 3 次失败。", "forkエージェントで完全な会話要約。旧メッセージを置換。サーキットブレーカー：最大3回失敗。"),
+      color: "var(--orange)",
+      intensity: 3,
+    },
+    {
+      name: tx("Context Collapse", "上下文折叠", "コンテキストコラプス"),
+      trigger: tx("Experimental", "实验性", "実験的"),
+      desc: tx("Incremental context reduction. Builds collapse store separately. Projected at read-time (non-destructive).", "增量上下文缩减，单独构建折叠存储，读取时投影（非破坏性）。", "段階的なコンテキスト縮小。折りたたみストアを別途構築。読み取り時にプロジェクション（非破壊）。"),
+      color: "var(--red)",
+      intensity: 4,
+    },
+  ];
+
+  const mcpTransports = [
+    { name: "stdio", icon: "⚡", desc: tx("Local process communication", "本地进程通信", "ローカルプロセス通信"), color: "var(--accent)" },
+    { name: "SSE", icon: "📡", desc: tx("Server-Sent Events (HTTP streaming)", "服务器推送事件（HTTP 流）", "Server-Sent Events（HTTPストリーミング）"), color: "var(--green)" },
+    { name: "HTTP", icon: "🌐", desc: tx("Standard HTTP requests", "标准 HTTP 请求", "標準HTTPリクエスト"), color: "var(--orange)" },
+    { name: "WebSocket", icon: "🔌", desc: tx("Full-duplex communication", "全双工通信", "全二重通信"), color: "var(--purple)" },
+  ];
+
   return (
     <div className="page-shell">
       <PageHeader
         title={tx("Services", "服务", "サービス")}
         description={tx(
-          "Claude Code's service layer handles compaction, MCP integration, LSP, analytics, memory extraction, and more. These run as background processes alongside the main query loop.",
-          "Claude Code 的服务层处理压缩、MCP 集成、LSP、分析、记忆提取等。这些作为后台进程与主查询循环并行运行。",
-          "Claude Code のサービス層は、圧縮、MCP 統合、LSP、分析、メモリ抽出などを担います。これらはメインのクエリループと並行して動作します。"
+          "Claude Code's service layer handles compaction, MCP integration, LSP, analytics, memory extraction, and more — running in parallel with the main query loop.",
+          "Claude Code 的服务层处理压缩、MCP 集成、LSP、分析、记忆提取等，与主查询循环并行运行。",
+          "Claude Code のサービス層は圧縮、MCP統合、LSP、分析、メモリ抽出などを担い、メインのクエリループと並行して動作します。"
         )}
         badge={tx("20+ services", "20+ 服务", "20+ サービス")}
         links={[
@@ -56,21 +100,53 @@ export default function ServicesPage() {
       />
       <SectionNav title={tx("Jump To", "跳转到", "移動先")} sections={sections} />
 
+      {/* Key Insight */}
+      <motion.div
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="mb-6 rounded-xl border-l-4 bg-bg-secondary p-4 sm:p-5"
+        style={{ borderLeftColor: "var(--green)" }}
+      >
+        <div className="text-[10px] font-semibold uppercase tracking-wider text-green mb-1.5">
+          {tx("Key Insight", "核心洞察", "重要なポイント")}
+        </div>
+        <p className="text-sm text-text-secondary leading-relaxed">
+          {tx(
+            "MCP is the largest single service at 470KB across 25 files — larger than BashTool. External tool integration is treated as a first-class architectural concern, not an afterthought.",
+            "MCP 是最大的单个服务，25 个文件共 470KB，比 BashTool 还大。外部工具集成被视为一等架构关注点，而非事后添加。",
+            "MCPは25ファイル・470KBで最大のサービスです。BashToolより大きい。外部ツール統合は後付けではなく、最優先の設計課題として扱われています。"
+          )}
+        </p>
+      </motion.div>
+
       {/* Service Overview */}
       <Card id="service-overview" title={tx("Service Overview", "服务概览", "サービス概要")} className="mb-6" summary={tx("Start here to see which responsibilities live outside the main query loop.", "如果你想先弄清哪些职责不在主 query loop 内部，先看这里。", "メイン query loop の外にある責務を整理する入口です。")}>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
           {serviceCards.map((s) => (
-            <div key={s.name} className="p-3 rounded-xl bg-bg-tertiary/30 border border-border/50">
-              <s.icon className="w-4 h-4 mb-2" style={{ color: s.color }} />
+            <div key={s.name} className="group p-4 rounded-xl border transition-shadow hover:shadow-sm"
+              style={{
+                background: `color-mix(in srgb, ${s.color} 5%, var(--bg-tertiary))`,
+                borderColor: `color-mix(in srgb, ${s.color} 15%, var(--border))`,
+              }}
+            >
+              <div className="flex items-start justify-between mb-2">
+                <s.icon className="w-4 h-4" style={{ color: s.color }} />
+                <span
+                  className="text-[9px] font-bold px-1.5 py-0.5 rounded-full font-mono"
+                  style={{ color: s.color, background: `color-mix(in srgb, ${s.color} 10%, transparent)` }}
+                >
+                  {s.size}
+                </span>
+              </div>
               <div className="text-xs font-semibold text-text-primary mb-0.5">{s.name}</div>
-              <div className="text-[10px] text-text-muted mb-1.5">{s.files} files &middot; {s.size}</div>
-              <p className="text-[10px] text-text-muted">{s.desc}</p>
+              <div className="text-[10px] text-text-muted mb-1.5">{s.files} {tx("files", "文件", "ファイル")}</div>
+              <p className="text-[10px] text-text-muted leading-relaxed">{s.desc}</p>
             </div>
           ))}
         </div>
       </Card>
 
-      {/* Compaction */}
+      {/* Compaction — Escalation Ladder */}
       <Card
         id="compaction-system"
         title={tx("Compaction System", "压缩系统", "圧縮システム")}
@@ -84,11 +160,59 @@ export default function ServicesPage() {
       >
         <p className="text-sm text-text-secondary mb-4">
           {tx(
-            "Multi-level context window management keeps conversations within token limits. The system uses 4 strategies with increasing aggressiveness:",
-            "多级上下文窗口管理使对话保持在 token 限制内。系统提供 4 种逐步增强的策略：",
-            "多段階のコンテキスト管理により会話をトークン上限内に保ちます。システムは強度の異なる4つの戦略を使います："
+            "Multi-level context window management keeps conversations within token limits. Four strategies with increasing aggressiveness:",
+            "多级上下文窗口管理使对话保持在 token 限制内。四种策略按积极程度逐级递增：",
+            "多段階のコンテキスト管理により会話をトークン上限内に保ちます。強度の異なる4つの戦略："
           )}
         </p>
+
+        {/* Escalation ladder */}
+        <div className="mb-5 space-y-2">
+          {compactionStrategies.map((s, i) => (
+            <motion.div
+              key={s.name}
+              initial={{ opacity: 0, x: -8 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: i * 0.05 }}
+              className="flex items-start gap-3 rounded-xl border p-4"
+              style={{
+                background: `color-mix(in srgb, ${s.color} 6%, var(--bg-tertiary))`,
+                borderColor: `color-mix(in srgb, ${s.color} 20%, var(--border))`,
+              }}
+            >
+              <div className="flex flex-col items-center gap-1 shrink-0 pt-0.5">
+                {/* Intensity bar */}
+                <div className="flex gap-0.5">
+                  {[1, 2, 3, 4].map((n) => (
+                    <div
+                      key={n}
+                      className="w-1.5 h-3 rounded-sm"
+                      style={{
+                        background: n <= s.intensity ? s.color : `color-mix(in srgb, ${s.color} 15%, var(--bg-tertiary))`,
+                      }}
+                    />
+                  ))}
+                </div>
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="flex flex-wrap items-center gap-2 mb-1">
+                  <span className="text-xs font-bold" style={{ color: s.color }}>{s.name}</span>
+                  <span className="text-[9px] px-2 py-0.5 rounded-full bg-bg-secondary border border-border text-text-muted">
+                    {s.trigger}
+                  </span>
+                  {i > 0 && (
+                    <span className="text-[9px] flex items-center gap-0.5 text-text-muted">
+                      <HiOutlineArrowUp className="w-3 h-3" />
+                      {tx("more aggressive", "更激进", "より積極的")}
+                    </span>
+                  )}
+                </div>
+                <p className="text-[11px] text-text-muted leading-relaxed">{s.desc}</p>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+
         <CodeBlock
           code={`// Token budget calculation:
 effective_window = model_context (e.g., 200K for opus)
@@ -96,27 +220,7 @@ effective_window = model_context (e.g., 200K for opus)
   - reserved_for_summary (20K)
   = ~164K effective
 
-autocompact_threshold = effective_window - 13K buffer
-
-// Strategy 1: Microcompact (every API call)
-  → Single-turn compression inline
-  → Cached, no API call needed
-  → Compresses tool results if unchanged
-
-// Strategy 2: Autocompact (threshold trigger)
-  → Full conversation summary via forked agent
-  → Replaces old messages with summary + preserved tail
-  → Marks boundary message with summary metrics
-  → Circuit breaker: max 3 consecutive failures
-
-// Strategy 3: History Snipping (feature-gated)
-  → Removes oldest messages below threshold
-  → Less aggressive than autocompact
-
-// Strategy 4: Context Collapse (experimental)
-  → Incremental context reduction
-  → Builds collapse store separately
-  → Projected at read-time (non-destructive)`}
+autocompact_threshold = effective_window - 13K buffer`}
         />
       </Card>
 
@@ -140,14 +244,27 @@ autocompact_threshold = effective_window - 13K buffer
             "MCP は25ファイル・470KBに及ぶ最大級のサービスです。Claude Code が MCP 互換サーバー上の外部ツールを統合できるようにします。"
           )}
         </p>
-        <CodeBlock
-          code={`// MCP client supports 4 transport types:
-1. stdio  → Local process communication
-2. SSE    → Server-Sent Events (HTTP streaming)
-3. HTTP   → Standard HTTP requests
-4. WebSocket → Full-duplex communication
 
-// How MCP tools work:
+        {/* 4 Transport Types Grid */}
+        <div className="mb-5 grid grid-cols-2 gap-3 lg:grid-cols-4">
+          {mcpTransports.map(({ name, icon, desc, color }) => (
+            <div
+              key={name}
+              className="rounded-xl border p-3 text-center"
+              style={{
+                background: `color-mix(in srgb, ${color} 6%, var(--bg-tertiary))`,
+                borderColor: `color-mix(in srgb, ${color} 20%, var(--border))`,
+              }}
+            >
+              <div className="text-xl mb-1">{icon}</div>
+              <div className="text-xs font-bold mb-1" style={{ color }}>{name}</div>
+              <p className="text-[10px] text-text-muted leading-relaxed">{desc}</p>
+            </div>
+          ))}
+        </div>
+
+        <CodeBlock
+          code={`// How MCP tools work:
 1. MCP server exposes tools via JSON schema
 2. mcpClient.ts patches MCPTool definition at runtime:
    - Sets real tool name (e.g., "mcp_weather_get_current")
