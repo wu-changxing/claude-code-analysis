@@ -366,6 +366,73 @@ pre .comment { color: #6b7280; font-style: italic; }
   position: relative;
 }
 
+/* Mobile utility: hide on mobile, show on sm+ */
+.desktop-only { display: none; }
+@media (min-width: 640px) { .desktop-only { display: initial; } }
+
+/* Horizontal scroll container with fade hint */
+.scroll-x-container {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  position: relative;
+}
+
+/* Learning path cards */
+.path-card {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--bg-secondary);
+  padding: 16px;
+  transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.path-card:hover {
+  border-color: color-mix(in srgb, var(--accent) 35%, var(--border));
+  box-shadow: 0 4px 16px color-mix(in srgb, var(--accent) 8%, transparent);
+  transform: translateY(-2px);
+}
+
+/* Module mobile tier card */
+.module-tier-card {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg-secondary);
+  padding: 12px 14px;
+}
+
+/* Fun facts discovery badge */
+.discovery-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  font-size: 10px;
+  font-weight: 700;
+  background: color-mix(in srgb, var(--orange) 10%, var(--bg-tertiary));
+  color: var(--orange);
+  border: 1px solid color-mix(in srgb, var(--orange) 20%, var(--border));
+}
+
+/* Section number badge for fun-facts */
+.section-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 800;
+  background: var(--bg-tertiary);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  shrink-0: 1;
+}
+
 @keyframes danger-pulse {
   0%, 100% { opacity: 1; transform: scale(1); }
   50% { opacity: 0.7; transform: scale(1.1); }

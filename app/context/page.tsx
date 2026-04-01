@@ -94,24 +94,46 @@ export default function ContextPage() {
       />
       <SectionNav title={tx("Jump To", "跳转到", "移動先")} sections={sections} />
 
-      {/* Key Insight */}
+      {/* 100K tokens hero callout */}
       <motion.div
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
-        className="mb-6 rounded-xl border-l-4 bg-bg-secondary p-4 sm:p-5"
-        style={{ borderLeftColor: "var(--orange)" }}
+        className="mb-6 rounded-2xl overflow-hidden border border-orange/30"
+        style={{
+          background: "linear-gradient(135deg, color-mix(in srgb, var(--orange) 8%, var(--bg-secondary)) 0%, color-mix(in srgb, var(--accent) 5%, var(--bg-secondary)) 100%)",
+        }}
       >
-        <div className="text-[10px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: "var(--orange)" }}>
-          {tx("Key Insight", "核心洞察", "重要なポイント")}
+        <div className="h-1 w-full" style={{ background: "linear-gradient(to right, var(--orange), var(--accent))" }} />
+        <div className="p-5 sm:p-6">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+            <div className="shrink-0">
+              <div className="text-4xl font-black sm:text-5xl" style={{ color: "var(--orange)" }}>~100K</div>
+              <div className="text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--orange)" }}>{tx("tokens", "tokens", "トークン")}</div>
+            </div>
+            <div>
+              <div className="text-sm font-bold text-text-primary mb-1">
+                {tx("Everything Claude Knows Before You Type", "在你输入之前 Claude 已经知道的一切", "あなたがタイプする前にClaudeが知っていること")}
+              </div>
+              <p className="text-[13px] text-text-secondary leading-relaxed">
+                {tx(
+                  "The system prompt for Claude Code is ~100K tokens before you type a single character. That's the core instructions, all 43 tool schemas, your CLAUDE.md files, git state, and memory — assembled on every turn.",
+                  "Claude Code 的系统提示在你输入任何内容之前就已经有约 100K tokens。包括核心指令、43 个工具 schema、你的 CLAUDE.md 文件、git 状态和记忆——每轮都重新组装。",
+                  "Claude Code のシステムプロンプトは、一文字タイプする前に約 100K トークン。コア指示、43 のツールスキーマ、CLAUDE.md、git 状態、メモリ — 毎ターン組み立てられる。"
+                )}
+              </p>
+            </div>
+          </div>
         </div>
-        <p className="text-sm text-text-secondary leading-relaxed">
-          {tx(
-            "The prompt is not one giant string — it's ordered sections. constants/prompts.ts defines a hard SYSTEM_PROMPT_DYNAMIC_BOUNDARY marker. Everything before that line can use global prompt caching (stable across users). Everything after can contain your git branch, CLAUDE.md content, and session data.",
-            "prompt 不是一整块超长字符串，而是有序的 section。constants/prompts.ts 里定义了一个硬性的 SYSTEM_PROMPT_DYNAMIC_BOUNDARY 标记。标记之前的内容可以使用全局 prompt 缓存（跨用户稳定），之后的内容则可以包含你的 git 分支、CLAUDE.md 内容和会话数据。",
-            "promptは巨大な1本の文字列ではなく順序付きセクションです。constants/prompts.tsにはSYSTEM_PROMPT_DYNAMIC_BOUNDARYという境界マーカーがあり、その前半はグローバルpromptキャッシュを使え、後半にはgitブランチやCLAUDE.md、セッションデータを含められます。"
-          )}
-        </p>
       </motion.div>
+
+      {/* Key Insight */}
+      <InsightCallout emoji="🔀" title={tx("Key Insight", "核心洞察", "重要なポイント")} className="mb-6">
+        {tx(
+          "The prompt is not one giant string — it's ordered sections. constants/prompts.ts defines a hard SYSTEM_PROMPT_DYNAMIC_BOUNDARY marker. Everything before that line can use global prompt caching (stable across users). Everything after can contain your git branch, CLAUDE.md content, and session data.",
+          "prompt 不是一整块超长字符串，而是有序的 section。constants/prompts.ts 里定义了一个硬性的 SYSTEM_PROMPT_DYNAMIC_BOUNDARY 标记。标记之前的内容可以使用全局 prompt 缓存（跨用户稳定），之后的内容则可以包含你的 git 分支、CLAUDE.md 内容和会话数据。",
+          "promptは巨大な1本の文字列ではなく順序付きセクションです。constants/prompts.tsにはSYSTEM_PROMPT_DYNAMIC_BOUNDARYという境界マーカーがあり、その前半はグローバルpromptキャッシュを使え、後半にはgitブランチやCLAUDE.md、セッションデータを含められます。"
+        )}
+      </InsightCallout>
 
       {/* System Prompt Assembly — Visual Stack */}
       <Card

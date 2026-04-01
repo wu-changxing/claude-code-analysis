@@ -72,33 +72,46 @@ function SidebarContent({
   return (
     <>
       <nav className="flex-1 px-3 py-4 overflow-y-auto">
-        {sections.map((section) => (
-          <div key={section.title} className="mb-4">
-            <div className="px-3 mb-1.5 text-[10px] font-semibold text-text-muted uppercase tracking-widest">
-              {section.title}
+        {sections.map((section, sectionIdx) => {
+          const sectionHasActive = section.items.some((item) => item.href === pathname);
+          return (
+            <div key={section.title} className={sectionIdx > 0 ? "mb-4 pt-3 border-t border-border/50" : "mb-4"}>
+              <div className="px-3 mb-1.5 flex items-center gap-2">
+                <span className="text-[10px] font-semibold text-text-muted uppercase tracking-widest">
+                  {section.title}
+                </span>
+                {sectionHasActive && (
+                  <span className="h-1.5 w-1.5 rounded-full bg-accent shrink-0" />
+                )}
+              </div>
+              <div className="space-y-0.5">
+                {section.items.map(({ href, label, icon: Icon }) => {
+                  const active = pathname === href;
+                  return (
+                    <Link
+                      key={href}
+                      href={href}
+                      onClick={onNavigate}
+                      className={`flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-[13px] transition-all ${
+                        active
+                          ? "bg-text-primary text-bg-primary font-medium shadow-sm"
+                          : "text-text-secondary hover:text-text-primary hover:bg-bg-tertiary/60"
+                      }`}
+                    >
+                      <Icon className="w-3.5 h-3.5 shrink-0" />
+                      <span className="flex-1">{label}</span>
+                      {active && (
+                        <span className="text-[9px] font-bold uppercase tracking-wider opacity-60">
+                          {lang === "zh" ? "当前" : lang === "ja" ? "現在" : "here"}
+                        </span>
+                      )}
+                    </Link>
+                  );
+                })}
+              </div>
             </div>
-            <div className="space-y-0.5">
-              {section.items.map(({ href, label, icon: Icon }) => {
-                const active = pathname === href;
-                return (
-                  <Link
-                    key={href}
-                    href={href}
-                    onClick={onNavigate}
-                    className={`flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-[13px] transition-all ${
-                      active
-                        ? "bg-text-primary text-bg-primary font-medium shadow-sm"
-                        : "text-text-secondary hover:text-text-primary hover:bg-bg-tertiary/60"
-                    }`}
-                  >
-                    <Icon className="w-3.5 h-3.5 shrink-0" />
-                    {label}
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </nav>
 
       <div className="p-4 border-t border-border space-y-3">

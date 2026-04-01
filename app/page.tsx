@@ -179,6 +179,118 @@ const INNOVATIONS = () => [
   },
 ];
 
+const LEARNING_PATHS = (lang: "en" | "zh" | "ja") => [
+  {
+    emoji: "🚀",
+    title: { en: "Quick Tour", zh: "快速导览", ja: "クイックツアー" },
+    time: { en: "30 min", zh: "30 分钟", ja: "30分" },
+    desc: { en: "Get the big picture fast", zh: "快速了解全貌", ja: "全体像をすばやく掴む" },
+    color: "var(--accent)",
+    pages: [
+      { href: "/", label: { en: "Home", zh: "首页", ja: "ホーム" } },
+      { href: "/architecture", label: { en: "Architecture", zh: "架构", ja: "アーキテクチャ" } },
+      { href: "/query-loop", label: { en: "Query Loop", zh: "查询循环", ja: "クエリループ" } },
+      { href: "/fun-facts", label: { en: "Fun Facts", zh: "趣闻", ja: "豆知識" } },
+    ],
+  },
+  {
+    emoji: "🔬",
+    title: { en: "Deep Dive", zh: "深度钻研", ja: "ディープダイブ" },
+    time: { en: "2 hours", zh: "2 小时", ja: "2時間" },
+    desc: { en: "Full technical picture", zh: "完整技术全貌", ja: "技術の全体像" },
+    color: "var(--purple)",
+    pages: [
+      { href: "/architecture", label: { en: "Architecture", zh: "架构", ja: "アーキテクチャ" } },
+      { href: "/query-loop", label: { en: "Query Loop", zh: "查询循环", ja: "クエリループ" } },
+      { href: "/tools", label: { en: "Tools", zh: "工具", ja: "ツール" } },
+      { href: "/permissions", label: { en: "Permissions", zh: "权限", ja: "権限" } },
+      { href: "/agents", label: { en: "Agents", zh: "代理", ja: "エージェント" } },
+      { href: "/context", label: { en: "Context", zh: "上下文", ja: "コンテキスト" } },
+      { href: "/services", label: { en: "Services", zh: "服务", ja: "サービス" } },
+    ],
+  },
+  {
+    emoji: "🏗️",
+    title: { en: "Builder's Path", zh: "构建者之路", ja: "ビルダーズパス" },
+    time: { en: "3 hours", zh: "3 小时", ja: "3時間" },
+    desc: { en: "For those extending Claude Code", zh: "针对扩展 Claude Code 的开发者", ja: "Claude Code を拡張する開発者向け" },
+    color: "var(--orange)",
+    pages: [
+      { href: "/tools", label: { en: "Tools", zh: "工具", ja: "ツール" } },
+      { href: "/permissions", label: { en: "Permissions", zh: "权限", ja: "権限" } },
+      { href: "/agents", label: { en: "Agents", zh: "代理", ja: "エージェント" } },
+      { href: "/services", label: { en: "Services", zh: "服务", ja: "サービス" } },
+      { href: "/modules", label: { en: "Module Map", zh: "模块地图", ja: "モジュールマップ" } },
+    ],
+  },
+];
+
+function LearningPaths({ lang }: { lang: "en" | "zh" | "ja" }) {
+  const paths = LEARNING_PATHS(lang);
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.13 }}
+      className="mb-12"
+    >
+      <div className="mb-4 flex items-center justify-between">
+        <h2 className="text-xs font-semibold uppercase tracking-wider text-text-muted">
+          {lang === "zh" ? "选择你的学习路径" : lang === "ja" ? "学習パスを選ぶ" : "How to Read This Site"}
+        </h2>
+      </div>
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+        {paths.map((path) => (
+          <div key={path.title.en} className="path-card">
+            <div className="flex items-start gap-3">
+              <span className="text-2xl shrink-0 leading-none mt-0.5">{path.emoji}</span>
+              <div className="min-w-0">
+                <div className="flex items-center gap-2 mb-0.5 flex-wrap">
+                  <span className="text-sm font-bold text-text-primary">
+                    {path.title[lang] || path.title.en}
+                  </span>
+                  <span
+                    className="text-[9px] font-semibold px-1.5 py-0.5 rounded-full"
+                    style={{
+                      background: `color-mix(in srgb, ${path.color} 12%, var(--bg-tertiary))`,
+                      color: path.color,
+                    }}
+                  >
+                    {path.time[lang] || path.time.en}
+                  </span>
+                </div>
+                <p className="text-[11px] text-text-muted">
+                  {path.desc[lang] || path.desc.en}
+                </p>
+              </div>
+            </div>
+            <div className="flex flex-wrap gap-1.5 mt-1">
+              {path.pages.map((page, i) => (
+                <span key={page.href} className="inline-flex items-center gap-0.5">
+                  <Link
+                    href={page.href}
+                    className="text-[10px] font-medium px-2 py-0.5 rounded-full border transition-colors hover:border-opacity-80"
+                    style={{
+                      color: path.color,
+                      borderColor: `color-mix(in srgb, ${path.color} 25%, var(--border))`,
+                      background: `color-mix(in srgb, ${path.color} 6%, var(--bg-tertiary))`,
+                    }}
+                  >
+                    {page.label[lang] || page.label.en}
+                  </Link>
+                  {i < path.pages.length - 1 && (
+                    <span className="text-[9px] text-text-muted">→</span>
+                  )}
+                </span>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </motion.div>
+  );
+}
+
 export default function HomePage() {
   const { lang } = useLang();
   const stats = STATS(lang);
@@ -347,6 +459,9 @@ export default function HomePage() {
           {lang === "zh" ? "核心循环深度分析" : lang === "ja" ? "コアループ詳細" : "Deep dive: Query Loop"}
         </Link>
       </motion.div>
+
+      {/* Learning Paths */}
+      <LearningPaths lang={lang} />
 
       {/* Core Loop Visual Diagram */}
       <motion.div

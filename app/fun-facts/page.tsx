@@ -32,20 +32,30 @@ export default function FunFactsPage() {
 
   return (
     <div className="page-shell">
-      {/* Header */}
+      {/* Hero Header — BuzzFeed style */}
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         className="mb-8 pb-6 border-b border-border"
       >
-        <div className="mb-2 flex flex-wrap items-center gap-3">
-          <VscHeart className="w-6 h-6 text-pink" />
-          <h1 className="text-2xl font-bold text-text-primary">{t("fun.title", lang)}</h1>
-          <span className="px-2.5 py-0.5 text-[11px] rounded-full bg-bg-tertiary text-text-secondary border border-border font-mono">
-            {tx("entertainment", "娱乐向", "読み物")}
-          </span>
+        <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-border bg-bg-secondary px-3 py-1 text-[11px] text-text-muted">
+          <VscHeart className="w-3 h-3 text-pink" />
+          <span>{tx("entertainment", "娱乐向", "読み物")}</span>
         </div>
-        <p className="text-text-secondary text-sm leading-relaxed max-w-2xl">
+        <div className="mb-1">
+          <span className="text-5xl font-black text-text-primary sm:text-6xl leading-none">50+</span>
+        </div>
+        <h1 className="text-2xl font-bold text-text-primary mb-2">
+          {lang === "zh" ? "隐藏的彩蛋与发现" : lang === "ja" ? "隠れた発見とイースターエッグ" : "Hidden Discoveries"}
+        </h1>
+        <p className="text-text-secondary text-sm leading-relaxed max-w-2xl mb-1">
+          {lang === "zh"
+            ? "大多数 Claude Code 用户对这些一无所知。"
+            : lang === "ja"
+            ? "Claude Code ユーザーのほとんどはこれを知らない。"
+            : "Most Claude Code users don't know any of these."}
+        </p>
+        <p className="text-text-muted text-sm leading-relaxed max-w-2xl">
           {t("fun.desc", lang)}
         </p>
         <SourceLinks
@@ -61,9 +71,12 @@ export default function FunFactsPage() {
 
       {/* Scary Numbers - Visual Grid */}
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
-        <div className="flex items-center gap-2 mb-4">
-          <HiOutlineFire className="w-5 h-5 text-red" />
-          <h2 className="text-sm font-semibold">{t("fun.numbers", lang)}</h2>
+        <div className="flex items-center gap-3 mb-4">
+          <span className="section-num">#1</span>
+          <div className="flex items-center gap-2">
+            <HiOutlineFire className="w-4 h-4 text-red" />
+            <h2 className="text-sm font-bold">{t("fun.numbers", lang)}</h2>
+          </div>
         </div>
         <div className="mb-8 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
           {[
@@ -79,11 +92,14 @@ export default function FunFactsPage() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.1 + i * 0.05 }}
-              className="bg-bg-secondary border border-border rounded-xl p-5 hover:shadow-sm transition-shadow"
+              className="bg-bg-secondary border border-border rounded-xl p-5 hover:shadow-sm transition-shadow relative overflow-hidden"
             >
+              <div className="absolute top-3 right-3">
+                <span className="discovery-badge">🔍 {tx("Discovery", "发现", "発見")}</span>
+              </div>
               <s.icon className="w-5 h-5 mb-3" style={{ color: s.color }} />
-              <div className="text-2xl font-bold font-mono text-text-primary">{s.value}</div>
-              <div className="text-xs text-text-secondary mt-1 font-medium">{s.label}</div>
+              <div className="text-2xl font-bold font-mono" style={{ color: s.color }}>{s.value}</div>
+              <div className="text-xs text-text-secondary mt-1 font-semibold">{s.label}</div>
               <div className="text-[11px] text-text-muted mt-1 italic">{s.note[lang] || s.note.en}</div>
             </motion.div>
           ))}
@@ -92,6 +108,10 @@ export default function FunFactsPage() {
 
       {/* Buddy System - Enhanced */}
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>
+        <div className="flex items-center gap-3 mb-4">
+          <span className="section-num">#2</span>
+          <h2 className="text-sm font-bold">{tx("The Buddy System", "宠物伙伴系统", "バディシステム")}</h2>
+        </div>
         <Card
           title={`${t("fun.buddy", lang)} — ${t("fun.buddyDesc", lang)}`}
           className="mb-6"
@@ -103,9 +123,16 @@ export default function FunFactsPage() {
         >
           <div className="mb-5 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
             {Object.entries(BUDDY_ART).map(([name, art]) => (
-              <div key={name} className="rounded-xl p-3 text-center bg-bg-tertiary border border-border/50">
-                <div className="mb-2 overflow-x-auto whitespace-pre font-mono text-[9px] leading-tight text-text-primary xs:text-[10px] sm:text-[11px]">{art}</div>
-                <span className="text-[11px] text-text-muted capitalize font-medium">{name}</span>
+              <div key={name} className="rounded-xl overflow-hidden border border-border/50 text-center">
+                <div
+                  className="px-3 py-4 overflow-x-auto"
+                  style={{ background: "#1a1a2e", borderBottom: "1px solid #2a2a3e" }}
+                >
+                  <div className="whitespace-pre font-mono text-[10px] leading-tight sm:text-[11px]" style={{ color: "#7dd3fc" }}>{art}</div>
+                </div>
+                <div className="bg-bg-tertiary py-1.5 px-2">
+                  <span className="text-[10px] text-text-muted capitalize font-semibold">{name}</span>
+                </div>
               </div>
             ))}
           </div>
@@ -164,6 +191,10 @@ export default function FunFactsPage() {
       </motion.div>
 
       {/* Wizard Comment */}
+      <div className="flex items-center gap-3 mb-4 mt-8">
+        <span className="section-num">#3</span>
+        <h2 className="text-sm font-bold">{tx("The Wizard Speaks", "巫师开口了", "魔法使いが語る")}</h2>
+      </div>
       <Card
         title={`${t("fun.wizard", lang)} (query.ts:151)`}
         className="mb-6"
@@ -190,6 +221,10 @@ export default function FunFactsPage() {
       </Card>
 
       {/* Spinner Verbs */}
+      <div className="flex items-center gap-3 mb-4 mt-8">
+        <span className="section-num">#4</span>
+        <h2 className="text-sm font-bold">{tx("The Loading Verb Thesaurus", "加载动画词典", "ローディング動詞辞典")}</h2>
+      </div>
       <Card
         title={`${t("fun.spinner", lang)} (160+)`}
         className="mb-6"
@@ -251,6 +286,10 @@ export default function FunFactsPage() {
       </Card>
 
       {/* Codename Tengu */}
+      <div className="flex items-center gap-3 mb-4 mt-8">
+        <span className="section-num">#5</span>
+        <h2 className="text-sm font-bold">{tx("Tengu & The Feature Flag Zoo", "天狗与功能标志动物园", "天狗とフィーチャーフラグ動物園")}</h2>
+      </div>
       <Card
         title={t("fun.tengu", lang)}
         className="mb-6"
@@ -294,6 +333,10 @@ export default function FunFactsPage() {
       </Card>
 
       {/* Hidden Commands */}
+      <div className="flex items-center gap-3 mb-4 mt-8">
+        <span className="section-num">#6</span>
+        <h2 className="text-sm font-bold">{tx("Commands You Didn't Know Existed", "你不知道存在的命令", "知らなかったコマンド")}</h2>
+      </div>
       <Card
         title={t("fun.commands", lang)}
         className="mb-6"
