@@ -1,6 +1,6 @@
 "use client";
 
-import { PageHeader, Card, CodeBlock, Table, SectionNav, NextPage, InsightCallout, RelatedPages } from "@/components/Section";
+import { PageHeader, Card, CodeBlock, Table, SectionNav, NextPage, InsightCallout, RelatedPages, TldrBox } from "@/components/Section";
 import { useTx } from "@/components/T";
 import { ghBlob, ghTree } from "@/lib/sourceLinks";
 import {
@@ -206,6 +206,32 @@ export default function AgentsPage() {
         ]}
       />
 
+      <TldrBox
+        color="var(--purple)"
+        items={[
+          tx(
+            "AgentTool spawns a full Claude instance with its own token budget. The child agent runs the same query() loop independently — including its own tool calls, compaction, and recovery.",
+            "AgentTool 启动一个完整的 Claude 实例，拥有独立的 token 预算。子代理独立运行同一套 query() 循环——包括自己的工具调用、压缩和恢复。",
+            "AgentToolは独自トークン予算を持つ完全なClaudeインスタンスを起動します。子エージェントは独立してquery()ループを実行し、独自のツール呼び出し・圧縮・回復も行います。"
+          ),
+          tx(
+            "CacheSafeParams (Step 3 of spawn flow) freezes the system prompt bytes at fork time. If parent and child have identical bytes, the API returns a prompt cache hit — zero extra cost for spawning.",
+            "CacheSafeParams（启动流程第 3 步）在 fork 时冻结系统提示字节。父子字节完全相同时，API 返回 prompt cache hit——生成子代理几乎零额外成本。",
+            "CacheSafeParams（起動フロー第3ステップ）はfork時にシステムプロンプトのバイト列を固定します。親子で同一バイト列なら prompt cache hit — サブエージェント起動のコストはほぼゼロ。"
+          ),
+          tx(
+            "3 isolation modes: Local (in-process, shared state), Worktree (git-isolated branch), Remote (CCR server, full isolation). Pick the level of risk your task warrants.",
+            "3 种隔离模式：Local（进程内，共享状态）、Worktree（git 隔离分支）、Remote（CCR 服务器，完全隔离）。根据任务风险选择合适的隔离级别。",
+            "3つの隔離モード：Local（インプロセス、共有状態）、Worktree（git隔離ブランチ）、Remote（CCRサーバー、完全隔離）。タスクのリスクに応じて選択。"
+          ),
+          tx(
+            "6 forked background agents run automatically: speculation (pre-executes next steps), extractMemories, promptSuggestion, sessionMemory, compaction, and autoDream (after 24h + 5 sessions).",
+            "6 种 fork 后台代理自动运行：speculation（预执行下一步）、extractMemories、promptSuggestion、sessionMemory、compaction，以及 autoDream（24h + 5 次会话后触发）。",
+            "6つのforkバックグラウンドエージェントが自動実行：speculation（次の一手を先行実行）、extractMemories、promptSuggestion、sessionMemory、compaction、autoDream（24h+5セッション後）。"
+          ),
+        ]}
+      />
+
       {/* Hero Stats Row */}
       <motion.div
         initial={{ opacity: 0, y: 12 }}
@@ -318,6 +344,50 @@ export default function AgentsPage() {
           { label: "remote/", href: ghTree("remote") },
         ]}
       >
+        {/* Isolation spectrum bar */}
+        <div className="mb-5 rounded-xl border border-border/60 bg-bg-tertiary/30 p-4">
+          <div className="mb-2 flex items-center justify-between text-[9px] font-bold uppercase tracking-widest text-text-muted">
+            <span>{tx("← Cheap · Shared · Fast startup", "← 成本低 · 共享 · 启动快", "← 低コスト · 共有 · 高速起動")}</span>
+            <span className="text-right">{tx("Isolated · Safe · Slow startup →", "隔离 · 安全 · 启动慢 →", "隔離 · 安全 · 低速起動 →")}</span>
+          </div>
+          <div className="relative h-3 rounded-full overflow-hidden" style={{ background: "linear-gradient(to right, color-mix(in srgb, var(--accent) 60%, var(--bg-tertiary)), color-mix(in srgb, var(--orange) 60%, var(--bg-tertiary)), color-mix(in srgb, var(--purple) 60%, var(--bg-tertiary)))" }}>
+            {/* Mode markers */}
+            {[
+              { label: "Local", pos: "15%", color: "var(--accent)" },
+              { label: "Worktree", pos: "50%", color: "var(--orange)" },
+              { label: "Remote", pos: "85%", color: "var(--purple)" },
+            ].map(({ label, pos, color }) => (
+              <div key={label} className="absolute top-0 flex flex-col items-center" style={{ left: pos, transform: "translateX(-50%)" }}>
+                <div className="h-3 w-0.5 bg-white/60" />
+              </div>
+            ))}
+          </div>
+          <div className="relative mt-1">
+            {[
+              { label: "Local", pos: "15%", color: "var(--accent)" },
+              { label: "Worktree", pos: "50%", color: "var(--orange)" },
+              { label: "Remote (CCR)", pos: "85%", color: "var(--purple)" },
+            ].map(({ label, pos, color }) => (
+              <div key={label} className="absolute text-[9px] font-bold" style={{ left: pos, transform: "translateX(-50%)", color }}>
+                {label}
+              </div>
+            ))}
+          </div>
+          <div className="mt-5 grid grid-cols-3 gap-2 text-[9px] text-text-muted">
+            <div className="text-center">
+              <div className="font-semibold" style={{ color: "var(--accent)" }}>~0 tokens</div>
+              <div>{tx("spawn cost", "启动成本", "起動コスト")}</div>
+            </div>
+            <div className="text-center">
+              <div className="font-semibold" style={{ color: "var(--orange)" }}>Low</div>
+              <div>{tx("spawn cost", "启动成本", "起動コスト")}</div>
+            </div>
+            <div className="text-center">
+              <div className="font-semibold" style={{ color: "var(--purple)" }}>High</div>
+              <div>{tx("spawn cost", "启动成本", "起動コスト")}</div>
+            </div>
+          </div>
+        </div>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           {executionModes.map(({ icon: Icon, color, title, subtitle, badge, diagram, bestFor, tradeoff }) => (
             <div

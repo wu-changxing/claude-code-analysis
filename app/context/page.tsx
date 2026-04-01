@@ -1,6 +1,6 @@
 "use client";
 
-import { PageHeader, Card, CodeBlock, SectionNav, InsightCallout, RelatedPages, NextPage } from "@/components/Section";
+import { PageHeader, Card, CodeBlock, SectionNav, InsightCallout, RelatedPages, NextPage, TldrBox } from "@/components/Section";
 import { useTx } from "@/components/T";
 import { ghBlob, ghTree } from "@/lib/sourceLinks";
 import { motion } from "framer-motion";
@@ -90,6 +90,31 @@ export default function ContextPage() {
           { label: "constants/prompts.ts", href: ghBlob("constants/prompts.ts") },
           { label: "memdir/", href: ghTree("memdir") },
           { label: "query/stopHooks.ts", href: ghBlob("query/stopHooks.ts") },
+        ]}
+      />
+      <TldrBox
+        color="var(--orange)"
+        items={[
+          tx(
+            "The system prompt is assembled from 5 ordered layers every turn: Default instructions → User context (git, CWD, shell) → System context (MCP capabilities) → Memory (CLAUDE.md) → Skills. Only Layer 1 is fully cacheable.",
+            "每轮的系统提示由 5 个有序层拼装：默认指令 → 用户上下文（git、CWD、shell）→ 系统上下文（MCP 能力）→ 记忆（CLAUDE.md）→ 技能。只有第 1 层可以完全缓存。",
+            "毎ターンのシステムプロンプトは5層の順序で組み立てられます：デフォルト指示 → ユーザーコンテキスト（git、CWD、shell）→ システムコンテキスト（MCP機能）→ メモリ（CLAUDE.md）→ スキル。完全にキャッシュできるのは第1層のみです。"
+          ),
+          tx(
+            "CLAUDE.md is loaded from 6 locations in priority order: parent dirs → project root → ~/.claude/ → subdir-specific. Each file can import others with @filename. The files are real at runtime — not embedded.",
+            "CLAUDE.md 按优先级从 6 个位置加载：父目录 → 项目根目录 → ~/.claude/ → 子目录特定文件。每个文件可以用 @filename 导入其他文件。运行时是真实读取的，而非内嵌。",
+            "CLAUDE.mdは優先順位に従い6か所から読み込まれます：親ディレクトリ → プロジェクトルート → ~/.claude/ → サブディレクトリ固有。各ファイルは @filename で他をimportできます。実行時はリアルに読み込まれます。"
+          ),
+          tx(
+            "The memory system stores facts in ~/.claude/projects/{hash}/memory.jsonl — extracted by a background agent after each query. These persist across sessions and are injected at turn start.",
+            "记忆系统将事实存储在 ~/.claude/projects/{hash}/memory.jsonl 中，每次查询后由后台代理提取，跨会话持久化，并在每轮开始时注入。",
+            "メモリシステムは~/.claude/projects/{hash}/memory.jsonlに事実を保存します。各クエリ後にバックグラウンドエージェントが抽出し、セッションをまたいで永続化され、ターン開始時に注入されます。"
+          ),
+          tx(
+            "AppState is a DeepImmutable Zustand-like store with 4 families: Runtime (connection), Agent Orchestration (tasks), Background Intelligence (speculation), and UX Subsystems (companion, bagel).",
+            "AppState 是一个 DeepImmutable 的 Zustand 式 store，分 4 个家族：Runtime（连接）、Agent Orchestration（任务）、Background Intelligence（推测）、UX Subsystems（companion、bagel）。",
+            "AppStateはDeepImmutableなZustand風のstoreで4ファミリー：Runtime（接続）、Agent Orchestration（タスク）、Background Intelligence（推測）、UX Subsystems（companion、bagel）。"
+          ),
         ]}
       />
       <SectionNav title={tx("Jump To", "跳转到", "移動先")} sections={sections} />

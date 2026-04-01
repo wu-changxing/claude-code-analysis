@@ -68,6 +68,7 @@ const SECTIONS = (lang: "en" | "zh" | "ja") => [
     icon: VscSymbolStructure,
     title: t("nav.architecture", lang),
     desc: { en: "High-level system design, directory map, and how all pieces fit together", zh: "高层系统设计、目录结构、各组件如何协同工作", ja: "システム設計、ディレクトリ構造、全体像" },
+    hook: { en: "Start here", zh: "从这里开始", ja: "ここから" },
     color: "var(--accent)",
   },
   {
@@ -75,6 +76,7 @@ const SECTIONS = (lang: "en" | "zh" | "ja") => [
     icon: VscServerProcess,
     title: t("nav.queryLoop", lang),
     desc: { en: "The core agentic cycle: message → API → tool calls → results → repeat", zh: "核心代理循环：消息 → API → 工具调用 → 结果 → 重复", ja: "コアループ：メッセージ→API→ツール呼び出し→結果→繰り返し" },
+    hook: { en: "7 phases per turn", zh: "每轮 7 阶段", ja: "毎ターン7フェーズ" },
     color: "var(--green)",
   },
   {
@@ -82,6 +84,7 @@ const SECTIONS = (lang: "en" | "zh" | "ja") => [
     icon: VscExtensions,
     title: t("nav.tools", lang),
     desc: { en: "43 built-in tools — Bash, FileEdit, Agent, MCP, and more", zh: "43 个内置工具 — Bash、FileEdit、Agent、MCP 等", ja: "43の組み込みツール — Bash、FileEdit、Agent、MCPなど" },
+    hook: { en: "Read & Write run differently", zh: "读写并行策略不同", ja: "読み書きで並列戦略が違う" },
     color: "var(--orange)",
   },
   {
@@ -89,6 +92,7 @@ const SECTIONS = (lang: "en" | "zh" | "ja") => [
     icon: VscLock,
     title: t("nav.permissions", lang),
     desc: { en: "5-layer security with an ML classifier called 'yoloClassifier'", zh: "5 层安全系统，其中 ML 分类器叫 'yoloClassifier'", ja: "「yoloClassifier」というML分類器を含む5層セキュリティ" },
+    hook: { en: "Has a real ML model", zh: "含真实 ML 模型", ja: "本物のMLモデルあり" },
     color: "var(--red)",
   },
   {
@@ -96,6 +100,7 @@ const SECTIONS = (lang: "en" | "zh" | "ja") => [
     icon: VscGitMerge,
     title: t("nav.agents", lang),
     desc: { en: "Subagent spawning, zero-cost cache sharing, worktree isolation", zh: "子代理生成、零成本缓存共享、工作树隔离", ja: "サブエージェント生成、ゼロコストキャッシュ共有" },
+    hook: { en: "Cache hit = free spawn", zh: "缓存命中 = 免费启动", ja: "キャッシュヒット = 無料起動" },
     color: "var(--purple)",
   },
   {
@@ -103,6 +108,7 @@ const SECTIONS = (lang: "en" | "zh" | "ja") => [
     icon: VscDatabase,
     title: t("nav.services", lang),
     desc: { en: "Compaction, MCP (470KB!), LSP, analytics, memory extraction", zh: "压缩、MCP（470KB！）、LSP、分析、记忆提取", ja: "コンパクション、MCP（470KB！）、LSP、分析" },
+    hook: { en: "MCP = 470KB service", zh: "MCP = 470KB 服务", ja: "MCP = 470KBサービス" },
     color: "var(--pink)",
   },
   {
@@ -110,6 +116,7 @@ const SECTIONS = (lang: "en" | "zh" | "ja") => [
     icon: VscFolderOpened,
     title: t("nav.context", lang),
     desc: { en: "System prompt construction, CLAUDE.md, auto-memory system", zh: "系统提示构建、CLAUDE.md、自动记忆系统", ja: "システムプロンプト構築、CLAUDE.md、自動メモリ" },
+    hook: { en: "5 prompt layers assembled", zh: "5 层提示词拼装", ja: "5層プロンプト構築" },
     color: "var(--accent)",
   },
   {
@@ -117,6 +124,7 @@ const SECTIONS = (lang: "en" | "zh" | "ja") => [
     icon: VscTerminal,
     title: t("nav.fileMap", lang),
     desc: { en: "Complete directory structure with key files and their purposes", zh: "完整的目录结构及关键文件用途", ja: "主要ファイルとその目的の完全なディレクトリ構造" },
+    hook: { en: "1,884 source files", zh: "1884 个源文件", ja: "ソースファイル1,884個" },
     color: "var(--green)",
   },
   {
@@ -124,6 +132,7 @@ const SECTIONS = (lang: "en" | "zh" | "ja") => [
     icon: VscHeart,
     title: t("nav.funFacts", lang),
     desc: { en: "Easter eggs, buddy pets, the yoloClassifier, wizard comments", zh: "彩蛋、宠物伙伴、yoloClassifier、巫师注释", ja: "イースターエッグ、バディペット、yoloClassifier" },
+    hook: { en: "There's a duck inside", zh: "里面藏着一只鸭子", ja: "中にアヒルがいる" },
     color: "var(--pink)",
   },
 ];
@@ -779,12 +788,22 @@ export default function HomePage() {
                     <s.icon className="h-4 w-4" style={{ color: s.color }} />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <h2
-                      className="mb-0.5 text-sm font-semibold text-text-primary transition-colors"
-                      style={{ ["--hover-color" as string]: s.color }}
-                    >
-                      {s.title}
-                    </h2>
+                    <div className="mb-1 flex flex-wrap items-center gap-1.5">
+                      <h2 className="text-sm font-semibold text-text-primary transition-colors">
+                        {s.title}
+                      </h2>
+                      {s.hook && (
+                        <span
+                          className="text-[9px] font-semibold px-1.5 py-0.5 rounded-full leading-none"
+                          style={{
+                            color: s.color,
+                            background: `color-mix(in srgb, ${s.color} 10%, var(--bg-tertiary))`,
+                          }}
+                        >
+                          {s.hook[lang] || s.hook.en}
+                        </span>
+                      )}
+                    </div>
                     <p className="text-[11px] text-text-muted leading-relaxed">
                       {s.desc[lang] || s.desc.en}
                     </p>

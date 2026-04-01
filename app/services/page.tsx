@@ -1,6 +1,6 @@
 "use client";
 
-import { PageHeader, Card, CodeBlock, SectionNav, NextPage, RelatedPages, InsightCallout } from "@/components/Section";
+import { PageHeader, Card, CodeBlock, SectionNav, NextPage, RelatedPages, InsightCallout, TldrBox } from "@/components/Section";
 import { useTx } from "@/components/T";
 import { ghBlob, ghTree } from "@/lib/sourceLinks";
 import {
@@ -125,6 +125,31 @@ export default function ServicesPage() {
           { label: "bridge/", href: ghTree("bridge") },
           { label: "remote/", href: ghTree("remote") },
           { label: "mcp/", href: ghTree("services/mcp") },
+        ]}
+      />
+      <TldrBox
+        color="var(--green)"
+        items={[
+          tx(
+            "MCP is the largest single service at 470KB across 25 files — bigger than BashTool. External tool integration is a first-class architecture concern, not an afterthought.",
+            "MCP 是最大的单个服务，25 个文件共 470KB，比 BashTool 还大。外部工具集成是一等架构关注点。",
+            "MCPは25ファイル・470KBで最大のサービス。BashToolより大きい。外部ツール統合は後付けではなく設計の最優先事項。"
+          ),
+          tx(
+            "Compaction has 4 escalating strategies (Microcompact → Snipping → Autocompact → Collapse) that activate from lightest to heaviest. Without them, sessions would hit the token wall every few hours.",
+            "压缩有 4 种递进策略（微压缩 → 裁剪 → 自动压缩 → 折叠），从最轻量到最重量逐级触发。没有它们，会话几小时内就会撞上 token 墙。",
+            "圧縮には4段階の戦略（マイクロ圧縮 → スニッピング → 自動圧縮 → コラプス）があり、軽いものから順に発動します。これがなければセッションは数時間でトークン上限に達します。"
+          ),
+          tx(
+            "The API layer handles streaming, retries, beta-flag management, and prompt cache control — all transparently. Most developers never touch it directly, but it fires on every single turn.",
+            "API 层处理流式传输、重试、beta 标志管理和提示缓存控制——全部透明。大多数开发者不会直接接触它，但每轮都会触发它。",
+            "API層はストリーミング、再試行、betaフラグ管理、プロンプトキャッシュ制御を透過的に処理します。直接触れることはほぼないですが、毎ターン実行されています。"
+          ),
+          tx(
+            "Bridge/Remote (35KB, 20 files) is a second top-level execution path alongside the local REPL — remote sessions dispatch work through the same QueryEngine/query() core.",
+            "Bridge/Remote（35KB，20 个文件）是本地 REPL 之外的第二条顶层执行路径——远程会话通过同一套 QueryEngine/query() 核心分发工作。",
+            "Bridge/Remote（35KB・20ファイル）はローカルREPLと並ぶ第二のトップレベル実行経路です。リモートセッションも同じQueryEngine/query()コアで処理されます。"
+          ),
         ]}
       />
       <SectionNav title={tx("Jump To", "跳转到", "移動先")} sections={sections} />

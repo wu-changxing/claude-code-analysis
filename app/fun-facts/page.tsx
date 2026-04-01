@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Card, CodeBlock, SourceLinks, RelatedPages, NextPage } from "@/components/Section";
+import { Card, CodeBlock, SourceLinks, RelatedPages, NextPage, TldrBox } from "@/components/Section";
 import { useTx } from "@/components/T";
 import { useLang } from "@/lib/LangContext";
 import { t } from "@/lib/i18n";
@@ -68,6 +68,34 @@ export default function FunFactsPage() {
           className="mt-4"
         />
       </motion.div>
+
+      {/* TL;DR teaser */}
+      <TldrBox
+        color="var(--pink)"
+        title={lang === "zh" ? "你将发现" : lang === "ja" ? "発見できること" : "What you'll discover"}
+        items={[
+          lang === "zh"
+            ? "Claude Code 里有一只鸭子——它是 18 种可收集宠物伙伴之一（1% 概率是传奇），还能戴帽子"
+            : lang === "ja"
+            ? "Claude Codeの中にアヒルがいる — 18種のバディペットの一つ（伝説は確率1%）、帽子もかぶれる"
+            : "There's a duck inside Claude Code — one of 18 collectible buddy pets with rarity tiers, hats, and 5 stats including CHAOS and SNARK",
+          lang === "zh"
+            ? "yoloClassifier 是生产代码中真实存在的 ML 模型，用于判断 shell 命令是否足够安全可以自动执行"
+            : lang === "ja"
+            ? "yoloClassifierは本番コードに実在するMLモデルで、シェルコマンドが安全かを判定"
+            : "yoloClassifier is a real ML model in production code that decides if shell commands are safe to auto-approve",
+          lang === "zh"
+            ? "Fast Mode 内部叫企鹅模式（penguinModeOrgEnabled），会禁用扩展思考"
+            : lang === "ja"
+            ? "高速モードの内部名はペンギンモード（penguinModeOrgEnabled）、拡張思考を無効化"
+            : "Fast Mode is internally called Penguin Mode (penguinModeOrgEnabled) and disables extended thinking",
+          lang === "zh"
+            ? "Claude 会做梦——24小时 + 5个会话后，自动触发 /dream 命令进行记忆整合"
+            : lang === "ja"
+            ? "Claudeは夢を見る — 24時間+5セッション後に自動で /dream を実行してメモリを統合"
+            : "Claude auto-dreams: after 24h + 5 sessions, it automatically runs /dream to consolidate memories",
+        ]}
+      />
 
       {/* Scary Numbers - Visual Grid */}
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
