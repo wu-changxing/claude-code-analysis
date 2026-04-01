@@ -201,12 +201,34 @@ export default function HomePage() {
           <span>@anthropic-ai/claude-code v2.1.88</span>
         </div>
 
-        <h1 className="mb-4 text-3xl font-bold leading-tight tracking-tight text-text-primary sm:text-4xl">
+        <h1 className="mb-4 text-3xl font-bold leading-tight tracking-tight text-text-primary sm:text-4xl lg:text-5xl">
           {t("home.title", lang)}
         </h1>
         <p className="mb-5 max-w-2xl text-base text-text-secondary leading-relaxed">
           {t("home.desc", lang)}
         </p>
+
+        {/* What you'll discover teaser */}
+        <div className="mb-6 rounded-xl border border-border bg-bg-secondary p-4">
+          <div className="mb-2.5 text-[10px] font-semibold uppercase tracking-widest text-text-muted">
+            {lang === "zh" ? "你将发现" : lang === "ja" ? "発見できること" : "What you'll discover"}
+          </div>
+          <div className="flex flex-col gap-2 sm:flex-row sm:gap-4">
+            {[
+              { emoji: "🦆", en: "A duck lives inside Claude Code", zh: "Claude Code 里藏着一只鸭子", ja: "Claude Codeの中にアヒルがいる", color: "var(--orange)" },
+              { emoji: "🤖", en: "There's an ML classifier named yoloClassifier", zh: "有个 ML 分类器叫 yoloClassifier", ja: "yoloClassifierというML分類器がある", color: "var(--red)" },
+              { emoji: "🐧", en: "Fast Mode is secretly called Penguin Mode", zh: "快速模式内部叫企鹅模式", ja: "Fast Modeの内部名はPenguin Mode", color: "var(--accent)" },
+            ].map(({ emoji, en, zh, ja, color }) => (
+              <div key={en} className="flex items-center gap-2 flex-1">
+                <span className="text-base shrink-0">{emoji}</span>
+                <span className="text-[11px] text-text-secondary leading-tight" style={{ borderLeft: `2px solid ${color}`, paddingLeft: 8 }}>
+                  {lang === "zh" ? zh : lang === "ja" ? ja : en}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+
         <SourceLinks
           links={[
             { label: lang === "zh" ? "仓库" : lang === "ja" ? "リポジトリ" : "Repo", href: CLAUDE_CODE_REPO },
@@ -231,22 +253,24 @@ export default function HomePage() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.1 + i * 0.05 }}
-            className="relative overflow-hidden rounded-2xl border border-border bg-bg-secondary p-4 sm:p-5"
-            style={{ borderTop: `3px solid ${s.color}` }}
+            className="stat-card"
           >
-            <div className="mb-2 flex items-center gap-1.5">
-              <s.icon className="h-3.5 w-3.5 shrink-0" style={{ color: s.color }} />
-              <span className="text-[10px] uppercase tracking-wider text-text-muted font-medium">
-                {s.label}
-              </span>
+            <div className="stat-card-border" style={{ background: s.color }} />
+            <div className="pl-2">
+              <div className="mb-1.5 flex items-center gap-1.5">
+                <s.icon className="h-3.5 w-3.5 shrink-0" style={{ color: s.color }} />
+                <span className="text-[10px] uppercase tracking-wider text-text-muted font-medium">
+                  {s.label}
+                </span>
+              </div>
+              <div
+                className="text-3xl font-bold font-mono tracking-tight sm:text-4xl"
+                style={{ color: s.color }}
+              >
+                {s.value}
+              </div>
+              <div className="mt-1 text-[11px] text-text-muted">{s.sub[lang] || s.sub.en}</div>
             </div>
-            <div
-              className="text-3xl font-bold font-mono tracking-tight sm:text-4xl"
-              style={{ color: s.color }}
-            >
-              {s.value}
-            </div>
-            <div className="mt-1 text-[11px] text-text-muted">{s.sub[lang] || s.sub.en}</div>
             {/* Subtle bg decoration */}
             <div
               className="pointer-events-none absolute -right-4 -bottom-4 h-16 w-16 rounded-full opacity-5"
@@ -461,7 +485,7 @@ export default function HomePage() {
               transition={{ delay: 0.25 + i * 0.03 }}
             >
               <Link href={s.href} className="block group h-full">
-                <div className="flex h-full gap-3 rounded-xl border border-border bg-bg-secondary p-4 hover:border-accent/30 hover:shadow-sm transition-all">
+                <div className="section-hover-card flex h-full gap-3 rounded-xl border border-border bg-bg-secondary p-4 hover:border-accent/30 hover:shadow-sm hover:-translate-y-0.5">
                   <div
                     className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg"
                     style={{ background: `color-mix(in srgb, ${s.color} 12%, transparent)` }}
@@ -483,59 +507,94 @@ export default function HomePage() {
         </div>
       </motion.div>
 
+      {/* Related Pages */}
+      <motion.div
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.5 }}
+        className="mt-10"
+      >
+        <hr className="section-divider" />
+        <h2 className="mb-3 text-[10px] font-semibold uppercase tracking-widest text-text-muted">
+          {lang === "zh" ? "推荐阅读" : lang === "ja" ? "関連ページ" : "Recommended Reading"}
+        </h2>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+          {[
+            { href: "/architecture", icon: VscSymbolStructure, label: lang === "zh" ? "系统架构" : lang === "ja" ? "アーキテクチャ" : "Architecture", sub: lang === "zh" ? "从这里开始" : lang === "ja" ? "ここから開始" : "Start here", color: "var(--accent)" },
+            { href: "/query-loop", icon: VscServerProcess, label: lang === "zh" ? "查询循环" : lang === "ja" ? "クエリループ" : "Query Loop", sub: lang === "zh" ? "核心执行循环" : lang === "ja" ? "中核ループ" : "Core execution", color: "var(--green)" },
+            { href: "/fun-facts", icon: VscHeart, label: lang === "zh" ? "趣闻" : lang === "ja" ? "おもしろ事実" : "Fun Facts", sub: lang === "zh" ? "彩蛋与惊喜" : lang === "ja" ? "隠れた宝物" : "Easter eggs", color: "var(--pink)" },
+          ].map((p) => (
+            <Link key={p.href} href={p.href} className="related-card flex items-center gap-3">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg" style={{ background: `color-mix(in srgb, ${p.color} 12%, var(--bg-tertiary))` }}>
+                <p.icon className="h-4 w-4" style={{ color: p.color }} />
+              </div>
+              <div>
+                <div className="text-xs font-semibold text-text-primary">{p.label}</div>
+                <div className="text-[10px] text-text-muted">{p.sub}</div>
+              </div>
+              <HiOutlineArrowRight className="ml-auto h-3.5 w-3.5 shrink-0 text-text-muted" />
+            </Link>
+          ))}
+        </div>
+      </motion.div>
+
       {/* About Banner */}
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.55 }}
-        className="mt-12 rounded-2xl border border-border bg-bg-secondary p-5 sm:p-6"
+        className="mt-12 rounded-2xl border border-accent/20 overflow-hidden"
+        style={{
+          background: "linear-gradient(135deg, color-mix(in srgb, var(--accent) 6%, var(--bg-secondary)) 0%, color-mix(in srgb, var(--purple) 4%, var(--bg-secondary)) 100%)",
+        }}
       >
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-          <div className="max-w-xl">
-            <p className="mb-1 text-sm font-semibold text-text-primary">
-              {lang === "zh" ? "Claude Code 源码解析与重写" : lang === "ja" ? "Claude Code パターン研究と再実装" : "Claude Code Pattern Study & Rewrite"}
-            </p>
-            <p className="mb-2 text-[11px] text-text-muted">
-              {lang === "zh"
-                ? "由 @ConnectOnionAI 出品 — 开源 AI 代理框架"
-                : lang === "ja"
-                ? "@ConnectOnionAI によるオープンソースAIエージェント基盤"
-                : "By @ConnectOnionAI — Open-source AI Agent Framework"}
-            </p>
-            <p className="text-[11px] text-text-secondary leading-relaxed">
-              {lang === "zh"
-                ? "你的编程助手里藏了一只鸭子 — 从反 ptrace 防御到 AI 做梦机制，50 个你不知道的设计决策。"
-                : lang === "ja"
-                ? "あなたのコーディング助手の中にはアヒルがいる。anti-ptrace防御からAIの夢機構まで、知らなかった50の設計判断。"
-                : "Your coding assistant has a duck hiding inside — from anti-ptrace defense to AI dreaming, 50 design decisions you didn't know about."}
-            </p>
-          </div>
-          <div className="flex w-full shrink-0 flex-col gap-2 sm:w-auto sm:flex-row lg:flex-col lg:items-end">
-            <a
-              href="https://x.com/ConnectOnionAI"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full rounded-lg bg-text-primary px-4 py-2 text-center text-[11px] font-semibold text-bg-primary transition-opacity hover:opacity-90 sm:w-auto"
-            >
-              𝕏 @ConnectOnionAI
-            </a>
-            <div className="flex gap-2">
+        {/* Top accent bar */}
+        <div className="h-1 w-full" style={{ background: "linear-gradient(to right, var(--accent), var(--purple), var(--pink))" }} />
+        <div className="p-5 sm:p-7">
+          <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+            <div className="max-w-xl">
+              <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-accent/20 bg-bg-primary/60 px-3 py-1 text-[10px] font-semibold uppercase tracking-widest text-accent">
+                <span className="h-1.5 w-1.5 rounded-full bg-accent pulse-dot" />
+                {lang === "zh" ? "由 ConnectOnion 出品" : lang === "ja" ? "ConnectOnion 製作" : "By ConnectOnion"}
+              </div>
+              <h3 className="mb-2 text-base font-bold text-text-primary">
+                {lang === "zh" ? "Claude Code 源码解析与重写" : lang === "ja" ? "Claude Code パターン研究と再実装" : "Claude Code Pattern Study & Rewrite"}
+              </h3>
+              <p className="text-[12px] text-text-secondary leading-relaxed">
+                {lang === "zh"
+                  ? "你的编程助手里藏了一只鸭子 — 从反 ptrace 防御到 AI 做梦机制，50 个你不知道的设计决策。开源 AI 代理框架出品。"
+                  : lang === "ja"
+                  ? "あなたのコーディング助手の中にはアヒルがいる。anti-ptrace防御からAIの夢機構まで、知らなかった50の設計判断。"
+                  : "Your coding assistant has a duck hiding inside — from anti-ptrace defense to AI dreaming, 50 design decisions you didn't know about. By the Open-source AI Agent Framework team."}
+              </p>
+            </div>
+            <div className="flex w-full shrink-0 flex-col gap-2 sm:w-auto sm:flex-row lg:flex-col lg:items-end">
               <a
-                href="https://openonion.ai"
+                href="https://x.com/ConnectOnionAI"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-1 rounded-lg border border-border px-4 py-2 text-center text-[11px] font-medium text-text-secondary transition-colors hover:bg-bg-tertiary hover:text-text-primary"
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-text-primary px-5 py-2.5 text-center text-[12px] font-semibold text-bg-primary transition-opacity hover:opacity-90 shadow-sm"
               >
-                OpenOnion.ai
+                𝕏 @ConnectOnionAI
               </a>
-              <a
-                href="https://docs.connectonion.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex-1 rounded-lg border border-border px-4 py-2 text-center text-[11px] font-medium text-text-secondary transition-colors hover:bg-bg-tertiary hover:text-text-primary"
-              >
-                Docs
-              </a>
+              <div className="flex gap-2">
+                <a
+                  href="https://openonion.ai"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1 rounded-xl border border-border bg-bg-primary/70 px-4 py-2.5 text-center text-[11px] font-medium text-text-secondary transition-colors hover:bg-bg-tertiary hover:text-text-primary"
+                >
+                  OpenOnion.ai
+                </a>
+                <a
+                  href="https://docs.connectonion.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1 rounded-xl border border-border bg-bg-primary/70 px-4 py-2.5 text-center text-[11px] font-medium text-text-secondary transition-colors hover:bg-bg-tertiary hover:text-text-primary"
+                >
+                  Docs
+                </a>
+              </div>
             </div>
           </div>
         </div>

@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { ReactNode } from "react";
 import { HiOutlineChevronRight } from "react-icons/hi2";
 import { VscLinkExternal } from "react-icons/vsc";
+import Link from "next/link";
 
 type SourceLink = {
   label: string;
@@ -61,7 +62,7 @@ export function PageHeader({
       className="mb-8 pb-6 border-b border-border"
     >
       <div className="mb-3 flex flex-wrap items-center gap-2 text-[11px] text-text-muted">
-        <span>Claude Code</span>
+        <Link href="/" className="hover:text-accent transition-colors">Claude Code</Link>
         <HiOutlineChevronRight className="w-3 h-3" />
         <span className="text-text-secondary">{title}</span>
       </div>

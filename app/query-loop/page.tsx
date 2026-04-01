@@ -3,6 +3,7 @@
 import { PageHeader, Card, CodeBlock, SectionNav } from "@/components/Section";
 import { useTx } from "@/components/T";
 import { ghBlob } from "@/lib/sourceLinks";
+import Link from "next/link";
 import {
   VscServerProcess,
   VscExtensions,
@@ -339,35 +340,59 @@ class StreamingToolExecutor {
 
       {/* Recovery Cascade */}
       <Card title={tx("Error Recovery Cascade", "错误恢复级联", "エラー回復カスケード")} className="mb-6" accent="var(--orange)">
-        <p className="text-sm text-text-secondary mb-4">
+        <p className="text-sm text-text-secondary mb-5">
           {tx(
-            "When things go wrong, the loop tries 4 recovery strategies in order — each more aggressive:",
-            "发生问题时，循环会按顺序尝试 4 种恢复策略，而且一层比一层更激进：",
-            "問題が起きたとき、ループはより強力な4段階の回復戦略を順番に試します："
+            "When things go wrong, the loop tries 4 recovery strategies in order — each more aggressive. Think of it as a funnel: gentle first, nuclear last.",
+            "发生问题时，循环会按顺序尝试 4 种恢复策略，一层比一层更激进。可以想象成一个漏斗：先温和，最后才动用大招。",
+            "問題が起きたとき、ループはより強力な4段階の回復戦略を順番に試します。漏斗型: 穏やかなものから始まり、最後は強力な手段へ。"
           )}
         </p>
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
-          {recoverySteps.map(({ step, title, desc, color, icon: Icon }) => (
-            <div
-              key={step}
-              className="rounded-xl border p-4 text-center"
-              style={{
-                borderColor: `color-mix(in srgb, ${color} 30%, transparent)`,
-                background: `color-mix(in srgb, ${color} 6%, var(--bg-secondary))`,
-                borderTop: `3px solid ${color}`,
-              }}
-            >
-              <div
-                className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-xl"
-                style={{ background: `color-mix(in srgb, ${color} 18%, transparent)` }}
-              >
-                <Icon className="h-5 w-5" style={{ color }} />
+        {/* Funnel visual */}
+        <div className="flex flex-col items-center gap-0 mb-2">
+          {recoverySteps.map(({ step, title, desc, color, icon: Icon }, idx) => {
+            const width = [100, 85, 70, 55][idx];
+            return (
+              <div key={step} className="flex flex-col items-center w-full">
+                <div
+                  className="rounded-xl border p-3 sm:p-4 transition-all hover:shadow-sm"
+                  style={{
+                    width: `${width}%`,
+                    borderColor: `color-mix(in srgb, ${color} 35%, transparent)`,
+                    background: `color-mix(in srgb, ${color} 8%, var(--bg-secondary))`,
+                    borderLeft: `4px solid ${color}`,
+                  }}
+                >
+                  <div className="flex items-center gap-3">
+                    <div
+                      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl"
+                      style={{ background: `color-mix(in srgb, ${color} 20%, transparent)` }}
+                    >
+                      <Icon className="h-4 w-4" style={{ color }} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-0.5">
+                        <span
+                          className="text-[9px] font-bold rounded-full px-1.5 py-0.5"
+                          style={{ background: `color-mix(in srgb, ${color} 20%, transparent)`, color }}
+                        >
+                          {step}
+                        </span>
+                        <span className="text-xs font-semibold text-text-primary">{title}</span>
+                      </div>
+                      <p className="text-[10px] text-text-muted leading-relaxed">{desc}</p>
+                    </div>
+                  </div>
+                </div>
+                {idx < recoverySteps.length - 1 && (
+                  <div className="flex flex-col items-center py-0.5">
+                    <div className="h-2 w-px bg-border" />
+                    <span className="text-[9px] text-text-muted">↓ {tx("if still failing", "仍然失败则", "まだ失敗なら")}</span>
+                    <div className="h-2 w-px bg-border" />
+                  </div>
+                )}
               </div>
-              <div className="text-[10px] font-bold text-text-muted mb-1">{tx("Step", "步骤", "ステップ")} {step}</div>
-              <div className="text-xs font-semibold text-text-primary mb-1.5">{title}</div>
-              <p className="text-[10px] text-text-muted leading-relaxed">{desc}</p>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </Card>
 
@@ -473,13 +498,44 @@ handleStopHooks(...)
         accent="var(--purple)"
         summary={tx("How the 200K context window is actually divided.", "200K 上下文窗口是如何实际分配的。", "200K コンテキストウィンドウの実際の分割方法。")}
       >
-        <p className="text-[11px] text-text-muted mb-4">
+        <p className="text-[11px] text-text-muted mb-5">
           {tx(
             "Claude's 200K context window sounds vast — but compaction triggers well before you reach it. Here's the real math:",
             "Claude 的 200K 上下文窗口听起来很大，但压缩在达到上限之前很早就会触发。以下是真实的数学计算：",
             "200K のコンテキストウィンドウは広大に聞こえますが、到達するずっと前に圧縮がトリガーされます。実際の計算式："
           )}
         </p>
+
+        {/* Visual stacked bar */}
+        <div className="mb-5">
+          <div className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-text-muted">
+            {tx("200K token window breakdown", "200K token 窗口分配", "200K トークン内訳")}
+          </div>
+          <div className="h-8 w-full rounded-xl overflow-hidden flex border border-border/50">
+            <div className="h-full flex items-center justify-center text-[9px] font-bold text-white" style={{ width: "82%", background: "var(--green)" }}>
+              <span className="px-1 truncate hidden sm:block">{tx("Conversation ~164K", "对话 ~164K", "会話 ~164K")}</span>
+            </div>
+            <div className="h-full flex items-center justify-center text-[9px] font-bold text-white" style={{ width: "8%", background: "var(--orange)" }}>
+              <span className="hidden sm:block">{tx("Out", "输出", "出力")}</span>
+            </div>
+            <div className="h-full flex items-center justify-center text-[9px] font-bold text-white" style={{ width: "10%", background: "var(--red)" }}>
+              <span className="hidden sm:block">{tx("Buf", "缓冲", "バッファ")}</span>
+            </div>
+          </div>
+          <div className="mt-2 flex flex-wrap gap-3">
+            {[
+              { label: tx("Conversation", "对话", "会話"), tokens: "164K", color: "var(--green)" },
+              { label: tx("Max Output", "最大输出", "最大出力"), tokens: "16K", color: "var(--orange)" },
+              { label: tx("Summary Buffer", "摘要缓冲", "サマリーバッファ"), tokens: "20K", color: "var(--red)" },
+            ].map(({ label, tokens, color }) => (
+              <div key={label} className="flex items-center gap-1.5">
+                <span className="h-2.5 w-2.5 rounded-sm shrink-0" style={{ background: color }} />
+                <span className="text-[10px] text-text-muted">{label}: <strong className="text-text-primary">{tokens}</strong></span>
+              </div>
+            ))}
+          </div>
+        </div>
+
         <div className="space-y-2 mb-4">
           {[
             { label: tx("Total context window", "总上下文窗口", "総コンテキストウィンドウ"), value: "200,000", color: "var(--accent)", op: "=" },
@@ -510,7 +566,7 @@ handleStopHooks(...)
       </Card>
 
       {/* Message Example */}
-      <Card title={tx("Message Flow Example", "消息流示例", "メッセージフロー例")}>
+      <Card title={tx("Message Flow Example", "消息流示例", "メッセージフロー例")} className="mb-6">
         <CodeBlock
           code={`User: "write a hello.py file"
     ↓
@@ -542,6 +598,30 @@ query() loop iteration 1:
 Session ends, messages persisted to transcript.jsonl`}
         />
       </Card>
+
+      {/* Related Pages */}
+      <div className="mt-8">
+        <hr className="section-divider" />
+        <h2 className="mb-3 text-[10px] font-semibold uppercase tracking-widest text-text-muted">
+          {tx("Related", "相关页面", "関連ページ")}
+        </h2>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+          {[
+            { href: "/tools", label: tx("Tools", "工具", "ツール"), sub: tx("43 tools the loop executes", "循环执行的43个工具", "ループが実行する43ツール"), color: "var(--orange)" },
+            { href: "/permissions", label: tx("Permissions", "权限", "権限"), sub: tx("5-layer security gate", "5层安全网关", "5層セキュリティ"), color: "var(--red)" },
+            { href: "/services", label: tx("Services", "服务", "サービス"), sub: tx("MCP, compaction, memory", "MCP、压缩、记忆", "MCP・圧縮・メモリ"), color: "var(--green)" },
+          ].map((p) => (
+            <Link key={p.href} href={p.href} className="related-card flex items-center gap-3">
+              <div className="w-2 h-2 rounded-full shrink-0" style={{ background: p.color }} />
+              <div className="flex-1 min-w-0">
+                <div className="text-xs font-semibold text-text-primary">{p.label}</div>
+                <div className="text-[10px] text-text-muted">{p.sub}</div>
+              </div>
+              <VscServerProcess className="h-3.5 w-3.5 shrink-0 text-text-muted" />
+            </Link>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

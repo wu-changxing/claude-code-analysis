@@ -19,6 +19,10 @@
   --font-mono-stack: "SFMono-Regular", "IBM Plex Mono", ui-monospace, monospace;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 @theme inline {
   --color-bg-primary: var(--bg-primary);
   --color-bg-secondary: var(--bg-secondary);
@@ -205,4 +209,168 @@ pre .comment { color: #6b7280; font-style: italic; }
   .grid-cols-5 {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
   }
+}
+
+/* Section divider with gradient fade */
+.section-divider {
+  height: 1px;
+  border: none;
+  background: linear-gradient(to right, transparent, var(--border) 20%, var(--border) 80%, transparent);
+  margin: 2rem 0;
+}
+
+/* Key insight callout */
+.insight-callout {
+  border-left: 3px solid var(--accent);
+  background: color-mix(in srgb, var(--accent) 5%, var(--bg-secondary));
+  border-radius: 0 10px 10px 0;
+  padding: 12px 16px;
+}
+
+.insight-callout-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  margin-bottom: 6px;
+}
+
+/* Tag pills */
+.tag-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  font-size: 10px;
+  font-weight: 600;
+  border: 1px solid var(--border);
+  background: var(--bg-tertiary);
+  color: var(--text-muted);
+}
+
+/* Stat card with left border stripe */
+.stat-card {
+  position: relative;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  background: var(--bg-secondary);
+  padding: 16px 20px;
+  overflow: hidden;
+}
+
+.stat-card-border {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  border-radius: 16px 0 0 16px;
+}
+
+/* Related pages card hover */
+.related-card {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg-secondary);
+  padding: 14px 16px;
+  transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+}
+
+.related-card:hover {
+  border-color: color-mix(in srgb, var(--accent) 40%, var(--border));
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--accent) 8%, transparent);
+  transform: translateY(-1px);
+}
+
+/* Section card hover bottom border animation */
+.section-hover-card {
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+}
+
+.section-hover-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transition: transform 0.2s ease;
+  transform-origin: left;
+}
+
+.section-hover-card:hover::after {
+  transform: scaleX(1);
+}
+
+/* Funnel visual for permission layers */
+.funnel-layer {
+  position: relative;
+  transition: all 0.15s;
+}
+
+/* Architecture connection arrow */
+.arch-arrow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+
+.arch-arrow-line {
+  width: 2px;
+  height: 20px;
+  background: linear-gradient(to bottom, var(--border), color-mix(in srgb, var(--accent) 40%, var(--border)));
+}
+
+.arch-arrow-head {
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 6px solid color-mix(in srgb, var(--accent) 40%, var(--border));
+}
+
+/* Reading order connector line */
+.reading-order-connector {
+  position: relative;
+}
+
+.reading-order-connector::before {
+  content: '';
+  position: absolute;
+  left: 12px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: linear-gradient(to bottom, var(--border), transparent);
+}
+
+/* Danger meter for yoloClassifier */
+.danger-meter {
+  height: 6px;
+  border-radius: 3px;
+  background: linear-gradient(to right, var(--green), var(--orange), var(--red));
+  position: relative;
+  overflow: visible;
+}
+
+.danger-meter-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: transparent;
+  position: relative;
+}
+
+@keyframes danger-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(1.1); }
+}
+
+.danger-badge {
+  animation: danger-pulse 1.5s ease-in-out infinite;
 }

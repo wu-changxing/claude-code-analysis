@@ -186,58 +186,133 @@ function ModuleCard({ mod }: { mod: typeof MODULES[0] }) {
 
 function DependencyGraph() {
   const tx = useTx();
-  // Visual dependency grid — 3 tiers
-  const tier1 = MODULES.filter((m) => m.id === "query-engine" || m.id === "bridge" || m.id === "components");
-  const tier2 = MODULES.filter((m) => m.id === "tools" || m.id === "commands");
+  // Visual dependency grid — 4 tiers
+  const tier1 = MODULES.filter((m) => m.id === "query-engine");
+  const tier2 = MODULES.filter((m) => m.id === "tools" || m.id === "commands" || m.id === "components");
   const tier3 = MODULES.filter((m) => m.id === "services" || m.id === "permissions");
   const tier4 = MODULES.filter((m) => m.id === "utils");
+  const bridge = MODULES.filter((m) => m.id === "bridge");
 
-  const TierRow = ({ mods, label }: { mods: typeof MODULES; label: string }) => (
-    <div>
-      <div className="text-[9px] font-semibold uppercase tracking-widest text-text-muted mb-2 text-center">{label}</div>
-      <div className="flex justify-center gap-2 flex-wrap">
-        {mods.map((m) => {
-          const Icon = m.icon;
-          return (
-            <Link
-              key={m.id}
-              href={`/modules/${m.id}`}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-xl border-2 font-semibold text-xs text-text-primary hover:opacity-80 transition-all hover:shadow-sm"
-              style={{
-                borderColor: m.color,
-                background: `color-mix(in srgb, ${m.color} 12%, var(--bg-secondary))`,
-                minWidth: 110,
-              }}
-            >
-              <Icon className="w-3 h-3 shrink-0" style={{ color: m.color }} />
-              <span>{m.name}</span>
-            </Link>
-          );
-        })}
-      </div>
+  const TierBox = ({ mod, size = "md" }: { mod: typeof MODULES[0]; size?: "lg" | "md" | "sm" }) => {
+    const Icon = mod.icon;
+    const [fileCt] = mod.badge.split(" ·");
+    return (
+      <Link
+        href={`/modules/${mod.id}`}
+        className="group flex flex-col items-center gap-1.5 rounded-xl border-2 px-3 py-2.5 font-semibold text-text-primary hover:shadow-md transition-all hover:-translate-y-0.5"
+        style={{
+          borderColor: mod.color,
+          background: `color-mix(in srgb, ${mod.color} 10%, var(--bg-secondary))`,
+          minWidth: size === "lg" ? 140 : size === "md" ? 110 : 90,
+        }}
+      >
+        <div className="flex items-center gap-1.5">
+          <Icon className="w-3.5 h-3.5 shrink-0" style={{ color: mod.color }} />
+          <span className={size === "lg" ? "text-sm" : "text-xs"}>{mod.name}</span>
+        </div>
+        <span
+          className="text-[8px] font-mono px-1.5 py-0.5 rounded-full"
+          style={{
+            background: `color-mix(in srgb, ${mod.color} 15%, var(--bg-tertiary))`,
+            color: mod.color,
+          }}
+        >
+          {fileCt.trim()}
+        </span>
+      </Link>
+    );
+  };
+
+  const TierLabel = ({ label, desc }: { label: string; desc: string }) => (
+    <div className="text-center">
+      <div className="text-[9px] font-bold uppercase tracking-widest text-text-muted">{label}</div>
+      <div className="text-[9px] text-text-muted opacity-70">{desc}</div>
     </div>
   );
 
-  const ArrowRow = () => (
-    <div className="flex justify-center">
-      <div className="flex flex-col items-center gap-0.5">
-        <div className="h-5 w-px bg-border" />
-        <span className="text-text-muted text-xs">↓</span>
-        <div className="h-5 w-px bg-border" />
-      </div>
+  const ConnectorArrow = ({ wide = false }: { wide?: boolean }) => (
+    <div className="flex justify-center items-center gap-4 my-1">
+      {wide ? (
+        <>
+          <div className="arch-arrow"><div className="arch-arrow-line" /><div className="arch-arrow-head" /></div>
+          <div className="arch-arrow"><div className="arch-arrow-line" /><div className="arch-arrow-head" /></div>
+          <div className="arch-arrow"><div className="arch-arrow-line" /><div className="arch-arrow-head" /></div>
+        </>
+      ) : (
+        <div className="arch-arrow"><div className="arch-arrow-line" /><div className="arch-arrow-head" /></div>
+      )}
     </div>
   );
 
   return (
-    <div className="space-y-3 py-2">
-      <TierRow mods={tier1} label={tx("Top — Frontends & Orchestrator", "顶层 — 前端与编排层", "トップ — フロントエンド & オーケストレーター")} />
-      <ArrowRow />
-      <TierRow mods={tier2} label={tx("Mid — Tools & Commands", "中层 — 工具与命令", "中間 — ツール & コマンド")} />
-      <ArrowRow />
-      <TierRow mods={tier3} label={tx("Lower — Services & Permissions", "下层 — 服务与权限", "下層 — サービス & 権限")} />
-      <ArrowRow />
-      <TierRow mods={tier4} label={tx("Foundation — Utils (leaf)", "基础 — Utils（叶子）", "基盤 — Utils（葉）")} />
-      <p className="text-center text-[10px] text-text-muted pt-1 italic">
+    <div className="py-3">
+      {/* Bridge — floats to the side on sm+, stacks above on mobile */}
+      <div className="flex flex-col items-center gap-3">
+
+        {/* Tier 0: Bridge (wraps query-engine from above) */}
+        <div className="w-full flex flex-col sm:flex-row items-center justify-center gap-3">
+          <div className="flex flex-col items-center gap-1">
+            <TierLabel
+              label={tx("Bridge", "桥接层", "ブリッジ")}
+              desc={tx("SDK entry → orchestrator", "SDK 入口", "SDK入口")}
+            />
+            <div className="flex gap-2 flex-wrap justify-center">
+              {bridge.map((m) => <TierBox key={m.id} mod={m} size="sm" />)}
+            </div>
+          </div>
+          <div className="hidden sm:block text-text-muted text-xs px-2">→</div>
+          <div className="flex flex-col items-center gap-1">
+            <TierLabel
+              label={tx("Top — Orchestrator", "顶层 — 编排", "トップ — オーケストレーター")}
+              desc={tx("every message passes here", "所有消息经过此处", "すべてのメッセージが通過")}
+            />
+            <div className="flex gap-2 flex-wrap justify-center">
+              {tier1.map((m) => <TierBox key={m.id} mod={m} size="lg" />)}
+            </div>
+          </div>
+        </div>
+
+        <ConnectorArrow wide />
+
+        {/* Tier 2: Tools, Commands, Components */}
+        <div className="flex flex-col items-center gap-1">
+          <TierLabel
+            label={tx("Mid — Capabilities", "中层 — 能力", "中間 — 機能")}
+            desc={tx("tools, commands, UI", "工具、命令、界面", "ツール・コマンド・UI")}
+          />
+          <div className="flex gap-2 flex-wrap justify-center">
+            {tier2.map((m) => <TierBox key={m.id} mod={m} />)}
+          </div>
+        </div>
+
+        <ConnectorArrow wide />
+
+        {/* Tier 3: Services, Permissions */}
+        <div className="flex flex-col items-center gap-1">
+          <TierLabel
+            label={tx("Lower — Infrastructure", "下层 — 基础设施", "下層 — インフラ")}
+            desc={tx("services, security", "服务与安全", "サービス・セキュリティ")}
+          />
+          <div className="flex gap-2 flex-wrap justify-center">
+            {tier3.map((m) => <TierBox key={m.id} mod={m} />)}
+          </div>
+        </div>
+
+        <ConnectorArrow />
+
+        {/* Tier 4: Utils */}
+        <div className="flex flex-col items-center gap-1">
+          <TierLabel
+            label={tx("Foundation — Utils", "基础 — 工具集", "基盤 — ユーティリティ")}
+            desc={tx("no inbound dependencies", "无内部依赖", "内部依存なし")}
+          />
+          <div className="flex gap-2 flex-wrap justify-center">
+            {tier4.map((m) => <TierBox key={m.id} mod={m} />)}
+          </div>
+        </div>
+
+      </div>
+      <p className="text-center text-[10px] text-text-muted pt-3 italic">
         {tx("Arrows show dependency direction (A → B means A depends on B)", "箭头表示依赖方向（A → B 表示 A 依赖 B）", "矢印は依存方向（A → B は A が B に依存）")}
       </p>
     </div>
@@ -296,38 +371,46 @@ export default function ModulesIndexPage() {
           "基盤から上に向かって学びましょう。各モジュールは下のモジュールの上に構築されています。"
         )}
       >
-        <div className="space-y-2">
-          {READING_ORDER.map(({ step, id, reason }) => {
-            const mod = MODULES.find((m) => m.id === id)!;
-            const Icon = mod.icon;
-            return (
-              <Link
-                key={id}
-                href={`/modules/${id}`}
-                className="flex items-start gap-3 rounded-lg p-3 border border-border/60 hover:border-border hover:bg-bg-tertiary/30 transition-all group"
-              >
-                <div
-                  className="w-6 h-6 rounded-lg text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5"
-                  style={{ background: `color-mix(in srgb, ${mod.color} 20%, var(--bg-tertiary))`, color: mod.color }}
+        <div className="relative">
+          {/* Connecting line */}
+          <div className="absolute left-[15px] top-4 bottom-4 w-px bg-gradient-to-b from-border via-border to-transparent" />
+          <div className="space-y-1.5 pl-0">
+            {READING_ORDER.map(({ step, id, reason }) => {
+              const mod = MODULES.find((m) => m.id === id)!;
+              const Icon = mod.icon;
+              return (
+                <Link
+                  key={id}
+                  href={`/modules/${id}`}
+                  className="relative flex items-start gap-3 rounded-lg p-3 border border-border/60 hover:border-border hover:bg-bg-tertiary/30 transition-all group"
                 >
-                  {step}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-0.5">
-                    <Icon className="w-3 h-3 shrink-0" style={{ color: mod.color }} />
-                    <span className="text-xs font-semibold text-text-primary group-hover:underline">{mod.name}</span>
-                    <span className="text-[9px] font-mono text-text-muted">{mod.badge}</span>
+                  <div
+                    className="relative z-10 w-7 h-7 rounded-full text-[10px] font-bold flex items-center justify-center shrink-0 border-2"
+                    style={{
+                      background: `color-mix(in srgb, ${mod.color} 15%, var(--bg-primary))`,
+                      borderColor: mod.color,
+                      color: mod.color,
+                    }}
+                  >
+                    {step}
                   </div>
-                  <p className="text-[10px] text-text-muted leading-relaxed">{reason}</p>
-                </div>
-              </Link>
-            );
-          })}
+                  <div className="flex-1 min-w-0 pt-0.5">
+                    <div className="flex flex-wrap items-center gap-2 mb-0.5">
+                      <Icon className="w-3 h-3 shrink-0" style={{ color: mod.color }} />
+                      <span className="text-xs font-semibold text-text-primary group-hover:text-accent transition-colors">{mod.name}</span>
+                      <span className="tag-pill">{mod.badge}</span>
+                    </div>
+                    <p className="text-[10px] text-text-muted leading-relaxed">{reason}</p>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
         </div>
       </Card>
 
       {/* Quick stats */}
-      <Card title={tx("Codebase at a Glance", "代码库概览", "コードベース概要")} className="mb-6">
+      <Card title={tx("Codebase at a Glance", "代码库概览", "コードベース概要")} className="mb-6" accent="var(--accent)">
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           {[
             { label: tx("Largest module", "最大模块", "最大モジュール"), value: "Components", sub: "346 files", color: "var(--purple)" },
@@ -347,6 +430,30 @@ export default function ModulesIndexPage() {
           ))}
         </div>
       </Card>
+
+      {/* Related Pages */}
+      <div className="mt-8">
+        <hr className="section-divider" />
+        <h2 className="mb-3 text-[10px] font-semibold uppercase tracking-widest text-text-muted">
+          {tx("Related", "相关页面", "関連ページ")}
+        </h2>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+          {[
+            { href: "/architecture", label: tx("Architecture", "系统架构", "アーキテクチャ"), sub: tx("Full system overview", "完整系统视图", "全体アーキテクチャ"), color: "var(--accent)" },
+            { href: "/tools", label: tx("Tools", "工具", "ツール"), sub: tx("43 built-in tools", "43个内置工具", "43の組み込みツール"), color: "var(--orange)" },
+            { href: "/services", label: tx("Services", "服务", "サービス"), sub: tx("Background infrastructure", "后台基础设施", "バックグラウンドインフラ"), color: "var(--green)" },
+          ].map((p) => (
+            <Link key={p.href} href={p.href} className="related-card flex items-center gap-3">
+              <div className="w-2 h-2 rounded-full shrink-0" style={{ background: p.color }} />
+              <div className="flex-1 min-w-0">
+                <div className="text-xs font-semibold text-text-primary">{p.label}</div>
+                <div className="text-[10px] text-text-muted">{p.sub}</div>
+              </div>
+              <VscSymbolStructure className="h-3.5 w-3.5 shrink-0 text-text-muted" />
+            </Link>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

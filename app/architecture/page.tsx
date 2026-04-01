@@ -464,44 +464,52 @@ export default function ArchitecturePage() {
       </Card>
 
       {/* Module Size Breakdown */}
-      <Card title={tx("Module Size Breakdown", "模块规模拆解", "モジュール別規模")} className="mb-6">
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-4">
+      <Card title={tx("Module Size Breakdown", "模块规模拆解", "モジュール別規模")} className="mb-6" accent="var(--purple)">
+        <div className="space-y-2">
           {[
-            { icon: VscExtensions, name: tx("Tools", "工具", "ツール"), files: 140, lines: "~65K", color: "var(--orange)", href: "/modules/tools" },
-            { icon: VscDatabase, name: tx("Services", "服务", "サービス"), files: 110, lines: "~80K", color: "var(--green)", href: "/modules/services" },
-            { icon: VscCode, name: tx("Utils", "工具库", "ユーティリティ"), files: 220, lines: "~60K", color: "var(--accent)", href: "/modules/utils" },
-            { icon: VscSymbolStructure, name: tx("Components", "组件", "コンポーネント"), files: 346, lines: "~40K", color: "var(--purple)", href: "/modules/components" },
-            { icon: VscTerminalBash, name: tx("Commands", "命令", "コマンド"), files: 110, lines: "~8K", color: "var(--orange)", href: "/modules/commands" },
-            { icon: VscServerProcess, name: tx("Query/Engine", "查询/引擎", "Query/Engine"), files: 15, lines: "~15K", color: "var(--green)", href: "/modules/query-engine" },
-            { icon: VscShield, name: tx("Permissions", "权限", "権限"), files: 30, lines: "~20K", color: "var(--red)", href: "/modules/permissions" },
-            { icon: VscDatabase, name: tx("Bridge", "桥接层", "ブリッジ"), files: 12, lines: "~13K", color: "var(--pink)", href: "/modules/bridge" },
+            { icon: VscSymbolStructure, name: tx("Components", "组件", "コンポーネント"), files: 346, linesK: 40, color: "var(--purple)", href: "/modules/components" },
+            { icon: VscCode, name: tx("Utils", "工具库", "ユーティリティ"), files: 220, linesK: 60, color: "var(--accent)", href: "/modules/utils" },
+            { icon: VscExtensions, name: tx("Tools", "工具", "ツール"), files: 140, linesK: 65, color: "var(--orange)", href: "/modules/tools" },
+            { icon: VscTerminalBash, name: tx("Commands", "命令", "コマンド"), files: 110, linesK: 8, color: "var(--orange)", href: "/modules/commands" },
+            { icon: VscDatabase, name: tx("Services", "服务", "サービス"), files: 110, linesK: 80, color: "var(--green)", href: "/modules/services" },
+            { icon: VscShield, name: tx("Permissions", "权限", "権限"), files: 30, linesK: 20, color: "var(--red)", href: "/modules/permissions" },
+            { icon: VscServerProcess, name: tx("Query/Engine", "查询/引擎", "Query/Engine"), files: 15, linesK: 15, color: "var(--green)", href: "/modules/query-engine" },
+            { icon: VscDatabase, name: tx("Bridge", "桥接层", "ブリッジ"), files: 12, linesK: 13, color: "var(--pink)", href: "/modules/bridge" },
           ].map((m) => (
             <Link
-              key={m.name}
+              key={m.href}
               href={m.href}
-              className="rounded-xl border border-border/50 p-3 block hover:border-border transition-colors group"
-              style={{ borderTop: `2px solid ${m.color}` }}
+              className="flex items-center gap-3 rounded-lg border border-border/50 px-3 py-2.5 hover:border-border hover:bg-bg-tertiary/30 transition-all group"
             >
               <div
-                className="mb-2 flex h-8 w-8 items-center justify-center rounded-lg"
+                className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg"
                 style={{ background: `color-mix(in srgb, ${m.color} 14%, transparent)` }}
               >
-                <m.icon className="h-4 w-4" style={{ color: m.color }} />
+                <m.icon className="h-3.5 w-3.5" style={{ color: m.color }} />
               </div>
-              <div className="text-xs font-semibold text-text-primary group-hover:text-accent transition-colors">{m.name}</div>
-              <div className="mt-0.5 text-[10px] text-text-muted">
-                {m.files} {tx("files", "个文件", "ファイル")} · {m.lines}
+              <div className="w-24 shrink-0">
+                <div className="text-xs font-semibold text-text-primary group-hover:text-accent transition-colors">{m.name}</div>
+                <div className="text-[9px] text-text-muted">{m.files} {tx("files", "个", "ファイル")}</div>
               </div>
-              <div className="mt-1.5 text-[9px] text-accent opacity-0 group-hover:opacity-100 transition-opacity font-medium">
-                {tx("→ View details", "→ 查看详情", "→ 詳細を見る")}
+              {/* Mini bar chart */}
+              <div className="flex-1 h-3 bg-bg-primary rounded-full overflow-hidden border border-border/50">
+                <div
+                  className="h-full rounded-full transition-all"
+                  style={{
+                    width: `${Math.max((m.linesK / 80) * 100, 8)}%`,
+                    background: `color-mix(in srgb, ${m.color} 70%, transparent)`,
+                  }}
+                />
               </div>
+              <span className="w-10 shrink-0 text-right text-[10px] font-mono text-text-muted">~{m.linesK}K</span>
             </Link>
           ))}
         </div>
+        <p className="mt-3 text-[10px] text-text-muted italic">{tx("Bar = relative lines of code", "条形图 = 相对代码行数", "バー = 相対的なコード行数")}</p>
       </Card>
 
       {/* Tech Stack */}
-      <Card title={tx("Technology Stack", "技术栈", "技術スタック")} className="mb-6">
+      <Card title={tx("Technology Stack", "技术栈", "技術スタック")} className="mb-6" accent="var(--green)">
         <Table
           headers={[
             tx("Technology", "技术", "技術"),
@@ -521,6 +529,30 @@ export default function ArchitecturePage() {
           ]}
         />
       </Card>
+
+      {/* Related Pages */}
+      <div className="mt-8">
+        <hr className="section-divider" />
+        <h2 className="mb-3 text-[10px] font-semibold uppercase tracking-widest text-text-muted">
+          {tx("Related", "相关页面", "関連ページ")}
+        </h2>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+          {[
+            { href: "/modules", label: tx("Module Map", "模块地图", "モジュールマップ"), sub: tx("8 modules with dependencies", "8个模块与依赖关系", "8モジュールと依存関係"), color: "var(--accent)" },
+            { href: "/query-loop", label: tx("Query Loop", "查询循环", "クエリループ"), sub: tx("How the core loop works", "核心循环如何运作", "コアループの仕組み"), color: "var(--green)" },
+            { href: "/tools", label: tx("Tools", "工具", "ツール"), sub: tx("43 built-in tools", "43个内置工具", "43の組み込みツール"), color: "var(--orange)" },
+          ].map((p) => (
+            <Link key={p.href} href={p.href} className="related-card flex items-center gap-3">
+              <div className="w-2 h-2 rounded-full shrink-0" style={{ background: p.color }} />
+              <div className="flex-1 min-w-0">
+                <div className="text-xs font-semibold text-text-primary">{p.label}</div>
+                <div className="text-[10px] text-text-muted">{p.sub}</div>
+              </div>
+              <VscArrowDown className="ml-auto h-3.5 w-3.5 shrink-0 rotate-[-90deg] text-text-muted" />
+            </Link>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

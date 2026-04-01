@@ -177,38 +177,76 @@ export default function PermissionsPage() {
             key={s.label}
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-bg-secondary border border-border rounded-xl p-4"
+            className="stat-card"
           >
-            <s.icon className="w-4 h-4 mb-2" style={{ color: s.color }} />
-            <div className="text-2xl font-bold font-mono" style={{ color: s.color }}>{s.value}</div>
-            <div className="text-[10px] text-text-muted mt-0.5">{s.label}</div>
+            <div className="stat-card-border" style={{ background: s.color }} />
+            <div className="pl-2">
+              <s.icon className="w-4 h-4 mb-2" style={{ color: s.color }} />
+              <div className="text-2xl font-bold font-mono" style={{ color: s.color }}>{s.value}</div>
+              <div className="text-[10px] text-text-muted mt-0.5">{s.label}</div>
+            </div>
           </motion.div>
         ))}
       </div>
 
-      {/* Key Insight */}
+      {/* yoloClassifier fun treatment */}
       <motion.div
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
-        className="mb-6 rounded-xl border-l-4 bg-bg-secondary p-4 sm:p-5"
-        style={{ borderLeftColor: "var(--accent)" }}
+        className="mb-6 rounded-xl border bg-bg-secondary overflow-hidden"
+        style={{ borderColor: "color-mix(in srgb, var(--pink) 40%, var(--border))" }}
       >
-        <div className="text-[10px] font-semibold uppercase tracking-wider text-accent mb-1.5">
-          {tx("Key Insight", "核心洞察", "重要なポイント")}
+        <div className="border-b px-4 py-3 flex items-center justify-between" style={{ borderColor: "color-mix(in srgb, var(--pink) 20%, var(--border))", background: "color-mix(in srgb, var(--pink) 5%, var(--bg-secondary))" }}>
+          <div className="flex items-center gap-2">
+            <HiOutlineCpuChip className="w-4 h-4" style={{ color: "var(--pink)" }} />
+            <span className="text-xs font-bold" style={{ color: "var(--pink)" }}>yoloClassifier</span>
+            <span className="danger-badge tag-pill text-[9px]" style={{ background: "color-mix(in srgb, var(--red) 12%, transparent)", color: "var(--red)", borderColor: "color-mix(in srgb, var(--red) 30%, transparent)" }}>
+              🔥 {tx("Production ML", "生产级ML", "本番ML")}
+            </span>
+          </div>
+          <a
+            href="https://github.com/anthropics/claude-code/blob/main/src/utils/permissions/yoloClassifier.ts"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[10px] text-text-muted hover:text-accent transition-colors"
+          >
+            utils/permissions/yoloClassifier.ts →
+          </a>
         </div>
-        <p className="text-sm text-text-secondary leading-relaxed">
-          {tx(
-            "The ML classifier is literally named ",
-            "那个 ML 分类器在源码里就叫 ",
-            "このML分類器はソースコードで文字通り "
-          )}
-          <code className="text-accent font-semibold">yoloClassifier</code>
-          {tx(
-            " in the source code. File: utils/permissions/yoloClassifier.ts. You can't make this up — Anthropic engineers named a production safety system after an internet meme.",
-            "。文件：utils/permissions/yoloClassifier.ts。Anthropic 的工程师把生产级安全系统命名成了一个网络梗，这是真的。",
-            " です。ファイル: utils/permissions/yoloClassifier.ts。Anthropicのエンジニアが本番の安全システムをネットミームで命名しました。"
-          )}
-        </p>
+        <div className="p-4 sm:p-5">
+          <div className="flex flex-col sm:flex-row gap-4 sm:items-center">
+            <div className="flex-1">
+              <p className="text-sm text-text-secondary leading-relaxed mb-3">
+                {tx(
+                  "The ML classifier is literally named ",
+                  "那个 ML 分类器在源码里就叫 ",
+                  "このML分類器はソースコードで文字通り "
+                )}
+                <code className="font-semibold" style={{ color: "var(--pink)" }}>yoloClassifier</code>
+                {tx(
+                  ". Anthropic engineers named a production safety system after an internet meme. It auto-approves safe patterns like 'git status' or 'ls'.",
+                  "。Anthropic 的工程师把生产级安全系统命名成了一个网络梗，它负责自动批准 'git status'、'ls' 等安全指令。",
+                  "。Anthropicのエンジニアが本番の安全システムをネットミームで命名。'git status'や'ls'などの安全パターンを自動承認します。"
+                )}
+              </p>
+              {/* Danger meter */}
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className="text-[10px] text-text-muted">{tx("Safety confidence", "安全置信度", "安全確信度")}</span>
+                  <span className="text-[10px] font-semibold" style={{ color: "var(--green)" }}>YOLO → allow</span>
+                </div>
+                <div className="danger-meter w-full">
+                  <div className="relative w-full h-6 rounded-lg overflow-hidden" style={{ background: "linear-gradient(to right, color-mix(in srgb, var(--green) 30%, var(--bg-tertiary)), color-mix(in srgb, var(--orange) 30%, var(--bg-tertiary)), color-mix(in srgb, var(--red) 30%, var(--bg-tertiary)))", border: "1px solid var(--border)" }}>
+                    <div className="absolute top-0 left-0 h-full rounded-lg" style={{ width: "72%", background: "linear-gradient(to right, var(--green), color-mix(in srgb, var(--green) 60%, var(--orange)))", opacity: 0.6 }} />
+                    <div className="absolute inset-0 flex items-center px-3">
+                      <span className="text-[9px] font-bold text-white" style={{ textShadow: "0 1px 2px rgba(0,0,0,0.5)" }}>git status, ls, cat → ✓ auto-allow</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </motion.div>
 
       {/* 5-Layer Pipeline Diagram */}
@@ -229,42 +267,52 @@ export default function PermissionsPage() {
           )}
         </p>
 
-        {/* Visual pipeline */}
-        <div className="space-y-0">
-          {layers.map((layer, idx) => (
-            <div key={layer.num} className="flex flex-col items-start">
-              <div
-                className="w-full rounded-xl border p-4 sm:p-5"
-                style={{
-                  background: `color-mix(in srgb, ${layer.color} 6%, var(--bg-tertiary))`,
-                  borderColor: `color-mix(in srgb, ${layer.color} 20%, var(--border))`,
-                }}
-              >
-                <div className="flex items-start gap-3">
-                  <div
-                    className="w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold text-white shrink-0 mt-0.5"
-                    style={{ background: layer.color }}
-                  >
-                    {layer.num}
-                  </div>
-                  <div className="min-w-0">
-                    <code className="text-sm font-semibold block mb-1" style={{ color: layer.color }}>
-                      {layer.fn}
-                    </code>
-                    <p className="text-[11px] text-text-muted leading-relaxed">{layer.desc}</p>
+        {/* Visual funnel pipeline — widest at top, narrowest at bottom */}
+        <div className="flex flex-col items-center gap-0">
+          <div className="text-[9px] text-text-muted mb-1.5 text-center font-semibold uppercase tracking-wider">
+            {tx("← all requests enter here", "← 所有请求从这里进入", "← すべてのリクエスト")}
+          </div>
+          {layers.map((layer, idx) => {
+            const widthPct = [100, 92, 82, 72, 62][idx];
+            return (
+              <div key={layer.num} className="flex flex-col items-center w-full">
+                <div
+                  className="rounded-xl border p-3 sm:p-4 transition-all hover:shadow-sm"
+                  style={{
+                    width: `${widthPct}%`,
+                    background: `color-mix(in srgb, ${layer.color} 6%, var(--bg-tertiary))`,
+                    borderColor: `color-mix(in srgb, ${layer.color} 25%, var(--border))`,
+                    borderLeft: `4px solid ${layer.color}`,
+                  }}
+                >
+                  <div className="flex items-start gap-3">
+                    <div
+                      className="w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold text-white shrink-0 mt-0.5"
+                      style={{ background: layer.color }}
+                    >
+                      {layer.num}
+                    </div>
+                    <div className="min-w-0">
+                      <code className="text-sm font-semibold block mb-0.5" style={{ color: layer.color }}>
+                        {layer.fn}
+                      </code>
+                      <p className="text-[11px] text-text-muted leading-relaxed">{layer.desc}</p>
+                    </div>
                   </div>
                 </div>
+                {idx < layers.length - 1 && (
+                  <div className="flex flex-col items-center py-1">
+                    <div className="h-2 w-px bg-border" />
+                    <span className="text-[9px] text-text-muted italic">{tx("if no decision...", "若无决策...", "判定なければ...")}</span>
+                    <div className="h-2 w-px bg-border" />
+                  </div>
+                )}
               </div>
-              {idx < layers.length - 1 && (
-                <div className="flex items-center gap-2 ml-3 py-1.5">
-                  <HiOutlineArrowDown className="w-3.5 h-3.5 text-text-muted" />
-                  <span className="text-[10px] text-text-muted italic">
-                    {tx("if no decision yet...", "若尚未决策...", "判定なければ...")}
-                  </span>
-                </div>
-              )}
-            </div>
-          ))}
+            );
+          })}
+          <div className="mt-2 text-[9px] text-text-muted text-center font-semibold uppercase tracking-wider">
+            {tx("only unresolved requests reach user dialog ↑", "只有未决策的请求才到达用户对话框", "判定なければユーザーダイアログへ")}
+          </div>
         </div>
 
         {/* Result bar */}
@@ -400,6 +448,7 @@ pushToQueue()          // Queue management for UI`}
       {/* Filesystem Permissions */}
       <Card
         title={tx("Filesystem Permission Checks", "文件系统权限检查", "ファイルシステム権限チェック")}
+        className="mb-6"
         links={[
           { label: "filesystem.ts", href: ghBlob("utils/permissions/filesystem.ts") },
           { label: "FileReadTool.ts", href: ghBlob("tools/FileReadTool/FileReadTool.ts") },
@@ -434,6 +483,30 @@ Blocked patterns:
   /proc/self/fd/*                          // stdio aliases`}
         />
       </Card>
+
+      {/* Related Pages */}
+      <div className="mt-8">
+        <hr className="section-divider" />
+        <h2 className="mb-3 text-[10px] font-semibold uppercase tracking-widest text-text-muted">
+          {tx("Related", "相关页面", "関連ページ")}
+        </h2>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+          {[
+            { href: "/tools", label: tx("Tools", "工具", "ツール"), sub: tx("BashTool: 300KB of security code", "BashTool: 300KB安全代码", "BashTool: 300KBのセキュリティ"), color: "var(--orange)" },
+            { href: "/fun-facts", label: tx("Fun Facts", "趣闻", "おもしろ事実"), sub: tx("yoloClassifier & more easter eggs", "yoloClassifier等彩蛋", "yoloClassifierと隠し機能"), color: "var(--pink)" },
+            { href: "/query-loop", label: tx("Query Loop", "查询循环", "クエリループ"), sub: tx("How permissions gate tool execution", "权限如何控制工具执行", "権限がツール実行を制御する仕組み"), color: "var(--red)" },
+          ].map((p) => (
+            <a key={p.href} href={p.href} className="related-card flex items-center gap-3">
+              <div className="w-2 h-2 rounded-full shrink-0" style={{ background: p.color }} />
+              <div className="flex-1 min-w-0">
+                <div className="text-xs font-semibold text-text-primary">{p.label}</div>
+                <div className="text-[10px] text-text-muted">{p.sub}</div>
+              </div>
+              <VscShield className="h-3.5 w-3.5 shrink-0 text-text-muted" />
+            </a>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
