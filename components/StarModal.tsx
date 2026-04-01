@@ -29,46 +29,65 @@ export function StarModal() {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 20, scale: 0.95 }}
           transition={{ type: "spring", stiffness: 300, damping: 25 }}
-          className="fixed bottom-5 right-5 z-50 w-80 rounded-2xl border border-border bg-bg-secondary shadow-xl"
+          className="fixed bottom-5 right-5 z-50 w-96 rounded-2xl border border-border bg-bg-secondary shadow-2xl"
         >
-          <div className="p-5">
+          <div className="p-6">
             <button
               onClick={dismiss}
-              className="absolute right-3 top-3 flex h-7 w-7 items-center justify-center rounded-lg text-text-muted transition-colors hover:bg-bg-tertiary hover:text-text-primary"
+              className="absolute right-4 top-4 flex h-7 w-7 items-center justify-center rounded-lg text-text-muted transition-colors hover:bg-bg-tertiary hover:text-text-primary"
               aria-label="Close"
             >
               <VscChromeClose className="h-3.5 w-3.5" />
             </button>
 
-            <div className="mb-3 flex items-center gap-2.5">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-text-primary">
-                <VscGithubInverted className="h-4.5 w-4.5 text-bg-primary" />
+            {/* Header */}
+            <div className="mb-4 flex items-center gap-3">
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-text-primary shadow-sm">
+                <span className="text-lg">🧅</span>
               </div>
               <div>
-                <p className="text-sm font-semibold text-text-primary">Enjoying this?</p>
-                <p className="text-[11px] text-text-muted">openonion/connectonion</p>
+                <p className="text-base font-bold text-text-primary">Enjoying this analysis?</p>
+                <p className="text-xs text-text-muted">Built by ConnectOnion team</p>
               </div>
             </div>
 
-            <p className="mb-4 text-xs text-text-secondary leading-relaxed">
-              This analysis is brought to you by{" "}
-              <span className="font-medium text-text-primary">ConnectOnion</span> — an open-source AI agent framework. A ⭐ means the world to us!
+            <p className="mb-5 text-sm text-text-secondary leading-relaxed">
+              This deep-dive is brought to you by{" "}
+              <span className="font-semibold text-text-primary">ConnectOnion</span> — an open-source AI agent framework. Your support helps us keep building!
             </p>
 
-            <div className="flex gap-2">
+            {/* Actions */}
+            <div className="space-y-2.5">
+              {/* Star GitHub */}
               <a
                 href="https://github.com/openonion/connectonion"
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={dismiss}
-                className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-text-primary px-3 py-2 text-xs font-medium text-bg-primary transition-opacity hover:opacity-90"
+                className="flex w-full items-center gap-3 rounded-xl bg-text-primary px-4 py-3 text-sm font-medium text-bg-primary transition-opacity hover:opacity-90"
               >
-                <VscStarFull className="h-3.5 w-3.5 text-yellow-400" />
-                Star on GitHub
+                <VscGithubInverted className="h-4 w-4 shrink-0" />
+                <span className="flex-1">Star on GitHub</span>
+                <VscStarFull className="h-4 w-4 shrink-0 text-yellow-400" />
               </a>
+
+              {/* Follow on X */}
+              <a
+                href="https://x.com/ConnectOnionAI"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={dismiss}
+                className="flex w-full items-center gap-3 rounded-xl border border-border bg-bg-primary px-4 py-3 text-sm font-medium text-text-primary transition-colors hover:bg-bg-tertiary"
+              >
+                <span className="h-4 w-4 shrink-0 text-center text-sm leading-none">𝕏</span>
+                <span className="flex-1">Follow @ConnectOnionAI</span>
+                <span className="text-xs text-text-muted">Aaron's updates</span>
+              </a>
+
+              {/* Dismiss */}
               <button
                 onClick={dismiss}
-                className="rounded-lg border border-border px-3 py-2 text-xs font-medium text-text-muted transition-colors hover:bg-bg-tertiary hover:text-text-primary"
+                className="w-full py-2 text-xs text-text-muted transition-colors hover:text-text-secondary"
               >
                 Maybe later
               </button>
