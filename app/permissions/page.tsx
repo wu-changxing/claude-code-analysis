@@ -1,6 +1,6 @@
 "use client";
 
-import { PageHeader, Card, CodeBlock, SourceLinks, NextPage } from "@/components/Section";
+import { PageHeader, Card, CodeBlock, SourceLinks, NextPage, TldrBox } from "@/components/Section";
 import { useTx } from "@/components/T";
 import { ghBlob, ghTree } from "@/lib/sourceLinks";
 import {
@@ -167,6 +167,27 @@ export default function PermissionsPage() {
           { label: "yoloClassifier.ts", href: ghBlob("utils/permissions/yoloClassifier.ts") },
           { label: "bashPermissions.ts", href: ghBlob("tools/BashTool/bashPermissions.ts") },
           { label: "filesystem.ts", href: ghBlob("utils/permissions/filesystem.ts") },
+        ]}
+      />
+
+      <TldrBox
+        color="var(--red)"
+        items={[
+          tx(
+            "Every Bash command passes through 5 layers: mode check → allow-list → AST analysis → yoloClassifier (ML) → interactive dialog. You can't skip layers.",
+            "每条 Bash 命令经过 5 层：模式检查 → 允许列表 → AST 分析 → yoloClassifier (ML) → 交互对话框。不能跳过任何层。",
+            "すべての Bash コマンドは 5 層を通過します：モード確認 → 許可リスト → AST 解析 → yoloClassifier (ML) → 対話ダイアログ。層をスキップできません。"
+          ),
+          tx(
+            "yoloClassifier is a real ML model in production code. It decides if a shell command is safe enough to auto-approve in auto-mode, based on command patterns.",
+            "yoloClassifier は本番コードにある本物の ML モデルです。コマンドパターンに基づき、auto モードで自動承認できるほど安全かを判定します。",
+            "yoloClassifier は本番コードの実際の ML モデルです。コマンドパターンに基づいてautoモードで自動承認できるか判定します。"
+          ),
+          tx(
+            "The permission system has 4 modes (default, plan, acceptEdits, bypassPermissions) plus org-level overrides via MDM. Each has a different risk profile.",
+            "权限系统有 4 种模式（default、plan、acceptEdits、bypassPermissions），加上通过 MDM 的组织级覆盖。每种模式都有不同的风险档案。",
+            "権限システムには4モード（default、plan、acceptEdits、bypassPermissions）とMDMによる組織レベルの上書きがあります。各モードのリスクが異なります。"
+          ),
         ]}
       />
 

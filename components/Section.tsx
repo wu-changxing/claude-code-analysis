@@ -6,6 +6,70 @@ import { HiOutlineChevronRight, HiOutlineArrowRight } from "react-icons/hi2";
 import { VscLinkExternal } from "react-icons/vsc";
 import Link from "next/link";
 
+export function TldrBox({
+  items,
+  title,
+  color,
+}: {
+  items: string[];
+  title?: string;
+  color?: string;
+}) {
+  const accentColor = color ?? "var(--accent)";
+  return (
+    <div
+      className="mb-6 rounded-xl border border-border bg-bg-secondary p-4 sm:p-5"
+      style={{ borderLeft: `4px solid ${accentColor}` }}
+    >
+      <div
+        className="mb-3 text-[10px] font-bold uppercase tracking-widest"
+        style={{ color: accentColor }}
+      >
+        {title ?? "TL;DR — Key Takeaways"}
+      </div>
+      <ul className="space-y-2">
+        {items.map((item, i) => (
+          <li key={i} className="flex items-start gap-2.5 text-xs text-text-secondary leading-relaxed">
+            <div
+              className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full"
+              style={{ background: accentColor }}
+            />
+            <span>{item}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+export function KeyFact({
+  label,
+  value,
+  sub,
+  color,
+}: {
+  label: string;
+  value: string;
+  sub?: string;
+  color?: string;
+}) {
+  const c = color ?? "var(--accent)";
+  return (
+    <div
+      className="rounded-xl border border-border bg-bg-secondary px-4 py-3 text-center"
+      style={{ borderTop: `3px solid ${c}` }}
+    >
+      <div className="text-2xl font-black font-mono leading-none" style={{ color: c }}>
+        {value}
+      </div>
+      <div className="mt-1 text-[10px] font-semibold uppercase tracking-wide text-text-muted">
+        {label}
+      </div>
+      {sub && <div className="mt-0.5 text-[9px] text-text-muted">{sub}</div>}
+    </div>
+  );
+}
+
 export function InsightCallout({
   emoji,
   title,

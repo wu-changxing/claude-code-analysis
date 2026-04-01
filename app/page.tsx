@@ -544,63 +544,108 @@ export default function HomePage() {
             {lang === "zh" ? "深入了解 →" : lang === "ja" ? "詳細 →" : "Deep dive →"}
           </Link>
         </div>
-        <div className="p-5">
-          {/* Steps */}
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-stretch">
-            {flowSteps.map((step, i) => (
-              <div key={step.label.en} className="flex sm:flex-col sm:flex-1 items-center sm:items-start gap-3 sm:gap-2">
-                <div
-                  className="flex h-10 w-10 shrink-0 sm:h-12 sm:w-12 items-center justify-center rounded-xl shadow-sm"
-                  style={{
-                    background: `color-mix(in srgb, ${step.color} 14%, transparent)`,
-                    border: `1.5px solid color-mix(in srgb, ${step.color} 30%, transparent)`,
-                  }}
-                >
-                  <step.icon className="h-4 w-4 sm:h-5 sm:w-5" style={{ color: step.color }} />
-                </div>
-                <div className="flex-1 sm:flex-none">
-                  <div className="flex items-center gap-1.5 mb-0.5">
-                    <span
-                      className="text-[9px] font-bold rounded px-1 py-0.5"
+        <div className="p-4 sm:p-5">
+          {/* Cycle rail diagram */}
+          <div className="relative">
+            {/* Mobile: vertical stack */}
+            <div className="flex flex-col gap-0 sm:hidden">
+              {flowSteps.map((step, i) => (
+                <div key={step.label.en} className="flex items-start gap-3">
+                  <div className="flex flex-col items-center">
+                    <div
+                      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl shadow-sm"
                       style={{
-                        background: `color-mix(in srgb, ${step.color} 14%, transparent)`,
-                        color: step.color,
+                        background: `color-mix(in srgb, ${step.color} 14%, var(--bg-tertiary))`,
+                        border: `1.5px solid color-mix(in srgb, ${step.color} 30%, var(--border))`,
                       }}
                     >
-                      {step.step}
-                    </span>
-                    <span className="text-xs font-semibold text-text-primary">
-                      {step.label[lang] || step.label.en}
-                    </span>
+                      <step.icon className="h-4 w-4" style={{ color: step.color }} />
+                    </div>
+                    {i < flowSteps.length - 1 && (
+                      <div className="h-6 w-px bg-border my-0.5" />
+                    )}
                   </div>
-                  <span className="text-[10px] text-text-muted">
-                    {step.detail[lang] || step.detail.en}
+                  <div className="pb-5 pt-1.5">
+                    <div className="text-xs font-semibold text-text-primary leading-tight">
+                      {step.label[lang] || step.label.en}
+                    </div>
+                    <div className="text-[10px] text-text-muted mt-0.5">
+                      {step.detail[lang] || step.detail.en}
+                    </div>
+                  </div>
+                </div>
+              ))}
+              {/* Loop back indicator */}
+              <div className="flex items-center gap-2 rounded-lg border border-border/60 bg-bg-tertiary/50 px-3 py-2 mt-1">
+                <VscServerProcess className="h-3 w-3 text-text-muted shrink-0" />
+                <span className="text-[10px] text-text-muted">
+                  {lang === "zh" ? "如有工具调用则循环" : lang === "ja" ? "ツールがあればループ" : "If tools called → loop again"}
+                </span>
+              </div>
+            </div>
+            {/* Desktop: horizontal rail */}
+            <div className="hidden sm:block">
+              <div className="flex items-stretch gap-0">
+                {flowSteps.map((step, i) => (
+                  <div key={step.label.en} className="flex flex-1 items-stretch">
+                    <div
+                      className="flex flex-1 flex-col gap-2 rounded-xl p-3 transition-colors"
+                      style={{
+                        background: `color-mix(in srgb, ${step.color} 6%, var(--bg-tertiary))`,
+                        border: `1px solid color-mix(in srgb, ${step.color} 20%, var(--border))`,
+                      }}
+                    >
+                      <div
+                        className="flex h-10 w-10 items-center justify-center rounded-xl"
+                        style={{
+                          background: `color-mix(in srgb, ${step.color} 15%, transparent)`,
+                        }}
+                      >
+                        <step.icon className="h-5 w-5" style={{ color: step.color }} />
+                      </div>
+                      <div>
+                        <div className="text-xs font-semibold text-text-primary leading-tight">
+                          {step.label[lang] || step.label.en}
+                        </div>
+                        <div className="mt-0.5 text-[10px] text-text-muted leading-snug">
+                          {step.detail[lang] || step.detail.en}
+                        </div>
+                      </div>
+                    </div>
+                    {i < flowSteps.length - 1 && (
+                      <div className="flex items-center px-1.5">
+                        <HiOutlineArrowRight className="h-3.5 w-3.5 text-text-muted" />
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+              {/* Loop-back rail */}
+              <div className="mt-3 flex items-center gap-3 rounded-xl border border-dashed border-border/70 bg-bg-tertiary/30 px-4 py-2.5">
+                <div className="flex items-center gap-1.5 text-[10px] text-text-muted">
+                  <span className="inline-block rotate-180">
+                    <HiOutlineArrowRight className="h-3 w-3" />
+                  </span>
+                  <span className="font-semibold" style={{ color: "var(--accent)" }}>
+                    {lang === "zh" ? "如有工具调用" : lang === "ja" ? "ツールあり" : "if tool calls"}
                   </span>
                 </div>
-                {/* Arrow — horizontal on sm+, vertical on mobile */}
-                {i < flowSteps.length - 1 && (
-                  <>
-                    <HiOutlineArrowRight
-                      className="hidden sm:block h-4 w-4 shrink-0 text-text-muted self-center mt-4"
-                      style={{ marginLeft: "auto" }}
-                    />
-                    <HiOutlineArrowRight
-                      className="sm:hidden h-4 w-4 shrink-0 text-text-muted rotate-90 self-center"
-                    />
-                  </>
-                )}
+                <div className="flex-1 h-px bg-gradient-to-r from-accent/30 via-border to-border" />
+                <span className="text-[10px] text-text-muted">
+                  {lang === "zh"
+                    ? "重新投影上下文 → 再次调用 API"
+                    : lang === "ja"
+                    ? "コンテキスト再投影 → API 再呼び出し"
+                    : "re-project context → call API again"}
+                </span>
+                <div className="flex-1 h-px bg-gradient-to-l from-accent/30 via-border to-border" />
+                <div className="flex items-center gap-1.5 text-[10px] text-text-muted">
+                  <span className="font-semibold" style={{ color: "var(--orange)" }}>
+                    {lang === "zh" ? "否则退出" : lang === "ja" ? "なければ終了" : "else exit"}
+                  </span>
+                  <HiOutlineArrowRight className="h-3 w-3 rotate-45" />
+                </div>
               </div>
-            ))}
-          </div>
-          {/* Loop badge */}
-          <div className="mt-5 flex justify-center">
-            <div className="flex items-center gap-2 rounded-full border border-border bg-bg-primary px-4 py-1.5 text-[11px] text-text-muted">
-              <VscServerProcess className="h-3 w-3" />
-              {lang === "zh"
-                ? "循环直到没有更多工具调用或触发退出条件"
-                : lang === "ja"
-                ? "ツール呼び出しがなくなるか終了条件まで繰り返す"
-                : "Loop until no more tool calls or exit condition"}
             </div>
           </div>
         </div>
@@ -711,21 +756,42 @@ export default function HomePage() {
               transition={{ delay: 0.25 + i * 0.03 }}
             >
               <Link href={s.href} className="block group h-full">
-                <div className="section-hover-card flex h-full gap-3 rounded-xl border border-border bg-bg-secondary p-4 hover:border-accent/30 hover:shadow-sm hover:-translate-y-0.5">
+                <div
+                  className="section-hover-card flex h-full gap-3 rounded-xl border border-border bg-bg-secondary p-4 transition-all duration-150 hover:-translate-y-0.5 hover:shadow-sm"
+                  style={{
+                    ["--card-color" as string]: s.color,
+                  }}
+                  onMouseEnter={(e) => {
+                    const el = e.currentTarget;
+                    el.style.borderColor = `color-mix(in srgb, ${s.color} 40%, var(--border))`;
+                    el.style.boxShadow = `0 4px 12px color-mix(in srgb, ${s.color} 10%, transparent)`;
+                  }}
+                  onMouseLeave={(e) => {
+                    const el = e.currentTarget;
+                    el.style.borderColor = "";
+                    el.style.boxShadow = "";
+                  }}
+                >
                   <div
                     className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg"
-                    style={{ background: `color-mix(in srgb, ${s.color} 12%, transparent)` }}
+                    style={{ background: `color-mix(in srgb, ${s.color} 14%, var(--bg-tertiary))` }}
                   >
                     <s.icon className="h-4 w-4" style={{ color: s.color }} />
                   </div>
-                  <div>
-                    <h2 className="text-sm font-semibold text-text-primary mb-0.5 group-hover:text-accent transition-colors">
+                  <div className="min-w-0 flex-1">
+                    <h2
+                      className="mb-0.5 text-sm font-semibold text-text-primary transition-colors"
+                      style={{ ["--hover-color" as string]: s.color }}
+                    >
                       {s.title}
                     </h2>
                     <p className="text-[11px] text-text-muted leading-relaxed">
                       {s.desc[lang] || s.desc.en}
                     </p>
                   </div>
+                  <HiOutlineArrowRight
+                    className="mt-0.5 h-3.5 w-3.5 shrink-0 text-text-muted opacity-0 transition-all group-hover:opacity-100 group-hover:translate-x-0.5"
+                  />
                 </div>
               </Link>
             </motion.div>

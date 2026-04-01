@@ -1,6 +1,6 @@
 "use client";
 
-import { PageHeader, Card, CodeBlock, SectionNav, NextPage } from "@/components/Section";
+import { PageHeader, Card, CodeBlock, SectionNav, NextPage, TldrBox, KeyFact } from "@/components/Section";
 import { useTx } from "@/components/T";
 import { ghBlob } from "@/lib/sourceLinks";
 import {
@@ -172,7 +172,39 @@ export default function QueryLoopPage() {
           { label: "query/stopHooks.ts", href: ghBlob("query/stopHooks.ts") },
         ]}
       />
+      <TldrBox
+        color="var(--green)"
+        items={[
+          tx(
+            "The main loop lives in query.ts (~1700 lines) and runs 7 phases every turn: project context, check compaction, stream API, error recovery, execute tools, inject attachments, then decide to continue or exit.",
+            "主循环位于 query.ts（约 1700 行），每轮执行 7 个阶段：投影上下文、检查压缩、流式 API、错误恢复、工具执行、注入附件，最后决定继续或退出。",
+            "主ループは query.ts（約1700行）にあり、毎ターン7フェーズを実行します：コンテキスト投影、圧縮確認、APIストリーミング、エラー回復、ツール実行、添付注入、継続/終了の判定。"
+          ),
+          tx(
+            "Tools start running BEFORE the model finishes — StreamingToolExecutor queues tool_use blocks as they arrive from the stream, cutting total latency.",
+            "工具在模型完成之前就开始运行——StreamingToolExecutor 在流中收到 tool_use 块时立即入队，显著降低总延迟。",
+            "ツールはモデルが完了する前に実行開始 — StreamingToolExecutor がストリームから到着した tool_use ブロックをキューに入れ、総レイテンシを削減します。"
+          ),
+          tx(
+            "Recovery is a 4-step cascade: drain collapses → reactive compact → escalate token limit 8K→64K → inject 'continue' (max 3×). The loop never gives up easily.",
+            "恢复是 4 步级联：排空折叠 → reactive compact → token 上限 8K→64K → 注入 continue（最多 3 次）。循环不会轻易放弃。",
+            "回復は4段カスケード：collapse排出 → reactive compact → トークン上限8K→64K拡張 → 'continue'注入（最大3回）。簡単に諦めません。"
+          ),
+          tx(
+            "Stop hooks run even after the model appears done — they can force the loop to continue, giving external processes a chance to inject more work.",
+            "即使模型看起来已完成，stop hooks 仍然会运行——它们可以强制循环继续，给外部进程注入更多工作的机会。",
+            "モデルが完了してもstop hooksは実行されます — 外部プロセスが追加作業を注入できるよう、ループの継続を強制できます。"
+          ),
+        ]}
+      />
       <SectionNav title={tx("Jump To", "跳转到", "移動先")} sections={sections} />
+      {/* Key facts row */}
+      <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <KeyFact label={tx("Main File", "主文件", "メインファイル")} value="query.ts" sub="~1700 lines" color="var(--green)" />
+        <KeyFact label={tx("Loop Phases", "循环阶段", "ループフェーズ")} value="7" sub={tx("per turn", "每轮", "毎ターン")} color="var(--orange)" />
+        <KeyFact label={tx("Exit States", "退出状态", "終了状態")} value="8" sub={tx("terminal conditions", "终止条件", "終了条件")} color="var(--red)" />
+        <KeyFact label={tx("Recovery Steps", "恢复步骤", "回復ステップ")} value="4" sub={tx("cascade strategy", "级联策略", "カスケード戦略")} color="var(--purple)" />
+      </div>
 
       {/* State Machine */}
       <Card

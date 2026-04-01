@@ -1,6 +1,6 @@
 "use client";
 
-import { PageHeader, Card, CodeBlock, SectionNav, NextPage } from "@/components/Section";
+import { PageHeader, Card, CodeBlock, SectionNav, NextPage, TldrBox } from "@/components/Section";
 import { useTx } from "@/components/T";
 import { ghBlob, ghTree } from "@/lib/sourceLinks";
 import {
@@ -167,6 +167,26 @@ export default function ToolsPage() {
           { label: "tools/", href: ghTree("tools") },
           { label: "services/tools/", href: ghTree("services/tools") },
           { label: "tools/BashTool/", href: ghTree("tools/BashTool") },
+        ]}
+      />
+      <TldrBox
+        color="var(--orange)"
+        items={[
+          tx(
+            "All 43 tools implement the same Tool<Input, Output, Progress> interface and are built via buildTool() — same pattern whether it's Bash, FileEdit, or MCP.",
+            "所有 43 个工具实现相同的 Tool<Input, Output, Progress> 接口，通过 buildTool() 构建——无论是 Bash、FileEdit 还是 MCP，模式一样。",
+            "43個のツールはすべて同じ Tool<Input, Output, Progress> インターフェースを実装し、buildTool() で構築されます。Bash、FileEdit、MCP も同じパターンです。"
+          ),
+          tx(
+            "Read-only tools (FileRead, Grep, Glob) run up to 10 in parallel. Write tools serialize. This split is why reading feels fast but edits are sequential.",
+            "只读工具（FileRead、Grep、Glob）最多 10 个并行运行；写工具串行。这就是为什么读取很快，而编辑是顺序执行的。",
+            "読み取り専用ツール（FileRead、Grep、Glob）は最大10並列。書き込みツールは直列。読み取りが速くても編集が順番なのはこのためです。"
+          ),
+          tx(
+            "The Agent tool spawns a full isolated sub-agent with zero-cost cache sharing — the child inherits the exact same system prompt bytes, auto-hitting the parent's prompt cache.",
+            "Agent ツールは完全に分離されたサブエージェントをゼロコストのキャッシュ共有で生成します。子は同じシステムプロンプトバイトを継承し、親のプロンプトキャッシュに自動ヒットします。",
+            "Agent ツールは完全分離サブエージェントをゼロコストキャッシュ共有で生成します。子は同じシステムプロンプトバイトを継承し、親のキャッシュに自動ヒットします。"
+          ),
         ]}
       />
       <SectionNav title={tx("Jump To", "跳转到", "移動先")} sections={sections} />

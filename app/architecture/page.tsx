@@ -1,6 +1,6 @@
 "use client";
 
-import { PageHeader, Card, CodeBlock, Table, SectionNav, InsightCallout, NextPage } from "@/components/Section";
+import { PageHeader, Card, CodeBlock, Table, SectionNav, InsightCallout, NextPage, TldrBox, KeyFact } from "@/components/Section";
 import { useTx } from "@/components/T";
 import { CLAUDE_CODE_REPO, ghBlob, ghTree } from "@/lib/sourceLinks";
 import Link from "next/link";
@@ -96,6 +96,38 @@ export default function ArchitecturePage() {
           { label: "query.ts", href: ghBlob("query.ts") },
         ]}
       />
+      <TldrBox
+        color="var(--accent)"
+        items={[
+          tx(
+            "Claude Code is a TypeScript monolith of ~512K lines across ~1,800 files — 3× larger than the Linux 1.0 kernel.",
+            "Claude Code 是一个 TypeScript 单体应用，约 512K 行代码，约 1,800 个文件——是 Linux 1.0 内核的 3 倍。",
+            "Claude Code は TypeScript モノリスで約 512K 行・約 1,800 ファイル — Linux 1.0 の 3 倍の規模です。"
+          ),
+          tx(
+            "The entry point (cli.tsx) starts fast-path detection immediately, then spawns parallel init tasks: MDM, keychain, GrowthBook — all before the first user prompt.",
+            "入口点 cli.tsx 立即启动快速路径检测，然后并行初始化：MDM、keychain、GrowthBook——全在第一个用户提示之前完成。",
+            "エントリポイント cli.tsx は即座に高速パス検出を開始し、MDM・keychain・GrowthBook を並列初期化します — 最初のユーザープロンプトの前に完了。"
+          ),
+          tx(
+            "QueryEngine.ts owns the conversation lifecycle: it assembles the system prompt, loads skills/plugins, and yields the first message to the loop.",
+            "QueryEngine.ts 拥有会话生命周期：构建系统提示、加载技能/插件，并向循环产出初始消息。",
+            "QueryEngine.ts が会話ライフサイクルを管理します：システムプロンプトの組み立て、スキル/プラグインの読み込み、最初のメッセージをループへ渡します。"
+          ),
+          tx(
+            "query.ts is the heart — a 7-phase loop that handles context projection, streaming, tool execution, and token budget management. A single turn can call this loop many times.",
+            "query.ts はその心臓部——コンテキスト投影、ストリーミング、ツール実行、トークン予算管理を処理する 7 フェーズのループです。1 ターンでこのループを何度も呼び出すことがあります。",
+            "query.ts はその中核 — コンテキスト投影、ストリーミング、ツール実行、トークン予算管理を行う 7 フェーズループです。1 ターンでこのループが何度も実行されることがあります。"
+          ),
+        ]}
+      />
+      {/* Key facts row */}
+      <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <KeyFact label={tx("Lines of Code", "代码行数", "コード行数")} value="512K" sub={tx("TypeScript", "TypeScript", "TypeScript")} color="var(--accent)" />
+        <KeyFact label={tx("Source Files", "源文件数", "ソースファイル")} value="1,884" sub=".ts / .tsx" color="var(--green)" />
+        <KeyFact label={tx("Built-in Tools", "内置工具", "組み込みツール")} value="43" sub={tx("Bash → MCP", "Bash → MCP", "Bash → MCP")} color="var(--orange)" />
+        <KeyFact label={tx("Slash Commands", "斜杠命令", "スラッシュコマンド")} value="101" sub={tx("/compact → /stickers", "/compact → /stickers", "/compact → /stickers")} color="var(--purple)" />
+      </div>
       <SectionNav title={tx("Jump To", "跳转到", "移動先")} sections={sections} />
 
       {/* Directory Map */}

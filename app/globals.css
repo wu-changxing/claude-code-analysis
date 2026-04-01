@@ -686,3 +686,104 @@ pre .comment { color: #6b7280; font-style: italic; }
     gap: 12px;
   }
 }
+
+/* TL;DR box accent animation on load */
+@keyframes tldr-slide-in {
+  from { opacity: 0; transform: translateX(-8px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* KeyFact card top accent bar */
+.key-fact-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.key-fact-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--accent);
+  border-radius: 12px 12px 0 0;
+}
+
+/* Section card focus ring on keyboard nav */
+.section-hover-card:focus-within {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Loop rail gradient connector */
+.loop-rail-connector {
+  position: relative;
+  flex: 1;
+  height: 2px;
+  border-radius: 1px;
+}
+
+/* Diagram annotation text */
+.diagram-label {
+  font-size: 9px;
+  font-family: var(--font-mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* Visual flow node */
+.flow-node {
+  border-radius: 12px;
+  border: 1.5px solid var(--border);
+  background: var(--bg-secondary);
+  padding: 10px 14px;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.flow-node:hover {
+  box-shadow: 0 2px 10px color-mix(in srgb, var(--accent) 12%, transparent);
+}
+
+/* Comparison table column color bands */
+.compare-col-left  { border-left: 3px solid var(--green); }
+.compare-col-right { border-left: 3px solid var(--orange); }
+
+/* Dense info grid for specs */
+.spec-grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0;
+}
+
+.spec-grid dt {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 6px 12px 6px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.spec-grid dd {
+  font-size: 11px;
+  color: var(--text-secondary);
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+@media (max-width: 639px) {
+  .spec-grid {
+    grid-template-columns: 1fr;
+  }
+  .spec-grid dt {
+    padding-bottom: 2px;
+    border-bottom: none;
+  }
+  .spec-grid dd {
+    padding-top: 0;
+    margin-bottom: 8px;
+  }
+}
