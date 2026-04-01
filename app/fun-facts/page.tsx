@@ -450,6 +450,145 @@ Stats: DEBUGGING, PATIENCE, CHAOS, WISDOM, SNARK
         </p>
       </Card>
 
+      {/* Penguin Mode */}
+      <Card title={lang === "zh" ? "快速模式的真名：企鹅模式" : lang === "ja" ? "高速モードの本名：ペンギンモード" : "Fast Mode's Real Name: Penguin Mode"} className="mb-6" accent="var(--accent)">
+        <p className="text-sm text-text-secondary mb-4">
+          {lang === "zh"
+            ? "Fast Mode 在内部叫 'Penguin Mode'。所有变量名都是企鹅主题："
+            : "Fast Mode is internally codenamed 'Penguin Mode'. All variable names are penguin-themed:"}
+        </p>
+        <div className="grid grid-cols-3 gap-2 mb-3">
+          {[
+            { code: "penguinModeOrgEnabled", desc: lang === "zh" ? "组织级开关" : "Org-level toggle" },
+            { code: "tengu_penguins_off", desc: lang === "zh" ? "关闭企鹅模式的 flag" : "Kill-switch flag" },
+            { code: "/api/claude_code_penguin_mode", desc: "API endpoint" },
+          ].map(({ code, desc }) => (
+            <div key={code} className="p-2 rounded-lg bg-bg-tertiary/20 border border-border/50">
+              <code className="text-[10px] text-accent block truncate">{code}</code>
+              <span className="text-[10px] text-text-muted">{desc}</span>
+            </div>
+          ))}
+        </div>
+        <p className="text-[11px] text-text-muted italic">
+          {lang === "zh"
+            ? "品牌名用的是 'Opus 4.6'，但代码里到处都是企鹅。为什么是企鹅？没人知道。"
+            : lang === "ja"
+            ? "ブランド名は「Opus 4.6」だが、コード内はペンギンだらけ。なぜペンギン？誰も知らない。"
+            : "The branded name is 'Opus 4.6' but the code is full of penguins. Why penguins? Nobody knows."}
+        </p>
+      </Card>
+
+      {/* Speculation Engine */}
+      <Card title={lang === "zh" ? "推测引擎：Claude 在猜你下一步" : "Speculation Engine: Claude Predicts Your Next Move"} className="mb-6" accent="var(--green)">
+        <p className="text-sm text-text-secondary mb-4">
+          {lang === "zh"
+            ? "Claude Code 有一个后台推测系统，在你还没打字的时候就预执行了可能的下一步操作："
+            : "Claude Code has a background speculation system that pre-executes your likely next action before you type:"}
+        </p>
+        <div className="grid grid-cols-2 gap-3 mb-3">
+          <div className="p-3 rounded-xl bg-bg-tertiary/20 border border-border/50">
+            <div className="text-xs font-semibold text-text-primary mb-1">
+              {lang === "zh" ? "写时复制覆盖层" : "Copy-on-Write Overlay"}
+            </div>
+            <p className="text-[10px] text-text-muted">
+              {lang === "zh"
+                ? "在 /tmp/claude/speculation/ 中创建虚拟文件系统，只在写入时复制文件。读取时使用主工作目录。"
+                : "Creates virtual filesystem at /tmp/claude/speculation/. Only copies files on write. Reads from main cwd otherwise."}
+            </p>
+          </div>
+          <div className="p-3 rounded-xl bg-bg-tertiary/20 border border-border/50">
+            <div className="text-xs font-semibold text-text-primary mb-1">
+              {lang === "zh" ? "时间节省反馈" : "Time Savings Feedback"}
+            </div>
+            <p className="text-[10px] text-text-muted">
+              {lang === "zh"
+                ? "显示类似 'Speculated 3 tool uses · 2.5K tokens · +1m23s saved' 的反馈。"
+                : "Shows feedback like 'Speculated 3 tool uses · 2.5K tokens · +1m23s saved (2m18s this session)'."}
+            </p>
+          </div>
+        </div>
+        <div className="p-3 rounded-lg bg-bg-tertiary/20 border border-border/50">
+          <p className="text-[11px] text-text-muted">
+            <strong className="text-text-primary">{lang === "zh" ? "安全边界：" : "Safety bounds: "}</strong>
+            {lang === "zh"
+              ? "推测在遇到文件编辑、非只读 Bash、被拒绝的工具时停止。最多 20 轮或 100 条消息。"
+              : "Speculation stops at file edits, non-read-only bash, denied tools. Max 20 turns or 100 messages."}
+          </p>
+        </div>
+      </Card>
+
+      {/* Compaction Agent */}
+      <Card title={lang === "zh" ? "压缩代理的怒吼" : "The Compaction Agent's Rage"} className="mb-6" accent="var(--orange)">
+        <div className="p-4 rounded-xl bg-bg-tertiary/20 border-l-2" style={{ borderLeftColor: "var(--orange)" }}>
+          <p className="text-sm text-text-secondary italic leading-relaxed">
+            &quot;CRITICAL: Respond with TEXT ONLY. Do NOT call any tools. Tool calls will be REJECTED
+            and will waste your only turn — you will fail the task.&quot;
+          </p>
+          <p className="text-[10px] text-text-muted mt-2">— compaction agent system prompt</p>
+        </div>
+        <p className="text-[11px] text-text-muted mt-3">
+          {lang === "zh"
+            ? "压缩代理的提示词用全大写写着 'CRITICAL' 和 'REJECTED'。它把分析包裹在 <analysis> 标签中，这些标签在发送前被剥离。压缩必须覆盖 9 个必需章节——包括原始用户消息的逐字引用。"
+            : lang === "ja"
+            ? "コンパクションエージェントのプロンプトは全大文字で「CRITICAL」「REJECTED」と叫んでいる。分析を<analysis>タグで包み、送信前に除去する。"
+            : "The compaction agent's prompt SCREAMS in all caps. It wraps analysis in <analysis> tags that are stripped before delivery. Must cover 9 required sections — including verbatim quotes of user messages."}
+        </p>
+      </Card>
+
+      {/* Unicode Symbols */}
+      <Card title={lang === "zh" ? "特殊符号图书馆" : "The Unicode Symbol Library"} className="mb-6" accent="var(--purple)">
+        <p className="text-sm text-text-secondary mb-3">
+          {lang === "zh"
+            ? "Claude Code 在 figures.ts 中策划了一个精心挑选的 Unicode 符号库："
+            : "Claude Code curates a carefully chosen Unicode symbol library in figures.ts:"}
+        </p>
+        <div className="grid grid-cols-4 gap-2">
+          {[
+            { sym: "↯", name: "LIGHTNING_BOLT", use: "Fast mode" },
+            { sym: "○ ◐ ● ◉", name: "EFFORT_*", use: "Effort levels" },
+            { sym: "◇ ◆", name: "DIAMOND_*", use: "Running/done" },
+            { sym: "▎", name: "BLOCKQUOTE_BAR", use: "Quote prefix" },
+            { sym: "↑ ↓", name: "ARROWS", use: "Scroll hints" },
+            { sym: "★", name: "STAR", use: "Buddy rarity" },
+            { sym: "·", name: "MIDDLE_DOT", use: "Separators" },
+            { sym: "…", name: "ELLIPSIS", use: "Truncation" },
+          ].map(({ sym, name, use }) => (
+            <div key={name} className="p-2 rounded-lg bg-bg-tertiary/20 border border-border/50 text-center">
+              <div className="text-lg font-mono mb-1 text-text-primary">{sym}</div>
+              <code className="text-[9px] text-accent block">{name}</code>
+              <span className="text-[9px] text-text-muted">{use}</span>
+            </div>
+          ))}
+        </div>
+      </Card>
+
+      {/* Prompt Suggestion */}
+      <Card title={lang === "zh" ? "提示建议的过滤器有多严格？" : "How Strict Is the Suggestion Filter?"} className="mb-6" accent="var(--pink)">
+        <p className="text-sm text-text-secondary mb-3">
+          {lang === "zh"
+            ? "提示建议系统的标准是：'用户会不会想——我正准备打这个！'。它过滤掉 46+ 种模式："
+            : "The prompt suggestion system's bar: 'Would they think I was just about to type that!' It filters 46+ patterns:"}
+        </p>
+        <div className="grid grid-cols-2 gap-2">
+          {[
+            { blocked: lang === "zh" ? "评价性评论" : "Evaluative comments", example: "'Looks good', 'Nice work'" },
+            { blocked: lang === "zh" ? "Claude 口吻" : "Claude-voice", example: "'Let me...', 'I'll...'" },
+            { blocked: lang === "zh" ? "用户没要求的新想法" : "New ideas user didn't ask for", example: "'How about we also...'" },
+            { blocked: lang === "zh" ? "沉默/元推理" : "Silence meta-reasoning", example: "'(no suggestion needed)'" },
+          ].map(({ blocked, example }) => (
+            <div key={blocked} className="p-2 rounded-lg bg-bg-tertiary/20 border border-border/50">
+              <div className="text-[11px] font-semibold text-text-primary">{blocked}</div>
+              <code className="text-[10px] text-text-muted">{example}</code>
+            </div>
+          ))}
+        </div>
+        <p className="text-[11px] text-text-muted mt-3 italic">
+          {lang === "zh"
+            ? "允许的单词建议只有：yes, push, commit, deploy, continue, check。极简主义。"
+            : "Allowed single-word suggestions: yes, push, commit, deploy, continue, check. Minimalism."}
+        </p>
+      </Card>
+
       {/* Excluded Strings - The Build Police */}
       <Card title={lang === "zh" ? "构建警察：excluded-strings.txt" : lang === "ja" ? "ビルドポリス：excluded-strings.txt" : "The Build Police: excluded-strings.txt"} className="mb-6" accent="var(--red)">
         <p className="text-sm text-text-secondary mb-4">
