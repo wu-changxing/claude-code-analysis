@@ -1,6 +1,6 @@
 "use client";
 
-import { PageHeader, Card, CodeBlock, SectionNav, InsightCallout, RelatedPages } from "@/components/Section";
+import { PageHeader, Card, CodeBlock, SectionNav, InsightCallout, RelatedPages, NextPage } from "@/components/Section";
 import { useTx } from "@/components/T";
 import { ghBlob, ghTree } from "@/lib/sourceLinks";
 import { motion } from "framer-motion";
@@ -583,6 +583,15 @@ ToolUseSummaryMessage     → generated summary of tool batch
         { href: "/modules/services", title: tx("Services Module", "服务模块", "サービスモジュール"), color: "var(--orange)", desc: tx("extractMemories.ts lives in services/ and runs as a stop-hook after each query.", "extractMemories.ts 位于 services/ 中，作为停止钩子在每次查询后运行。", "extractMemories.tsはservices/にあり、各クエリ後にstop-hookとして動く。") },
         { href: "/fun-facts", title: tx("Fun Facts", "趣味事实", "豆知識"), color: "var(--pink)", desc: tx("Auto-Dream and the memory consolidation system — Claude literally dreams during downtime.", "Auto-Dream 和记忆整合系统——Claude 真的在空闲时做梦。", "Auto-Dreamとメモリ統合システム——Claudeは本当にダウンタイム中に夢を見る。") },
       ]} />
+      <NextPage
+        href="/file-map"
+        title={tx("File Map", "文件地图", "ファイルマップ")}
+        description={tx(
+          "Complete directory structure with every key file and its purpose — a searchable map of 1,884 source files.",
+          "完整的目录结构及每个关键文件的用途——1,884 个源文件的可搜索地图。",
+          "1,884のソースファイルの検索可能なマップ — 完全なディレクトリ構造と各ファイルの目的。"
+        )}
+      />
     </div>
   );
 }

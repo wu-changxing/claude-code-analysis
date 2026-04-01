@@ -1,8 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ReactNode } from "react";
-import { HiOutlineChevronRight } from "react-icons/hi2";
+import { ReactNode, useState, useCallback } from "react";
+import { HiOutlineChevronRight, HiOutlineArrowRight } from "react-icons/hi2";
 import { VscLinkExternal } from "react-icons/vsc";
 import Link from "next/link";
 
@@ -256,6 +256,15 @@ export function CodeBlock({
   language?: string;
   filename?: string;
 }) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = useCallback(() => {
+    navigator.clipboard.writeText(code).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  }, [code]);
+
   return (
     <div className="relative code-scroll-wrap">
       {filename && (
@@ -263,9 +272,55 @@ export function CodeBlock({
           {filename}
         </div>
       )}
+      {!filename && (
+        <div className="code-lang-badge">{language}</div>
+      )}
+      <button
+        onClick={handleCopy}
+        className={`code-copy-btn ${copied ? "copied" : ""}`}
+        aria-label="Copy code"
+      >
+        {copied ? "✓ copied" : "copy"}
+      </button>
       <pre className="!rounded-xl overflow-x-auto pt-8 text-[11px] leading-relaxed sm:text-[13px]">
         <code className={`language-${language}`}>{code}</code>
       </pre>
+    </div>
+  );
+}
+
+export function NextPage({
+  href,
+  title,
+  description,
+}: {
+  href: string;
+  title: string;
+  description: string;
+}) {
+  return (
+    <div className="mt-10 mb-2">
+      <div className="text-[10px] font-semibold uppercase tracking-wider text-text-muted mb-3">
+        Continue Reading
+      </div>
+      <Link href={href} className="next-page-card group block">
+        <div className="flex-1 min-w-0">
+          <div className="text-xs font-semibold uppercase tracking-wider text-text-muted mb-1">Next</div>
+          <div className="text-base font-bold text-text-primary group-hover:text-accent transition-colors mb-1">
+            {title}
+          </div>
+          <p className="text-sm text-text-muted leading-relaxed">{description}</p>
+        </div>
+        <div
+          className="shrink-0 w-10 h-10 rounded-xl flex items-center justify-center transition-colors"
+          style={{
+            background: "color-mix(in srgb, var(--accent) 10%, var(--bg-tertiary))",
+            border: "1.5px solid color-mix(in srgb, var(--accent) 20%, var(--border))",
+          }}
+        >
+          <HiOutlineArrowRight className="w-5 h-5 text-accent" />
+        </div>
+      </Link>
     </div>
   );
 }

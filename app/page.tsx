@@ -184,6 +184,7 @@ const LEARNING_PATHS = (lang: "en" | "zh" | "ja") => [
     emoji: "🚀",
     title: { en: "Quick Tour", zh: "快速导览", ja: "クイックツアー" },
     time: { en: "30 min", zh: "30 分钟", ja: "30分" },
+    pageCount: 4,
     desc: { en: "Get the big picture fast", zh: "快速了解全貌", ja: "全体像をすばやく掴む" },
     color: "var(--accent)",
     pages: [
@@ -197,6 +198,7 @@ const LEARNING_PATHS = (lang: "en" | "zh" | "ja") => [
     emoji: "🔬",
     title: { en: "Deep Dive", zh: "深度钻研", ja: "ディープダイブ" },
     time: { en: "2 hours", zh: "2 小时", ja: "2時間" },
+    pageCount: 7,
     desc: { en: "Full technical picture", zh: "完整技术全貌", ja: "技術の全体像" },
     color: "var(--purple)",
     pages: [
@@ -213,6 +215,7 @@ const LEARNING_PATHS = (lang: "en" | "zh" | "ja") => [
     emoji: "🏗️",
     title: { en: "Builder's Path", zh: "构建者之路", ja: "ビルダーズパス" },
     time: { en: "3 hours", zh: "3 小时", ja: "3時間" },
+    pageCount: 5,
     desc: { en: "For those extending Claude Code", zh: "针对扩展 Claude Code 的开发者", ja: "Claude Code を拡張する開発者向け" },
     color: "var(--orange)",
     pages: [
@@ -257,6 +260,9 @@ function LearningPaths({ lang }: { lang: "en" | "zh" | "ja" }) {
                     }}
                   >
                     {path.time[lang] || path.time.en}
+                  </span>
+                  <span className="text-[9px] text-text-muted px-1.5 py-0.5 rounded-full border border-border">
+                    {path.pageCount} {lang === "zh" ? "页" : lang === "ja" ? "ページ" : "pages"}
                   </span>
                 </div>
                 <p className="text-[11px] text-text-muted">
@@ -313,11 +319,32 @@ export default function HomePage() {
           <span>@anthropic-ai/claude-code v2.1.88</span>
         </div>
 
-        <h1 className="mb-4 text-3xl font-bold leading-tight tracking-tight text-text-primary sm:text-4xl lg:text-5xl">
-          {t("home.title", lang)}
-        </h1>
-        <p className="mb-5 max-w-2xl text-base text-text-secondary leading-relaxed">
+        <div className="flex items-center gap-4 mb-4">
+          {/* CC logo with gradient */}
+          <div
+            className="flex-shrink-0 w-14 h-14 rounded-2xl flex items-center justify-center font-black text-xl text-white shadow-lg"
+            style={{
+              background: "linear-gradient(135deg, #0969da 0%, #6639ba 60%, #bf3989 100%)",
+              boxShadow: "0 4px 20px color-mix(in srgb, var(--accent) 25%, transparent)",
+            }}
+          >
+            CC
+          </div>
+          <div>
+            <h1 className="text-3xl font-bold leading-tight tracking-tight text-text-primary sm:text-4xl lg:text-5xl">
+              {t("home.title", lang)}
+            </h1>
+          </div>
+        </div>
+        <p className="mb-2 max-w-2xl text-base text-text-secondary leading-relaxed">
           {t("home.desc", lang)}
+        </p>
+        <p className="mb-5 max-w-2xl text-sm text-text-muted italic">
+          {lang === "zh"
+            ? "史上最复杂的命令行工具 — 解码。"
+            : lang === "ja"
+            ? "これまで出荷された中で最も複雑なCLIツール — 解読。"
+            : "The most complex CLI tool ever shipped — decoded."}
         </p>
 
         {/* What you'll discover teaser — big cards */}

@@ -1,6 +1,6 @@
 "use client";
 
-import { PageHeader, Card, CodeBlock, SectionNav } from "@/components/Section";
+import { PageHeader, Card, CodeBlock, SectionNav, NextPage } from "@/components/Section";
 import { useTx } from "@/components/T";
 import { ghBlob, ghTree } from "@/lib/sourceLinks";
 import {
@@ -461,6 +461,15 @@ shouldUseSandbox.ts — Sandbox decision logic`}
    → Wrapped in tool_result block with tool_use_id pairing`}
         />
       </Card>
+      <NextPage
+        href="/permissions"
+        title={tx("Permissions & Security", "权限与安全", "権限とセキュリティ")}
+        description={tx(
+          "5-layer security model including the ML-powered yoloClassifier, AST-based Bash analysis, and how permission modes work.",
+          "5 层安全模型，包括 ML 驱动的 yoloClassifier、基于 AST 的 Bash 分析，以及权限模式的工作方式。",
+          "MLベースのyoloClassifier、AST解析、権限モードを含む5層のセキュリティモデル。"
+        )}
+      />
     </div>
   );
 }

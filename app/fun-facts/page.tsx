@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Card, CodeBlock, SourceLinks, RelatedPages } from "@/components/Section";
+import { Card, CodeBlock, SourceLinks, RelatedPages, NextPage } from "@/components/Section";
 import { useTx } from "@/components/T";
 import { useLang } from "@/lib/LangContext";
 import { t } from "@/lib/i18n";
@@ -1265,6 +1265,141 @@ if (model.startsWith('fennec-latest[1m]')) {
           desc: lang === "zh" ? "找到所有这些奇怪功能在源码中的位置。" : lang === "ja" ? "これらの奇妙な機能がソースコード上のどこにあるかを探す。" : "Find where all these weird features live in the actual source code.",
         },
       ]} />
+
+      {/* Code Archaeology */}
+      <div className="flex items-center gap-3 mb-4 mt-8">
+        <span className="section-num">#10</span>
+        <h2 className="text-sm font-bold">
+          {lang === "zh" ? "代码考古学" : lang === "ja" ? "コード考古学" : "Code Archaeology"}
+        </h2>
+      </div>
+      <Card
+        title={lang === "zh" ? "深埋在代码里的有趣发现" : lang === "ja" ? "コードの奥深くに埋まった面白い発見" : "Interesting Things Buried Deep in the Code"}
+        className="mb-6"
+        accent="var(--orange)"
+      >
+        <div className="space-y-4">
+          <div className="p-4 rounded-xl bg-bg-tertiary/20 border border-border/50">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-sm">🪲</span>
+              <span className="text-xs font-semibold text-text-primary">
+                {lang === "zh" ? "// @ts-ignore 打在全局上" : lang === "ja" ? "// @ts-ignore をグローバルに" : "// @ts-ignore on globals"}
+              </span>
+            </div>
+            <p className="text-[11px] text-text-muted leading-relaxed">
+              {lang === "zh"
+                ? "某些文件顶部有 /* global */ // @ts-ignore 注释组合。这意味着有人放弃了对整个文件的类型安全，并用注释把两件罪行记录在同一行。"
+                : lang === "ja"
+                ? "一部のファイルの先頭に /* global */ // @ts-ignore のコメントの組み合わせがある。これはあるファイル全体の型安全を諦め、その2つの罪を同じ行に書き残したことを意味する。"
+                : "Some files have /* global */ // @ts-ignore comment pairs at the top. This means someone gave up type safety for the entire file and documented both crimes on the same line."}
+            </p>
+          </div>
+          <div className="p-4 rounded-xl bg-bg-tertiary/20 border border-border/50">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-sm">🔢</span>
+              <span className="text-xs font-semibold text-text-primary">
+                {lang === "zh" ? "13K 缓冲区魔法数字" : lang === "ja" ? "13Kバッファのマジックナンバー" : "The 13K buffer magic number"}
+              </span>
+            </div>
+            <CodeBlock code={`// In compact/compaction.ts:
+// Leave 13K token buffer for model response headroom
+const COMPACTION_BUFFER_TOKENS = 13_000;`} />
+            <p className="text-[11px] text-text-muted leading-relaxed mt-2">
+              {lang === "zh"
+                ? "13,000 这个数字出现在压缩系统中。没有注释说明为什么是 13K 而不是 10K 或 15K。某处存在一次实验，产生了这个数字，然后它被永远凝固在了代码里。"
+                : lang === "ja"
+                ? "13,000という数値は圧縮システムに現れる。なぜ10Kや15KではなくてなぜてK13なのかのコメントはない。どこかで実験が行われ、その数値が生まれ、コードに永遠に固定された。"
+                : "13,000 appears in the compaction system as a hardcoded buffer. No comment explains why 13K and not 10K or 15K. Somewhere an experiment produced this number, and now it lives forever."}
+            </p>
+          </div>
+          <div className="p-4 rounded-xl bg-bg-tertiary/20 border border-border/50">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-sm">🌀</span>
+              <span className="text-xs font-semibold text-text-primary">
+                {lang === "zh" ? "160+ 加载动词中的隐藏神作" : lang === "ja" ? "160個以上のローディング動詞に隠された傑作" : "Hidden gems in the 160+ loading verbs"}
+              </span>
+            </div>
+            <p className="text-[11px] text-text-muted leading-relaxed mb-2">
+              {lang === "zh"
+                ? "包含 'Clauding' 这个词（让工具名变成动词）、'Prestidigitating'（表演魔术）和 'Flibbertigibbeting'（意思是行为反复无常）。有人真的打开了词典，写完了所有这些。"
+                : lang === "ja"
+                ? "「Clauding」（ツール名を動詞に）、「Prestidigitating」（手品を行う）、「Flibbertigibbeting」（軽薄に行動する）を含む。誰かが本当に辞書を開いて、これを全部書いた。"
+                : "Includes 'Clauding' (making the tool name a verb), 'Prestidigitating' (performing magic tricks), and 'Flibbertigibbeting' (behaving in a frivolous manner). Someone opened a real dictionary and wrote all of these."}
+            </p>
+          </div>
+        </div>
+      </Card>
+
+      {/* Design Decisions */}
+      <div className="flex items-center gap-3 mb-4 mt-8">
+        <span className="section-num">#11</span>
+        <h2 className="text-sm font-bold">
+          {lang === "zh" ? "让我们意外的设计决策" : lang === "ja" ? "私たちを驚かせた設計判断" : "Design Decisions That Surprised Us"}
+        </h2>
+      </div>
+      <Card
+        title={lang === "zh" ? "工程师们为什么这样选择" : lang === "ja" ? "なぜそのように選択したのか" : "Why They Made These Specific Choices"}
+        className="mb-6"
+        accent="var(--purple)"
+      >
+        <div className="space-y-5">
+          <div>
+            <div className="flex items-center gap-2 mb-1.5">
+              <span className="text-sm">🌳</span>
+              <span className="text-xs font-semibold text-text-primary">
+                {lang === "zh" ? "BashTool 使用 tree-sitter AST 解析而非正则" : lang === "ja" ? "BashToolが正規表現ではなくtree-sitter ASTを使う理由" : "Why BashTool uses tree-sitter AST instead of regex"}
+              </span>
+            </div>
+            <p className="text-[11px] text-text-muted leading-relaxed">
+              {lang === "zh"
+                ? "正则表达式解析 shell 命令会在 rm -rf $(cat /etc/hosts) 这样的场景失败。tree-sitter 给了你真正的 AST，所以你可以看到子shell替换、管道链和引用。这是做安全的正确方式，但也说明了为什么 BashTool 有 300KB 的安全代码。"
+                : lang === "ja"
+                ? "正規表現でシェルコマンドを解析すると、rm -rf $(cat /etc/hosts) のようなケースで失敗する。tree-sitterは本物のASTを提供するので、サブシェル置換、パイプチェーン、クォートが見える。セキュリティのための正しい方法だが、BashToolが300KBのセキュリティコードを持つ理由でもある。"
+                : "Regex parsing of shell commands fails on cases like rm -rf $(cat /etc/hosts). tree-sitter gives you an actual AST, so you can see subshell substitutions, pipe chains, and quoting. The right way to do security, which is also why BashTool has 300KB of security code."}
+            </p>
+          </div>
+          <div>
+            <div className="flex items-center gap-2 mb-1.5">
+              <span className="text-sm">🧊</span>
+              <span className="text-xs font-semibold text-text-primary">
+                {lang === "zh" ? "系统提示为何在缓存时被冻结" : lang === "ja" ? "なぜシステムプロンプトはキャッシュ時に凍結されるのか" : "Why the system prompt is frozen for caching"}
+              </span>
+            </div>
+            <p className="text-[11px] text-text-muted leading-relaxed">
+              {lang === "zh"
+                ? "CacheSafeParams 在 fork 时冻结系统提示。这意味着子代理的系统提示字节与父代理完全相同——触发自动提示缓存命中。好处：子代理实际上是免费的（只需为动态尾部付费）。代价：你不能在 fork 后修改系统提示。"
+                : lang === "ja"
+                ? "CacheSafeParamsはfork時にシステムプロンプトを凍結する。これはサブエージェントのシステムプロンプトバイトが親と完全に同一であることを意味し、自動的にプロンプトキャッシュヒットを引き起こす。利点：サブエージェントは実質無料（動的な末尾分だけ支払う）。コスト：fork後にシステムプロンプトを変更できない。"
+                : "CacheSafeParams freezes the system prompt at fork time. That means the subagent's system prompt bytes are byte-identical to the parent — triggering automatic prompt cache hits. Upside: subagents are essentially free (you only pay for the dynamic tail). Downside: you cannot mutate the system prompt after forking."}
+            </p>
+          </div>
+          <div>
+            <div className="flex items-center gap-2 mb-1.5">
+              <span className="text-sm">📦</span>
+              <span className="text-xs font-semibold text-text-primary">
+                {lang === "zh" ? "为什么有 4 种压缩策略而不是 1 种" : lang === "ja" ? "なぜ圧縮戦略が1つではなく4つなのか" : "Why there are 4 compaction strategies instead of 1"}
+              </span>
+            </div>
+            <p className="text-[11px] text-text-muted leading-relaxed">
+              {lang === "zh"
+                ? "micro（删除不重要的消息）、auto（AI 摘要）、snip（从中间删除）、collapse（将对话折叠成摘要）。每种在不同条件下效果最好：micro 对性能最小影响，auto 对精度最好，snip 对任务连续性，collapse 对全新开始。一刀切不行。"
+                : lang === "ja"
+                ? "micro（重要でないメッセージを削除）、auto（AI要約）、snip（中間から削除）、collapse（会話を要約に折り畳む）。それぞれ異なる条件で最も効果的：microはパフォーマンスへの影響が最小、autoは精度が最高、snipはタスク継続性のため、collapseは完全リセットのため。一律の解決策は機能しない。"
+                : "micro (delete unimportant messages), auto (AI summary), snip (delete from middle), collapse (fold conversation into summary). Each works best in different conditions: micro for minimal performance impact, auto for best accuracy, snip for task continuity, collapse for fresh start. One size doesn't fit all."}
+            </p>
+          </div>
+        </div>
+      </Card>
+
+      <NextPage
+        href="/file-map"
+        title={lang === "zh" ? "文件地图" : lang === "ja" ? "ファイルマップ" : "File Map"}
+        description={lang === "zh"
+          ? "找到所有这些奇怪功能在源码中的精确位置——完整的 1,884 文件目录。"
+          : lang === "ja"
+          ? "これらの奇妙な機能がソースコードのどこにあるかを正確に探す — 1,884ファイルの完全なディレクトリ。"
+          : "Find exactly where all these weird features live in the source code — a complete directory of 1,884 files."}
+      />
     </div>
   );
 }

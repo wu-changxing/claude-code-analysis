@@ -1,6 +1,6 @@
 "use client";
 
-import { PageHeader, Card, CodeBlock, Table, SectionNav } from "@/components/Section";
+import { PageHeader, Card, CodeBlock, Table, SectionNav, NextPage } from "@/components/Section";
 import { useTx } from "@/components/T";
 import { ghBlob, ghTree } from "@/lib/sourceLinks";
 import {
@@ -23,7 +23,6 @@ import {
   HiOutlineCheckCircle,
 } from "react-icons/hi2";
 import { motion } from "framer-motion";
-import Link from "next/link";
 
 export default function AgentsPage() {
   const tx = useTx();
@@ -788,33 +787,15 @@ getCoordinatorSystemPrompt()
         </div>
       </Card>
 
-      {/* Related Pages Footer */}
-      <div className="mt-8">
-        <hr className="section-divider" />
-        <div className="mb-3 text-[10px] font-semibold uppercase tracking-widest text-text-muted">
-          {tx("Related Pages", "相关页面", "関連ページ")}
-        </div>
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-          {[
-            { href: "/query-loop", icon: VscServerProcess, label: tx("Query Loop", "查询循环", "クエリループ"), sub: tx("Core execution cycle", "核心执行循环", "コア実行サイクル"), color: "var(--green)" },
-            { href: "/tools", icon: VscGitMerge, label: tx("Tools", "工具", "ツール"), sub: tx("43 built-in tools incl. AgentTool", "43个工具含 AgentTool", "AgentToolを含む43ツール"), color: "var(--accent)" },
-            { href: "/services", icon: VscDatabase, label: tx("Services", "服务", "サービス"), sub: tx("MCP, compaction, memory", "MCP、压缩、记忆", "MCP、圧縮、メモリ"), color: "var(--purple)" },
-          ].map((p) => (
-            <Link key={p.href} href={p.href} className="related-card flex items-center gap-3">
-              <div
-                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg"
-                style={{ background: `color-mix(in srgb, ${p.color} 12%, transparent)` }}
-              >
-                <p.icon className="h-4 w-4" style={{ color: p.color }} />
-              </div>
-              <div>
-                <div className="text-xs font-semibold text-text-primary">{p.label}</div>
-                <div className="text-[10px] text-text-muted">{p.sub}</div>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </div>
+      <NextPage
+        href="/services"
+        title={tx("Services", "服务系统", "サービスシステム")}
+        description={tx(
+          "MCP (470KB!), 4 compaction strategies, LSP integration, analytics pipeline, and the extractMemories background agent.",
+          "MCP（470KB！）、4 种压缩策略、LSP 集成、分析管道和 extractMemories 后台代理。",
+          "MCP（470KB！）、4つの圧縮戦略、LSP統合、分析パイプライン、extractMemoriesバックグラウンドエージェント。"
+        )}
+      />
     </div>
   );
 }

@@ -1,9 +1,8 @@
 "use client";
 
-import { PageHeader, Card, CodeBlock, SectionNav } from "@/components/Section";
+import { PageHeader, Card, CodeBlock, SectionNav, NextPage } from "@/components/Section";
 import { useTx } from "@/components/T";
 import { ghBlob } from "@/lib/sourceLinks";
-import Link from "next/link";
 import {
   VscServerProcess,
   VscExtensions,
@@ -602,29 +601,15 @@ Session ends, messages persisted to transcript.jsonl`}
         />
       </Card>
 
-      {/* Related Pages */}
-      <div className="mt-8">
-        <hr className="section-divider" />
-        <h2 className="mb-3 text-[10px] font-semibold uppercase tracking-widest text-text-muted">
-          {tx("Related", "相关页面", "関連ページ")}
-        </h2>
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-          {[
-            { href: "/tools", label: tx("Tools", "工具", "ツール"), sub: tx("43 tools the loop executes", "循环执行的43个工具", "ループが実行する43ツール"), color: "var(--orange)" },
-            { href: "/permissions", label: tx("Permissions", "权限", "権限"), sub: tx("5-layer security gate", "5层安全网关", "5層セキュリティ"), color: "var(--red)" },
-            { href: "/services", label: tx("Services", "服务", "サービス"), sub: tx("MCP, compaction, memory", "MCP、压缩、记忆", "MCP・圧縮・メモリ"), color: "var(--green)" },
-          ].map((p) => (
-            <Link key={p.href} href={p.href} className="related-card flex items-center gap-3">
-              <div className="w-2 h-2 rounded-full shrink-0" style={{ background: p.color }} />
-              <div className="flex-1 min-w-0">
-                <div className="text-xs font-semibold text-text-primary">{p.label}</div>
-                <div className="text-[10px] text-text-muted">{p.sub}</div>
-              </div>
-              <VscServerProcess className="h-3.5 w-3.5 shrink-0 text-text-muted" />
-            </Link>
-          ))}
-        </div>
-      </div>
+      <NextPage
+        href="/tools"
+        title={tx("Tools", "工具系统", "ツールシステム")}
+        description={tx(
+          "43 built-in tools — how they're structured, how permissions work, why BashTool is 300KB, and how MCP plugs in external tools.",
+          "43 个内置工具——它们的结构、权限工作方式、BashTool 为何有 300KB，以及 MCP 如何接入外部工具。",
+          "43の組み込みツール — その構造、権限の仕組み、BashToolが300KBある理由、MCPが外部ツールをどう接続するか。"
+        )}
+      />
     </div>
   );
 }

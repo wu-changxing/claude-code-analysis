@@ -570,3 +570,106 @@ pre .comment { color: #6b7280; font-style: italic; }
     padding: 10px 12px;
   }
 }
+
+/* Section intro — lead text that hooks readers */
+.section-lead {
+  font-size: 0.9375rem;
+  line-height: 1.7;
+  color: var(--text-secondary);
+  max-width: 65ch;
+  margin-bottom: 1.5rem;
+}
+
+/* Key term highlight — inline emphasis */
+.key-term {
+  font-weight: 600;
+  color: var(--text-primary);
+  border-bottom: 2px solid color-mix(in srgb, var(--accent) 40%, transparent);
+  padding-bottom: 1px;
+}
+
+/* Number callout — big stat inline in text */
+.inline-stat {
+  font-size: 1.25rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--accent);
+}
+
+/* Table of contents style anchor */
+.page-anchor {
+  scroll-margin-top: 5rem;
+}
+
+/* Next page CTA card */
+.next-page-card {
+  border: 1.5px solid var(--border);
+  border-radius: 16px;
+  background: var(--bg-secondary);
+  padding: 20px 24px;
+  transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  text-decoration: none;
+}
+
+.next-page-card:hover {
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
+  box-shadow: 0 4px 20px color-mix(in srgb, var(--accent) 10%, transparent);
+  transform: translateY(-2px);
+}
+
+/* Code block copy button */
+.code-copy-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 10px;
+  font-family: var(--font-mono);
+  background: rgba(255,255,255,0.08);
+  color: rgba(148, 163, 184, 0.7);
+  border: 1px solid rgba(255,255,255,0.1);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s, background 0.15s, color 0.15s;
+  z-index: 10;
+}
+
+.code-copy-btn.copied {
+  color: #4ade80;
+  background: rgba(74, 222, 128, 0.1);
+  border-color: rgba(74, 222, 128, 0.25);
+  opacity: 1 !important;
+}
+
+.code-scroll-wrap:hover .code-copy-btn {
+  opacity: 1;
+}
+
+/* Language badge on code blocks */
+.code-lang-badge {
+  position: absolute;
+  top: 10px;
+  left: 48px;
+  padding: 2px 7px;
+  border-radius: 5px;
+  font-size: 9px;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: rgba(255,255,255,0.06);
+  color: rgba(148, 163, 184, 0.5);
+  border: 1px solid rgba(255,255,255,0.07);
+  pointer-events: none;
+}
+
+@media (max-width: 639px) {
+  .next-page-card {
+    padding: 16px;
+    gap: 12px;
+  }
+}

@@ -1,6 +1,6 @@
 "use client";
 
-import { PageHeader, Card, Table, RelatedPages } from "@/components/Section";
+import { PageHeader, Card, Table, RelatedPages, NextPage } from "@/components/Section";
 import { useTx } from "@/components/T";
 import { CLAUDE_CODE_REPO, ghTree } from "@/lib/sourceLinks";
 import { motion } from "framer-motion";
@@ -269,6 +269,15 @@ export default function FileMapPage() {
         { href: "/query-loop", title: tx("Query Loop", "查询循环", "クエリループ"), color: "var(--green)", desc: tx("Deep dive into the 7-phase agentic loop that drives Claude's responses.", "深入探讨驱动 Claude 响应的 7 阶段代理循环。", "7フェーズのエージェントループの詳細解説。") },
         { href: "/fun-facts", title: tx("Fun Facts", "趣味事实", "豆知識"), color: "var(--pink)", desc: tx("Easter eggs and hidden gems found in the source files listed here.", "在这里列出的源文件中发现的彩蛋和隐藏亮点。", "ここに記載されたソースファイルに隠れたイースターエッグ。") },
       ]} />
+      <NextPage
+        href="/fun-facts"
+        title={tx("Fun Facts", "趣味事实", "豆知識")}
+        description={tx(
+          "Easter eggs, buddy pets with rarity tiers, the yoloClassifier, 160+ loading verbs, and wizard comments in production code.",
+          "彩蛋、含稀有度等级的宠物伙伴、yoloClassifier、160+ 加载动词，以及生产代码中的巫师注释。",
+          "イースターエッグ、レアリティ付きバディペット、yoloClassifier、160以上のローディング動詞、本番コードの魔法使いコメント。"
+        )}
+      />
     </div>
   );
 }

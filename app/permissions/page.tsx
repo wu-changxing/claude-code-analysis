@@ -1,6 +1,6 @@
 "use client";
 
-import { PageHeader, Card, CodeBlock, SourceLinks } from "@/components/Section";
+import { PageHeader, Card, CodeBlock, SourceLinks, NextPage } from "@/components/Section";
 import { useTx } from "@/components/T";
 import { ghBlob, ghTree } from "@/lib/sourceLinks";
 import {
@@ -484,29 +484,15 @@ Blocked patterns:
         />
       </Card>
 
-      {/* Related Pages */}
-      <div className="mt-8">
-        <hr className="section-divider" />
-        <h2 className="mb-3 text-[10px] font-semibold uppercase tracking-widest text-text-muted">
-          {tx("Related", "相关页面", "関連ページ")}
-        </h2>
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-          {[
-            { href: "/tools", label: tx("Tools", "工具", "ツール"), sub: tx("BashTool: 300KB of security code", "BashTool: 300KB安全代码", "BashTool: 300KBのセキュリティ"), color: "var(--orange)" },
-            { href: "/fun-facts", label: tx("Fun Facts", "趣闻", "おもしろ事実"), sub: tx("yoloClassifier & more easter eggs", "yoloClassifier等彩蛋", "yoloClassifierと隠し機能"), color: "var(--pink)" },
-            { href: "/query-loop", label: tx("Query Loop", "查询循环", "クエリループ"), sub: tx("How permissions gate tool execution", "权限如何控制工具执行", "権限がツール実行を制御する仕組み"), color: "var(--red)" },
-          ].map((p) => (
-            <a key={p.href} href={p.href} className="related-card flex items-center gap-3">
-              <div className="w-2 h-2 rounded-full shrink-0" style={{ background: p.color }} />
-              <div className="flex-1 min-w-0">
-                <div className="text-xs font-semibold text-text-primary">{p.label}</div>
-                <div className="text-[10px] text-text-muted">{p.sub}</div>
-              </div>
-              <VscShield className="h-3.5 w-3.5 shrink-0 text-text-muted" />
-            </a>
-          ))}
-        </div>
-      </div>
+      <NextPage
+        href="/agents"
+        title={tx("Agents & Subagents", "代理与子代理", "エージェントとサブエージェント")}
+        description={tx(
+          "How Claude Code spawns subagents, shares prompt cache for zero marginal cost, and isolates them in git worktrees.",
+          "Claude Code 如何生成子代理、共享提示缓存以实现零边际成本，以及如何在 git 工作树中隔离它们。",
+          "Claude Codeがサブエージェントをどう生成し、プロンプトキャッシュを共有してゼロ限界コストを実現し、gitワークツリーで隔離するか。"
+        )}
+      />
     </div>
   );
 }

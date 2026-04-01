@@ -1,6 +1,6 @@
 "use client";
 
-import { PageHeader, Card, CodeBlock, SectionNav } from "@/components/Section";
+import { PageHeader, Card, CodeBlock, SectionNav, NextPage } from "@/components/Section";
 import { useTx } from "@/components/T";
 import { ghBlob, ghTree } from "@/lib/sourceLinks";
 import {
@@ -602,6 +602,15 @@ guards:
 //    siblingAbortController → kill sibling subprocesses on bash error`}
         />
       </Card>
+      <NextPage
+        href="/context"
+        title={tx("Context & Memory", "上下文与记忆", "コンテキストとメモリ")}
+        description={tx(
+          "How the system prompt is built from 4 layers, where CLAUDE.md files are loaded from, and how auto-memory extraction works.",
+          "系统提示如何由 4 层构建、CLAUDE.md 文件从哪里加载，以及自动记忆提取如何工作。",
+          "4つのレイヤーからシステムプロンプトを構築する方法、CLAUDE.mdの読み込み元、自動メモリ抽出の仕組み。"
+        )}
+      />
     </div>
   );
 }

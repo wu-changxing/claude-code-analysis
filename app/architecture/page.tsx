@@ -1,6 +1,6 @@
 "use client";
 
-import { PageHeader, Card, CodeBlock, Table, SectionNav } from "@/components/Section";
+import { PageHeader, Card, CodeBlock, Table, SectionNav, InsightCallout, NextPage } from "@/components/Section";
 import { useTx } from "@/components/T";
 import { CLAUDE_CODE_REPO, ghBlob, ghTree } from "@/lib/sourceLinks";
 import Link from "next/link";
@@ -12,7 +12,6 @@ import {
   VscDatabase,
   VscShield,
   VscSymbolStructure,
-  VscArrowDown,
 } from "react-icons/vsc";
 import {
   HiOutlineArrowDown,
@@ -201,6 +200,13 @@ export default function ArchitecturePage() {
             "現在のソースツリーで重要なのは、Claude Code がもはや「ローカル REPL + ツール」だけではないことです。bridge/remote サブシステム、より厚い prompt-suggestion/speculation サービス、そして元の query loop を取り巻く多くのセッション基盤が加わっています。"
           )}
         </p>
+        <InsightCallout emoji="🏛️" title={tx("Key Insight", "核心洞察", "重要なポイント")} className="mt-4">
+          {tx(
+            "The /utils directory has 220 files but zero inbound package dependencies — it's the foundation everything builds on. Nothing in the codebase imports into utils; everything imports from it.",
+            "/utils 目录有 220 个文件，但没有任何入向包依赖——它是整个代码库的基础。代码库中没有任何东西向 utils 输出，一切都从它引入。",
+            "/utils ディレクトリには 220 ファイルがありますが、入向パッケージ依存は一切ありません。コードベース全体の土台であり、全てが utils からインポートし、utils へのインポートはゼロです。"
+          )}
+        </InsightCallout>
       </Card>
 
       {/* Key Abstractions */}
@@ -508,6 +514,13 @@ export default function ArchitecturePage() {
           ))}
           </div>
         </div>
+        <InsightCallout emoji="📏" title={tx("Key Insight", "核心洞察", "重要なポイント")} className="mt-4">
+          {tx(
+            "print.ts is 5,594 lines and does ONE thing: format terminal output. That's more lines than the entire React core scheduler. When output formatting gets complex enough, it becomes its own subsystem.",
+            "print.ts 有 5,594 行，只做一件事：格式化终端输出。这比整个 React 核心调度器的代码还多。当输出格式化变得足够复杂，它就成了自己的子系统。",
+            "print.ts は 5,594 行で、ただ一つのことを行います: ターミナル出力の書式設定。React コアスケジューラ全体よりも行数が多い。出力書式設定が十分複雑になると、独自のサブシステムになります。"
+          )}
+        </InsightCallout>
       </Card>
 
       {/* Module Size Breakdown */}
@@ -575,31 +588,24 @@ export default function ArchitecturePage() {
             ["GrowthBook", tx("Feature flags", "功能开关", "機能フラグ"), tx("A/B testing with cached gate values", "基于缓存 gate 值的 A/B 测试", "キャッシュ済み gate 値による A/B テスト")],
           ]}
         />
+        <InsightCallout emoji="⚡" title={tx("Key Insight", "核心洞察", "重要なポイント")} className="mt-4">
+          {tx(
+            "Claude Code uses a CUSTOM FORK of Ink — they've modified the terminal rendering engine itself. The ink/ directory isn't just configuration; it's a patched version of React-for-terminals with layout engine changes, focus management, and selection behavior Anthropic needed but upstream doesn't have.",
+            "Claude Code 使用了 Ink 的自定义分支——他们修改了终端渲染引擎本身。ink/ 目录不只是配置；它是 React for terminals 的打补丁版本，包含布局引擎变更、焦点管理和 Anthropic 需要但上游没有的选择行为。",
+            "Claude Code は Ink のカスタム FORK を使用しており、端末レンダリングエンジン自体を改変しています。ink/ ディレクトリは単なる設定ではなく、Anthropic が必要だが上流にはないレイアウト変更・フォーカス管理・選択動作を含む改修版です。"
+          )}
+        </InsightCallout>
       </Card>
 
-      {/* Related Pages */}
-      <div className="mt-8">
-        <hr className="section-divider" />
-        <h2 className="mb-3 text-[10px] font-semibold uppercase tracking-widest text-text-muted">
-          {tx("Related", "相关页面", "関連ページ")}
-        </h2>
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-          {[
-            { href: "/modules", label: tx("Module Map", "模块地图", "モジュールマップ"), sub: tx("8 modules with dependencies", "8个模块与依赖关系", "8モジュールと依存関係"), color: "var(--accent)" },
-            { href: "/query-loop", label: tx("Query Loop", "查询循环", "クエリループ"), sub: tx("How the core loop works", "核心循环如何运作", "コアループの仕組み"), color: "var(--green)" },
-            { href: "/tools", label: tx("Tools", "工具", "ツール"), sub: tx("43 built-in tools", "43个内置工具", "43の組み込みツール"), color: "var(--orange)" },
-          ].map((p) => (
-            <Link key={p.href} href={p.href} className="related-card flex items-center gap-3">
-              <div className="w-2 h-2 rounded-full shrink-0" style={{ background: p.color }} />
-              <div className="flex-1 min-w-0">
-                <div className="text-xs font-semibold text-text-primary">{p.label}</div>
-                <div className="text-[10px] text-text-muted">{p.sub}</div>
-              </div>
-              <VscArrowDown className="ml-auto h-3.5 w-3.5 shrink-0 rotate-[-90deg] text-text-muted" />
-            </Link>
-          ))}
-        </div>
-      </div>
+      <NextPage
+        href="/query-loop"
+        title={tx("The Query Loop", "查询循环", "クエリループ")}
+        description={tx(
+          "Dive into the 7-phase agentic loop — how query.ts orchestrates API streaming, tool execution, and error recovery across ~1700 lines of state machine.",
+          "深入了解 7 阶段代理循环——query.ts 如何在约 1700 行状态机中编排 API 流式输出、工具执行和错误恢复。",
+          "7段階のエージェントループを詳解 — query.ts が約1700行の状態機械でAPIストリーミング、ツール実行、エラー回復をどう調整するか。"
+        )}
+      />
     </div>
   );
 }
