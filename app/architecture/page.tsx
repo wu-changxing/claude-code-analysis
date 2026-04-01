@@ -1,6 +1,15 @@
 "use client";
 
 import { PageHeader, Card, CodeBlock, Table } from "@/components/Section";
+import {
+  VscCode,
+  VscExtensions,
+  VscTerminalBash,
+  VscServerProcess,
+  VscDatabase,
+  VscShield,
+  VscSymbolStructure,
+} from "react-icons/vsc";
 
 export default function ArchitecturePage() {
   return (
@@ -129,6 +138,95 @@ export default function ArchitecturePage() {
           </div>
         </Card>
       </div>
+
+      {/* Size Comparison */}
+      <Card title="Codebase Size Comparison" className="mb-6" accent="var(--accent)">
+        <p className="text-xs text-text-muted mb-4">
+          Lines of code compared to well-known projects (approximate):
+        </p>
+        <div className="space-y-2.5">
+          {[
+            { name: "Linux 1.0 (1994)", lines: 176000, color: "var(--green)" },
+            { name: "jQuery 3.x", lines: 10000, color: "var(--orange)" },
+            { name: "Express.js", lines: 14000, color: "var(--orange)" },
+            { name: "React (core)", lines: 200000, color: "var(--accent)" },
+            { name: "Claude Code v2.1.88", lines: 512664, color: "var(--red)", highlight: true },
+          ].map((p) => (
+            <div key={p.name} className="flex items-center gap-3">
+              <span className={`text-xs w-40 shrink-0 ${p.highlight ? "font-semibold text-text-primary" : "text-text-muted"}`}>
+                {p.name}
+              </span>
+              <div className="flex-1 h-5 bg-bg-primary rounded-full overflow-hidden border border-border/50">
+                <div
+                  className="h-full rounded-full transition-all flex items-center justify-end pr-2"
+                  style={{
+                    width: `${Math.min((p.lines / 512664) * 100, 100)}%`,
+                    background: p.color,
+                    minWidth: "40px",
+                  }}
+                >
+                  <span className="text-[10px] font-mono text-white font-medium">
+                    {(p.lines / 1000).toFixed(0)}K
+                  </span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </Card>
+
+      {/* Largest Files */}
+      <Card title="Top 10 Largest Files" className="mb-6" accent="var(--red)">
+        <div className="space-y-1.5">
+          {[
+            { file: "cli/print.ts", lines: 5594, desc: "Formatted terminal output" },
+            { file: "utils/messages.ts", lines: 5512, desc: "Message creation & formatting" },
+            { file: "utils/sessionStorage.ts", lines: 5105, desc: "Session persistence" },
+            { file: "utils/hooks.ts", lines: 5022, desc: "React hooks for REPL" },
+            { file: "screens/REPL.tsx", lines: 5005, desc: "Main REPL screen" },
+            { file: "main.tsx", lines: 4683, desc: "CLI initialization" },
+            { file: "utils/bash/bashParser.ts", lines: 4436, desc: "Bash AST parser" },
+            { file: "utils/attachments.ts", lines: 3997, desc: "Attachment prefetch" },
+            { file: "services/api/claude.ts", lines: 3419, desc: "API client + streaming" },
+            { file: "services/mcp/client.ts", lines: 3348, desc: "MCP protocol client" },
+          ].map((f, i) => (
+            <div key={f.file} className="flex items-center gap-3 py-1">
+              <span className="text-[10px] text-text-muted w-4 text-right font-mono">{i + 1}</span>
+              <code className="text-[11px] text-accent flex-1 truncate">{f.file}</code>
+              <span className="text-[10px] text-text-muted w-24 text-right">{f.desc}</span>
+              <div className="w-20 h-3 bg-bg-primary rounded-full overflow-hidden border border-border/50">
+                <div
+                  className="h-full rounded-full bg-red"
+                  style={{ width: `${(f.lines / 5594) * 100}%`, opacity: 0.7 }}
+                />
+              </div>
+              <span className="text-[10px] font-mono text-text-muted w-12 text-right">{f.lines.toLocaleString()}</span>
+            </div>
+          ))}
+        </div>
+      </Card>
+
+      {/* Module Size Breakdown */}
+      <Card title="Module Size Breakdown" className="mb-6">
+        <div className="grid grid-cols-4 gap-3">
+          {[
+            { icon: VscExtensions, name: "Tools", files: 140, lines: "~65K", color: "var(--orange)" },
+            { icon: VscDatabase, name: "Services", files: 110, lines: "~80K", color: "var(--green)" },
+            { icon: VscCode, name: "Utils", files: 220, lines: "~60K", color: "var(--accent)" },
+            { icon: VscSymbolStructure, name: "Components", files: 346, lines: "~40K", color: "var(--purple)" },
+            { icon: VscTerminalBash, name: "Commands", files: 110, lines: "~8K", color: "var(--orange)" },
+            { icon: VscServerProcess, name: "Query/Engine", files: 15, lines: "~15K", color: "var(--green)" },
+            { icon: VscShield, name: "Permissions", files: 30, lines: "~20K", color: "var(--red)" },
+            { icon: VscDatabase, name: "Bridge", files: 12, lines: "~13K", color: "var(--pink)" },
+          ].map((m) => (
+            <div key={m.name} className="p-3 rounded-lg bg-bg-tertiary/30 border border-border/50">
+              <m.icon className="w-4 h-4 mb-2" style={{ color: m.color }} />
+              <div className="text-xs font-semibold text-text-primary">{m.name}</div>
+              <div className="text-[10px] text-text-muted mt-0.5">{m.files} files &middot; {m.lines} lines</div>
+            </div>
+          ))}
+        </div>
+      </Card>
 
       {/* Tech Stack */}
       <Card title="Technology Stack" className="mb-6">

@@ -1,6 +1,51 @@
 "use client";
 
 import { PageHeader, Card, CodeBlock, Table } from "@/components/Section";
+import {
+  VscTerminalBash,
+  VscEdit,
+  VscNewFile,
+  VscOpenPreview,
+  VscSearch,
+  VscFileSymlinkDirectory,
+  VscGitMerge,
+  VscWand,
+  VscPlug,
+  VscGlobe,
+  VscBrowser,
+  VscNotebook,
+  VscGitCompare,
+  VscSignOut,
+  VscComment,
+  VscChecklist,
+  VscSymbolMisc,
+  VscServerProcess,
+  VscTerminalPowershell,
+  VscWatch,
+} from "react-icons/vsc";
+
+const TOOL_CARDS = [
+  { name: "Bash", icon: VscTerminalBash, type: "Execution", color: "var(--orange)", desc: "Shell commands with AST security analysis, sandbox, ML classifier" },
+  { name: "FileEdit", icon: VscEdit, type: "Modification", color: "var(--accent)", desc: "String find/replace with fuzzy matching and unified diff" },
+  { name: "FileWrite", icon: VscNewFile, type: "Modification", color: "var(--accent)", desc: "Full content atomic file replacement" },
+  { name: "FileRead", icon: VscOpenPreview, type: "Read", color: "var(--green)", desc: "Read files with PDF, notebook, image handling" },
+  { name: "Grep", icon: VscSearch, type: "Search", color: "var(--green)", desc: "Ripgrep-based content search with permission filtering" },
+  { name: "Glob", icon: VscFileSymlinkDirectory, type: "Search", color: "var(--green)", desc: "Fast file pattern matching, mod-time sorted" },
+  { name: "Agent", icon: VscGitMerge, type: "Spawning", color: "var(--purple)", desc: "Isolated sub-agents with zero-cost cache sharing" },
+  { name: "Skill", icon: VscWand, type: "Invocation", color: "var(--purple)", desc: "User-defined prompt templates from .md files" },
+  { name: "MCP", icon: VscPlug, type: "Proxy", color: "var(--pink)", desc: "Wraps external tools via Model Context Protocol" },
+  { name: "WebSearch", icon: VscGlobe, type: "Search", color: "var(--green)", desc: "Web search integration" },
+  { name: "WebFetch", icon: VscBrowser, type: "Read", color: "var(--green)", desc: "Fetch web page content" },
+  { name: "NotebookEdit", icon: VscNotebook, type: "Modification", color: "var(--accent)", desc: "Jupyter notebook cell editing" },
+  { name: "Worktree", icon: VscGitCompare, type: "Isolation", color: "var(--orange)", desc: "Git worktree creation and cleanup" },
+  { name: "SendMessage", icon: VscComment, type: "Comms", color: "var(--purple)", desc: "Inter-agent messaging" },
+  { name: "Task*", icon: VscChecklist, type: "Management", color: "var(--orange)", desc: "Create, get, update, stop tracked subtasks" },
+  { name: "ToolSearch", icon: VscSymbolMisc, type: "Discovery", color: "var(--green)", desc: "Deferred tool loading for large tool sets" },
+  { name: "LSP", icon: VscServerProcess, type: "Integration", color: "var(--accent)", desc: "Language Server Protocol queries" },
+  { name: "PowerShell", icon: VscTerminalPowershell, type: "Execution", color: "var(--orange)", desc: "Windows PowerShell execution" },
+  { name: "Sleep", icon: VscWatch, type: "Utility", color: "var(--green)", desc: "Async wait/delay" },
+  { name: "Exit*", icon: VscSignOut, type: "Cleanup", color: "var(--red)", desc: "Exit worktree/plan with safety checks" },
+];
 
 export default function ToolsPage() {
   return (
@@ -48,33 +93,25 @@ export default function ToolsPage() {
         />
       </Card>
 
-      {/* Tool Registry */}
-      <Card title="Built-in Tools" className="mb-6">
-        <Table
-          headers={["Tool", "Type", "Read-Only", "Key Feature"]}
-          rows={[
-            ["BashTool", "Execution", "No", "AST security analysis, sandbox, ML classifier"],
-            ["FileEditTool", "Modification", "No", "String find/replace with fuzzy matching + diff"],
-            ["FileWriteTool", "Modification", "No", "Full content atomic replacement"],
-            ["FileReadTool", "Read", "Yes", "PDF, notebook, image handling + device safety"],
-            ["GrepTool", "Search", "Yes", "Ripgrep with permission-aware file filtering"],
-            ["GlobTool", "Search", "Yes", "Fast pattern matching, mod-time sorted"],
-            ["AgentTool", "Spawning", "No", "Isolated subagents with cache sharing"],
-            ["SkillTool", "Invocation", "No", "User-defined prompt templates (.md files)"],
-            ["MCPTool", "Proxy", "Varies", "Wraps external tools via MCP protocol"],
-            ["WebSearchTool", "Search", "Yes", "Web search integration"],
-            ["WebFetchTool", "Read", "Yes", "Fetch web page content"],
-            ["NotebookEditTool", "Modification", "No", "Jupyter notebook cell editing"],
-            ["EnterWorktreeTool", "Isolation", "No", "Creates git worktree, mutates cwd"],
-            ["ExitWorktreeTool", "Cleanup", "No", "Safe removal with change detection"],
-            ["SendMessageTool", "Communication", "No", "Inter-agent messaging"],
-            ["TaskCreateTool", "Management", "No", "Create tracked subtasks"],
-            ["ToolSearchTool", "Discovery", "Yes", "Deferred tool loading for large sets"],
-            ["LSPTool", "Integration", "Yes", "Language Server Protocol queries"],
-            ["PowerShellTool", "Execution", "No", "Windows PowerShell execution"],
-            ["SleepTool", "Utility", "Yes", "Async wait/delay"],
-          ]}
-        />
+      {/* Tool Registry Visual */}
+      <Card title="Built-in Tools (43 total)" className="mb-6">
+        <div className="grid grid-cols-4 gap-2">
+          {TOOL_CARDS.map((t) => (
+            <div key={t.name} className="p-3 rounded-lg bg-bg-tertiary/30 border border-border/50 hover:border-accent/30 transition-colors">
+              <div className="flex items-center gap-2 mb-1.5">
+                <t.icon className="w-3.5 h-3.5 shrink-0" style={{ color: t.color }} />
+                <span className="text-xs font-semibold text-text-primary">{t.name}</span>
+              </div>
+              <span className="inline-block px-1.5 py-0.5 rounded text-[9px] font-medium mb-1.5" style={{
+                background: `color-mix(in srgb, ${t.color} 12%, transparent)`,
+                color: t.color,
+              }}>
+                {t.type}
+              </span>
+              <p className="text-[10px] text-text-muted leading-relaxed">{t.desc}</p>
+            </div>
+          ))}
+        </div>
       </Card>
 
       {/* BashTool Deep Dive */}

@@ -201,6 +201,58 @@ export default function FunFactsPage() {
         </div>
       </Card>
 
+      {/* Wizard Comment */}
+      <Card title="The Wizard Comment (query.ts:151)" className="mb-6" accent="var(--accent)">
+        <p className="text-sm text-text-secondary mb-3">
+          Deep in the query loop, the thinking rules are documented in full medieval fantasy style:
+        </p>
+        <CodeBlock code={`/**
+ * The rules of thinking are lengthy and fortuitous. They require plenty
+ * of thinking of most long duration and deep meditation for a wizard to
+ * wrap one's noggin around.
+ *
+ * The rules follow:
+ * 1. A message that contains a thinking or redacted_thinking block must
+ *    be part of a query whose max_thinking_length > 0
+ * 2. A thinking block may not be the last message in a block
+ * 3. Thinking blocks must be preserved for the duration of an assistant
+ *    trajectory...
+ *
+ * Heed these rules well, young wizard. For they are the rules of
+ * thinking, and the rules of thinking are the rules of the universe.
+ * If ye does not heed these rules, ye will be punished with an entire
+ * day of debugging and hair pulling.
+ */`} />
+        <p className="text-xs text-text-muted mt-3 italic">
+          This is real production code at Anthropic. Someone got paid to write &quot;wrap one&apos;s noggin around.&quot;
+        </p>
+      </Card>
+
+      {/* Spinner Verbs */}
+      <Card title="Loading Spinner Verbs (160+ of them)" className="mb-6" accent="var(--orange)">
+        <p className="text-sm text-text-secondary mb-3">
+          Instead of boring &quot;Loading...&quot;, Claude Code cycles through 160+ absurd verbs
+          from <code className="text-accent">constants/spinnerVerbs.ts</code>. Here are the highlights:
+        </p>
+        <div className="flex flex-wrap gap-1.5">
+          {[
+            "Lollygagging", "Beboppin'", "Boondoggling", "Flibbertigibbeting",
+            "Hullaballooing", "Clauding", "Julienning", "Prestidigitating",
+            "Razzle-dazzling", "Quantumizing", "Shenaniganing", "Symbioting",
+            "Whatchamacalliting", "Zesting", "Discombobulating", "Skedaddling",
+            "Bamboozling", "Moseying", "Dillydallying", "Gallivanting",
+          ].map((v) => (
+            <span key={v} className="px-2 py-1 bg-bg-tertiary/50 rounded-lg text-xs text-text-secondary font-mono">
+              {v}...
+            </span>
+          ))}
+        </div>
+        <p className="text-xs text-text-muted mt-3 italic">
+          &quot;Clauding...&quot; is a verb now. Also, &quot;Prestidigitating&quot; means performing magic tricks.
+          Someone at Anthropic has a thesaurus and they&apos;re not afraid to use it.
+        </p>
+      </Card>
+
       {/* Code Comments */}
       <Card title="Best Comments Found in the Code" className="mb-6" accent="var(--green)">
         <div className="space-y-3">
@@ -280,6 +332,46 @@ export default function FunFactsPage() {
               roughly 3x the original Linux kernel. For a tool that runs in your terminal.
               The Ink rendering engine alone (custom React fork for terminals) would be a
               significant open-source project by itself.
+            </p>
+          </div>
+        </div>
+      </Card>
+
+      {/* More Surprises */}
+      <Card title="Things That Shouldn't Exist But Do" className="mb-6" accent="var(--purple)">
+        <div className="space-y-4 text-sm">
+          <div className="p-3 rounded bg-bg-tertiary/30">
+            <p className="font-medium text-text-primary mb-1">Magic Docs — files that update themselves</p>
+            <p className="text-xs text-text-secondary">
+              Mark any file with <code className="text-accent"># MAGIC DOC: [title]</code> and Claude Code will
+              periodically update it in the background using a dedicated agent. There&apos;s an entire
+              service at <code className="text-accent">services/MagicDocs/</code> for this. The pattern matching
+              is <code className="text-accent">/^#\s*MAGIC\s+DOC:\s*(.+)$/im</code>. It&apos;s literally magic.
+            </p>
+          </div>
+          <div className="p-3 rounded bg-bg-tertiary/30">
+            <p className="font-medium text-text-primary mb-1">HackerOne bug bounty references in comments</p>
+            <p className="text-xs text-text-secondary">
+              The BashTool&apos;s permission code contains references like{" "}
+              <code className="text-accent">// (HackerOne #3543050)</code> — real security bug reports
+              that led to code changes. The security engineering is battle-tested by actual attackers.
+            </p>
+          </div>
+          <div className="p-3 rounded bg-bg-tertiary/30">
+            <p className="font-medium text-text-primary mb-1">MAX_VIM_COUNT = 10,000</p>
+            <p className="text-xs text-text-secondary">
+              Yes, Claude Code has a full Vim mode implementation. And someone specifically decided
+              that typing &quot;10000dd&quot; is the maximum reasonable Vim count. Someone tested this.
+              Someone had to.
+            </p>
+          </div>
+          <div className="p-3 rounded bg-bg-tertiary/30">
+            <p className="font-medium text-text-primary mb-1">284 feature flag checks across 109 files</p>
+            <p className="text-xs text-text-secondary">
+              The GrowthBook integration has 284 calls to{" "}
+              <code className="text-accent">getFeatureValue_CACHED_MAY_BE_STALE()</code>. That function name
+              is refreshingly honest about its caching guarantees. 40+ named feature flags control
+              everything from compaction strategies to whether you get a buddy pet.
             </p>
           </div>
         </div>
