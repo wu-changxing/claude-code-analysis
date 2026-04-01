@@ -64,15 +64,40 @@ code {
 }
 
 pre {
-  background: var(--bg-secondary);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 16px;
+  background: #1a1a2e;
+  border: 1px solid #2a2a3e;
+  border-radius: 10px;
+  padding: 20px;
   overflow-x: auto;
   font-size: 13px;
-  line-height: 1.6;
+  line-height: 1.7;
+  position: relative;
+}
+
+pre::before {
+  content: '';
+  position: absolute;
+  top: 10px;
+  left: 14px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ff5f57;
+  box-shadow: 16px 0 0 #febc2e, 32px 0 0 #28c840;
 }
 
 pre code {
-  color: var(--text-primary);
+  color: #e2e8f0;
+}
+
+/* Syntax-like coloring for keywords in code blocks */
+pre .comment { color: #6b7280; font-style: italic; }
+
+/* Inline code */
+:not(pre) > code {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-size: 0.85em;
 }

@@ -75,14 +75,23 @@ export function Card({
 export function CodeBlock({
   code,
   language = "typescript",
+  filename,
 }: {
   code: string;
   language?: string;
+  filename?: string;
 }) {
   return (
-    <pre className="!bg-bg-primary !border-border !rounded-lg text-[13px] leading-relaxed overflow-x-auto">
-      <code className={`language-${language}`}>{code}</code>
-    </pre>
+    <div className="relative">
+      {filename && (
+        <div className="absolute top-2.5 right-3 px-2 py-0.5 rounded text-[10px] font-mono text-gray-400 bg-white/5">
+          {filename}
+        </div>
+      )}
+      <pre className="!rounded-xl text-[13px] leading-relaxed overflow-x-auto pt-8">
+        <code className={`language-${language}`}>{code}</code>
+      </pre>
+    </div>
   );
 }
 
