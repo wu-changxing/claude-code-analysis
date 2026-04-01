@@ -1,6 +1,6 @@
 "use client";
 
-import { PageHeader, Card, CodeBlock, Table } from "@/components/Section";
+import { PageHeader, Card, CodeBlock, Table, SectionNav } from "@/components/Section";
 import { useTx } from "@/components/T";
 import { ghBlob, ghTree } from "@/lib/sourceLinks";
 import {
@@ -14,6 +14,13 @@ import { HiOutlineBolt, HiOutlineGlobeAlt, HiOutlineCpuChip } from "react-icons/
 
 export default function AgentsPage() {
   const tx = useTx();
+  const sections = [
+    { id: "agent-schema", label: tx("Input Schema", "输入模式", "入力スキーマ"), description: tx("What the agent tool accepts and why it matters.", "Agent tool 接受哪些参数，以及它们为什么重要。", "Agent tool の入力項目。") },
+    { id: "execution-modes", label: tx("Execution Modes", "执行模式", "実行モード"), description: tx("Local, worktree, and remote isolation models.", "本地、worktree、远程三种隔离模型。", "ローカル、worktree、remote の違い。") },
+    { id: "cache-sharing", label: tx("Cache Sharing", "缓存共享", "キャッシュ共有"), description: tx("Why subagents can be so cheap to launch.", "为什么子代理可以如此低成本地启动。", "サブエージェントが安価な理由。") },
+    { id: "coordinator-mode", label: tx("Coordinator", "协调器", "コーディネーター"), description: tx("How leader/worker orchestration really works.", "leader/worker 编排到底如何运作。", "leader/worker 編成の実態。") },
+    { id: "forked-agents", label: tx("Forked Agents", "分叉代理", "フォーク型エージェント"), description: tx("The background agents users often never see.", "用户通常看不到的后台代理。", "ユーザーが見ないことも多い裏方エージェント。") },
+  ];
   const executionModes = [
     {
       icon: HiOutlineBolt,
@@ -84,11 +91,14 @@ export default function AgentsPage() {
           { label: "remote/", href: ghTree("remote") },
         ]}
       />
+      <SectionNav title={tx("Jump To", "跳转到", "移動先")} sections={sections} />
 
       {/* Agent Input */}
       <Card
+        id="agent-schema"
         title={tx("Agent Input Schema", "代理输入模式", "エージェント入力スキーマ")}
         className="mb-6"
+        summary={tx("This is the interface surface for spawning or continuing agents.", "这是生成或继续代理时使用的接口层。", "エージェント起動/継続の入力面です。")}
         links={[
           { label: "AgentTool.tsx", href: ghBlob("tools/AgentTool/AgentTool.tsx") },
           { label: "loadAgentsDir.ts", href: ghBlob("tools/AgentTool/loadAgentsDir.ts") },
@@ -113,8 +123,10 @@ export default function AgentsPage() {
 
       {/* Execution Modes */}
       <Card
+        id="execution-modes"
         title={tx("Execution Modes", "执行模式", "実行モード")}
         className="mb-6"
+        summary={tx("Use this section to compare local, worktree, and remote execution tradeoffs.", "如果你想比较本地、worktree 与远程执行的取舍，读这一节。", "ローカル、worktree、remote の比較です。")}
         links={[
           { label: "runAgent.ts", href: ghBlob("tools/AgentTool/runAgent.ts") },
           { label: "EnterWorktreeTool.ts", href: ghBlob("tools/EnterWorktreeTool/EnterWorktreeTool.ts") },
@@ -142,9 +154,11 @@ export default function AgentsPage() {
 
       {/* Cache Sharing */}
       <Card
+        id="cache-sharing"
         title={tx("Zero-Cost Cache Sharing", "零成本缓存共享", "ゼロコストのキャッシュ共有")}
         className="mb-6"
         accent="var(--green)"
+        summary={tx("The performance story of agents starts here: cache-stable prompt bytes make forks cheap.", "代理系统的性能故事从这里开始：稳定的 prompt 字节让 fork 变得便宜。", "エージェント性能の核心はここです。安定した prompt バイト列が fork を安くします。")}
         links={[
           { label: "forkedAgent.ts", href: ghBlob("utils/forkedAgent.ts") },
           { label: "runAgent.ts", href: ghBlob("tools/AgentTool/runAgent.ts") },
@@ -182,9 +196,11 @@ export default function AgentsPage() {
 
       {/* Coordinator Mode */}
       <Card
+        id="coordinator-mode"
         title={tx("Coordinator Mode", "协调器模式", "コーディネーターモード")}
         className="mb-6"
         accent="var(--purple)"
+        summary={tx("This explains the leader/worker pattern Claude Code bakes into its own prompt design.", "这一节解释 Claude Code 如何把 leader/worker 模式写进自己的提示设计里。", "leader/worker パターンをどう prompt に組み込んでいるかを説明します。")}
         links={[
           { label: "coordinator/", href: ghTree("coordinator") },
           { label: "coordinatorMode.ts", href: ghBlob("coordinator/coordinatorMode.ts") },
@@ -274,8 +290,10 @@ getCoordinatorSystemPrompt()
 
       {/* Forked Agents */}
       <Card
+        id="forked-agents"
         title={tx("Forked Agents (Lightweight)", "分叉代理（轻量）", "フォーク型エージェント（軽量）")}
         className="mb-6"
+        summary={tx("These are the small background agents that make the product feel smarter than a single visible loop.", "这些轻量后台代理让产品看起来不只是一个可见的单线程循环。", "単一ループ以上に賢く見せる裏方エージェントです。")}
         links={[
           { label: "extractMemories.ts", href: ghBlob("services/extractMemories/extractMemories.ts") },
           { label: "sessionMemory.ts", href: ghBlob("services/SessionMemory/sessionMemory.ts") },

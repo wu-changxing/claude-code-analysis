@@ -1,6 +1,6 @@
 "use client";
 
-import { PageHeader, Card, CodeBlock, FlowStep } from "@/components/Section";
+import { PageHeader, Card, CodeBlock, FlowStep, SectionNav } from "@/components/Section";
 import { useTx } from "@/components/T";
 import { ghBlob } from "@/lib/sourceLinks";
 import {
@@ -15,6 +15,13 @@ import { HiOutlineArrowPath } from "react-icons/hi2";
 
 export default function QueryLoopPage() {
   const tx = useTx();
+  const sections = [
+    { id: "loop-state", label: tx("State Machine", "状态机", "状態機械"), description: tx("What state the loop carries between turns.", "循环在多轮之间保留哪些状态。", "ループが反復間で保持する状態。") },
+    { id: "loop-flow", label: tx("Iteration Flow", "迭代流程", "反復フロー"), description: tx("The end-to-end path from context projection to continuation.", "从上下文投影到继续判定的完整路径。", "文脈投影から継続判定までの流れ。") },
+    { id: "streaming-tools", label: tx("Streaming Tools", "流式工具", "ストリーミングツール"), description: tx("How tool execution overlaps with model streaming.", "工具执行如何与模型流式输出重叠。", "ツール実行がモデル生成とどう重なるか。") },
+    { id: "token-budget", label: tx("Token Budget", "Token 预算", "トークン予算"), description: tx("Why the loop sometimes nudges itself to continue.", "为什么循环有时会主动提示自己继续。", "なぜ自分で継続を促すことがあるのか。") },
+    { id: "stop-hooks", label: tx("Stop Hooks", "停止 Hooks", "停止フック"), description: tx("What still runs after the answer looks finished.", "答案看似结束后还会执行什么。", "応答後にも走る処理。") },
+  ];
   const recoverySteps = [
     {
       step: "1",
@@ -74,11 +81,14 @@ export default function QueryLoopPage() {
           { label: "query/stopHooks.ts", href: ghBlob("query/stopHooks.ts") },
         ]}
       />
+      <SectionNav title={tx("Jump To", "跳转到", "移動先")} sections={sections} />
 
       {/* State Machine */}
       <Card
+        id="loop-state"
         title={tx("Loop State Machine", "循环状态机", "ループ状態機械")}
         className="mb-6"
+        summary={tx("Read this first if you want to understand what the loop remembers and why retries behave differently across turns.", "如果你想理解循环记住了什么，以及为什么不同轮次的重试行为不同，先看这里。", "ループが何を記憶し、なぜターンごとに再試行挙動が変わるかを知る入口です。")}
         links={[
           { label: "query.ts", href: ghBlob("query.ts") },
           { label: "QueryEngine.ts", href: ghBlob("QueryEngine.ts") },
@@ -108,7 +118,7 @@ export default function QueryLoopPage() {
       </Card>
 
       {/* Flow Steps */}
-      <Card title={tx("Loop Iteration Flow", "循环迭代流程", "ループ反復フロー")} className="mb-6">
+      <Card id="loop-flow" title={tx("Loop Iteration Flow", "循环迭代流程", "ループ反復フロー")} className="mb-6" summary={tx("This is the operational walkthrough of a single turn, from message projection to exit or continuation.", "这是单轮执行的操作式讲解，从消息投影到退出或继续。", "1ターン分の処理を、投影から終了/継続まで順に追います。")}>
         <div className="pt-2">
           <FlowStep
             number={1}
@@ -185,9 +195,11 @@ export default function QueryLoopPage() {
 
       {/* Streaming Tool Execution */}
       <Card
+        id="streaming-tools"
         title={tx("Streaming Tool Execution", "流式工具执行", "ストリーミングツール実行")}
         className="mb-6"
         accent="var(--green)"
+        summary={tx("This section explains the main latency trick: tools can start before the model has fully finished speaking.", "这一节解释最关键的延迟优化：模型还没说完，工具就能先开始执行。", "主要な低遅延化の仕組みを説明します。モデルが話し終える前にツールを起動します。")}
         links={[
           { label: "StreamingToolExecutor.ts", href: ghBlob("services/tools/StreamingToolExecutor.ts") },
           { label: "toolOrchestration.ts", href: ghBlob("services/tools/toolOrchestration.ts") },
@@ -246,9 +258,11 @@ class StreamingToolExecutor {
       </Card>
 
       <Card
+        id="token-budget"
         title={tx("Token Budget Continuation", "Token 预算续写", "トークン予算の継続判定")}
         className="mb-6"
         accent="var(--purple)"
+        summary={tx("Claude Code now reasons about turn-level budget, not only hard model limits.", "Claude Code 现在考虑的是回合级预算，而不只是模型硬上限。", "Claude Code はモデル上限だけでなく、ターン単位の予算でも継続を判断します。")}
         links={[{ label: "query/tokenBudget.ts", href: ghBlob("query/tokenBudget.ts") }]}
       >
         <p className="text-sm text-text-secondary mb-4">
@@ -284,9 +298,11 @@ startedAt`}
       </Card>
 
       <Card
+        id="stop-hooks"
         title={tx("Stop Hooks & Background Work", "停止 Hook 与后台任务", "停止フックとバックグラウンド処理")}
         className="mb-6"
         accent="var(--accent)"
+        summary={tx("Use this section to understand why 'done' in the loop is not the true end of a turn.", "如果你想理解为什么循环里的“结束”并不是真正的回合终点，就看这节。", "ループの『完了』が本当の終点ではない理由を説明します。")}
         links={[
           { label: "query/stopHooks.ts", href: ghBlob("query/stopHooks.ts") },
           { label: "speculation.ts", href: ghBlob("services/PromptSuggestion/speculation.ts") },

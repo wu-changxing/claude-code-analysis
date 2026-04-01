@@ -1,11 +1,18 @@
 "use client";
 
-import { PageHeader, Card, CodeBlock, FlowStep } from "@/components/Section";
+import { PageHeader, Card, CodeBlock, FlowStep, SectionNav } from "@/components/Section";
 import { useTx } from "@/components/T";
 import { ghBlob, ghTree } from "@/lib/sourceLinks";
 
 export default function ContextPage() {
   const tx = useTx();
+  const sections = [
+    { id: "system-prompt", label: tx("Prompt Assembly", "提示构建", "プロンプト構築"), description: tx("How the final system prompt is built from multiple layers.", "最终 system prompt 如何由多层内容拼装而成。", "最終システムプロンプトの組み立て方。") },
+    { id: "prompt-cache", label: tx("Prompt Cache", "提示缓存", "プロンプトキャッシュ"), description: tx("Why prompt boundaries matter for performance.", "为什么 prompt 边界会影响性能。", "境界が性能に効く理由。") },
+    { id: "claude-md", label: "CLAUDE.md", description: tx("Where project instructions are loaded from.", "项目指令从哪里加载。", "プロジェクト指示の読み込み元。") },
+    { id: "memory-system", label: tx("Memory System", "记忆系统", "メモリシステム"), description: tx("Persistent memory layout and file model.", "持久化记忆的目录结构与文件模型。", "永続メモリの構造。") },
+    { id: "app-state", label: tx("AppState", "AppState", "AppState"), description: tx("The runtime control surface behind the UI.", "UI 背后的运行时控制面。", "UI 背後の実行時制御面。") },
+  ];
   return (
     <div className="page-shell">
       <PageHeader
@@ -23,12 +30,15 @@ export default function ContextPage() {
           { label: "query/stopHooks.ts", href: ghBlob("query/stopHooks.ts") },
         ]}
       />
+      <SectionNav title={tx("Jump To", "跳转到", "移動先")} sections={sections} />
 
       {/* System Prompt Assembly */}
       <Card
+        id="system-prompt"
         title={tx("System Prompt Assembly", "系统提示构建", "システムプロンプト構築")}
         className="mb-6"
         accent="var(--accent)"
+        summary={tx("This section explains what actually goes into the model prompt on every turn.", "这一节解释每一轮真正送进模型的 prompt 由什么组成。", "各ターンでモデルに渡る prompt の中身を説明します。")}
         links={[
           { label: "QueryEngine.ts", href: ghBlob("QueryEngine.ts") },
           { label: "context/", href: ghTree("context") },
@@ -95,9 +105,11 @@ const systemPrompt = asSystemPrompt([
       </Card>
 
       <Card
+        id="prompt-cache"
         title={tx("Prompt Boundary & Cache Topology", "Prompt 边界与缓存拓扑", "Prompt 境界とキャッシュ構造")}
         className="mb-6"
         accent="var(--orange)"
+        summary={tx("Read this if you want the performance story, not just the content story, of prompt construction.", "如果你想理解的不只是 prompt 内容，还有性能层面的设计，就看这里。", "prompt 内容だけでなく性能設計も知る節です。")}
         links={[
           { label: "constants/prompts.ts", href: ghBlob("constants/prompts.ts") },
           { label: "utils/api.ts", href: ghBlob("utils/api.ts") },
@@ -128,9 +140,11 @@ SYSTEM_PROMPT_DYNAMIC_BOUNDARY = "__SYSTEM_PROMPT_DYNAMIC_BOUNDARY__"
 
       {/* CLAUDE.md */}
       <Card
+        id="claude-md"
         title={tx("CLAUDE.md Loading", "CLAUDE.md 加载", "CLAUDE.md の読み込み")}
         className="mb-6"
         accent="var(--green)"
+        summary={tx("Project instructions are layered from several locations; this section shows the order.", "项目指令会从多个位置叠加进来；这一节展示加载顺序。", "複数の場所から指示が積み上がる順序です。")}
         links={[
           { label: "context/", href: ghTree("context") },
           { label: "constants/", href: ghTree("constants") },
@@ -161,9 +175,11 @@ SYSTEM_PROMPT_DYNAMIC_BOUNDARY = "__SYSTEM_PROMPT_DYNAMIC_BOUNDARY__"
 
       {/* Memory System */}
       <Card
+        id="memory-system"
         title={tx("Auto-Memory System (memdir/)", "自动记忆系统（memdir/）", "自動メモリシステム（memdir/）")}
         className="mb-6"
         accent="var(--purple)"
+        summary={tx("Use this section to understand what Claude Code tries to remember across sessions and where it stores it.", "如果你想理解 Claude Code 跨会话会记住什么、存在哪里，就看这里。", "セッションを跨いで何をどう保存するかを説明します。")}
         links={[
           { label: "memdir/", href: ghTree("memdir") },
           { label: "SessionMemory/", href: ghTree("services/SessionMemory") },
@@ -281,9 +297,11 @@ saveCacheSafeParams(createCacheSafeParams(stopHookContext))
 
       {/* State Management */}
       <Card
+        id="app-state"
         title={tx("AppState Store", "AppState 存储", "AppState ストア")}
         className="mb-6"
         accent="var(--orange)"
+        summary={tx("This is the runtime map behind the terminal UI, remote bridge, tasks, and speculation.", "这是终端 UI、远程 bridge、任务和 speculation 背后的运行时状态地图。", "端末 UI、remote bridge、tasks、speculation の背後にある状態地図です。")}
         links={[
           { label: "state/AppStateStore.ts", href: ghBlob("state/AppStateStore.ts") },
           { label: "PromptSuggestion/", href: ghTree("services/PromptSuggestion") },

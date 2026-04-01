@@ -1,6 +1,6 @@
 "use client";
 
-import { PageHeader, Card, CodeBlock, Table } from "@/components/Section";
+import { PageHeader, Card, CodeBlock, Table, SectionNav } from "@/components/Section";
 import { useTx } from "@/components/T";
 import { CLAUDE_CODE_REPO, ghBlob, ghTree } from "@/lib/sourceLinks";
 import {
@@ -15,6 +15,12 @@ import {
 
 export default function ArchitecturePage() {
   const tx = useTx();
+  const sections = [
+    { id: "directory-structure", label: tx("Directory Structure", "目录结构", "ディレクトリ構成"), description: tx("The top-level map of the codebase.", "代码库的顶层地图。", "コードベースの全体地図。") },
+    { id: "core-abstractions", label: tx("Core Abstractions", "核心抽象", "主要抽象"), description: tx("The main concepts you need before reading source.", "阅读源码前需要先掌握的核心概念。", "ソースを読む前に必要な主要概念。") },
+    { id: "control-plane", label: tx("Control Plane", "控制平面", "コントロールプレーン"), description: tx("Why Claude Code is more than a simple loop plus tools.", "为什么 Claude Code 不只是一个循环加工具。", "なぜ単なるループ+ツールではないのか。") },
+    { id: "largest-files", label: tx("Largest Files", "最大文件", "最大ファイル"), description: tx("Where a lot of complexity is concentrated.", "复杂度最集中的地方。", "複雑さが集中する場所。") },
+  ];
   return (
     <div className="page-shell">
       <PageHeader
@@ -32,11 +38,14 @@ export default function ArchitecturePage() {
           { label: "query.ts", href: ghBlob("query.ts") },
         ]}
       />
+      <SectionNav title={tx("Jump To", "跳转到", "移動先")} sections={sections} />
 
       {/* Directory Map */}
       <Card
+        id="directory-structure"
         title={tx("Directory Structure", "目录结构", "ディレクトリ構成")}
         className="mb-6"
+        summary={tx("Use this map first if you need to orient yourself before diving into specific source files.", "如果你想在深入具体源码前先建立方向感，先看这张图。", "個別ファイルへ入る前の地図です。")}
         links={[
           { label: "src/", href: ghTree("") },
           { label: "services/", href: ghTree("services") },
@@ -102,8 +111,10 @@ export default function ArchitecturePage() {
       {/* Key Abstractions */}
       <div className="mb-6 grid grid-cols-1 gap-4 xl:grid-cols-2">
         <Card
+          id="core-abstractions"
           title={tx("Core Abstractions", "核心抽象", "主要な抽象")}
           accent="var(--accent)"
+          summary={tx("These abstractions are the vocabulary of the rest of the system.", "这些抽象就是后续系统各部分的共同语言。", "以後のシステムを読むための語彙です。")}
           links={[
             { label: "QueryEngine.ts", href: ghBlob("QueryEngine.ts") },
             { label: "query.ts", href: ghBlob("query.ts") },
@@ -209,9 +220,11 @@ export default function ArchitecturePage() {
       </div>
 
       <Card
+        id="control-plane"
         title={tx("Operational Control Plane", "运行时控制平面", "運用コントロールプレーン")}
         className="mb-6"
         accent="var(--purple)"
+        summary={tx("This section explains the product-level runtime that surrounds the core agent loop.", "这一节解释围绕核心 agent loop 的产品级运行时结构。", "コア agent loop を取り巻く実行基盤です。")}
         links={[
           { label: "state/AppStateStore.ts", href: ghBlob("state/AppStateStore.ts") },
           { label: "bridge/", href: ghTree("bridge") },
@@ -282,7 +295,7 @@ UX subsystems:
       </Card>
 
       {/* Largest Files */}
-      <Card title={tx("Top 10 Largest Files", "最大文件 Top 10", "最大ファイル Top 10")} className="mb-6" accent="var(--red)">
+      <Card id="largest-files" title={tx("Top 10 Largest Files", "最大文件 Top 10", "最大ファイル Top 10")} className="mb-6" accent="var(--red)" summary={tx("Use this table when you want to know where the codebase is densest and worth deeper reading.", "如果你想知道哪些文件最重、最值得深入阅读，就看这张表。", "密度の高いファイルを知るための表です。")}>
         <div className="overflow-x-auto">
           <div className="min-w-[560px] space-y-1.5">
           {[

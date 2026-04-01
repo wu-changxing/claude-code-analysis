@@ -1,6 +1,6 @@
 "use client";
 
-import { PageHeader, Card, CodeBlock } from "@/components/Section";
+import { PageHeader, Card, CodeBlock, SectionNav } from "@/components/Section";
 import { useTx } from "@/components/T";
 import { ghBlob, ghTree } from "@/lib/sourceLinks";
 import {
@@ -51,6 +51,13 @@ const TOOL_CARDS = [
 
 export default function ToolsPage() {
   const tx = useTx();
+  const sections = [
+    { id: "tool-interface", label: tx("Interface", "接口", "インターフェース"), description: tx("The shared contract every tool implements.", "每个工具都遵循的公共契约。", "全ツール共通の契約。") },
+    { id: "tool-registry", label: tx("Built-ins", "内置工具", "組み込みツール"), description: tx("A map of the major tool families.", "主要工具家族的概览。", "主要ツール群の地図。") },
+    { id: "bash-tool", label: tx("BashTool", "BashTool", "BashTool"), description: tx("The most security-sensitive tool in the system.", "系统里安全要求最高的工具。", "最もセキュリティが重いツール。") },
+    { id: "file-edit", label: tx("FileEditTool", "FileEditTool", "FileEditTool"), description: tx("How text edits are validated and applied safely.", "文本编辑如何被安全校验并应用。", "テキスト編集がどう安全に行われるか。") },
+    { id: "tool-orchestration", label: tx("Orchestration", "编排", "オーケストレーション"), description: tx("How multiple tools run together without breaking state.", "多个工具如何协同运行而不破坏状态。", "複数ツールをどう安全に走らせるか。") },
+  ];
   const toolCards = TOOL_CARDS.map((tool) => ({
     ...tool,
     type: tx(tool.type, ({
@@ -149,11 +156,14 @@ export default function ToolsPage() {
           { label: "tools/BashTool/", href: ghTree("tools/BashTool") },
         ]}
       />
+      <SectionNav title={tx("Jump To", "跳转到", "移動先")} sections={sections} />
 
       {/* Tool Interface */}
       <Card
+        id="tool-interface"
         title={tx("Tool Interface (Tool.ts)", "工具接口（Tool.ts）", "ツールインターフェース（Tool.ts）")}
         className="mb-6"
+        summary={tx("Start here if you want the mental model that unifies Bash, Edit, MCP, Agent, and the rest.", "如果你想先建立一个统一理解 Bash、Edit、MCP、Agent 等工具的模型，从这里开始。", "Bash、Edit、MCP、Agent などをまとめて理解する入口です。")}
         links={[
           { label: "Tool.ts", href: ghBlob("Tool.ts") },
           { label: "buildTool()", href: ghBlob("Tool.ts") },
@@ -196,8 +206,10 @@ export default function ToolsPage() {
 
       {/* Tool Registry Visual */}
       <Card
+        id="tool-registry"
         title={tx("Built-in Tools (43 total)", "内置工具（共 43 个）", "組み込みツール（全43種）")}
         className="mb-6"
+        summary={tx("This section helps you orient which tools are for reading, writing, searching, spawning, or protocol bridging.", "这节帮助你快速分清哪些工具负责读取、写入、搜索、派生或协议桥接。", "読み取り、書き込み、検索、起動、プロトコル橋渡しのどれかを把握できます。")}
         links={[
           { label: "tools/", href: ghTree("tools") },
           { label: "MCPTool/", href: ghTree("tools/MCPTool") },
@@ -225,9 +237,11 @@ export default function ToolsPage() {
 
       {/* BashTool Deep Dive */}
       <Card
+        id="bash-tool"
         title={tx("BashTool Deep Dive", "BashTool 深入解析", "BashTool 詳解")}
         className="mb-6"
         accent="var(--orange)"
+        summary={tx("Read this if you want to understand why shell execution in Claude Code is so heavily guarded.", "如果你想理解为什么 Claude Code 对 shell 执行做了这么多防护，读这一节。", "シェル実行に多層防御がある理由を知る節です。")}
         links={[
           { label: "BashTool.tsx", href: ghBlob("tools/BashTool/BashTool.tsx") },
           { label: "bashPermissions.ts", href: ghBlob("tools/BashTool/bashPermissions.ts") },
@@ -282,9 +296,11 @@ shouldUseSandbox.ts — Sandbox decision logic`}
 
       {/* FileEdit Deep Dive */}
       <Card
+        id="file-edit"
         title={tx("FileEditTool", "FileEditTool", "FileEditTool")}
         className="mb-6"
         accent="var(--accent)"
+        summary={tx("This section explains why edits are more than a simple string replace.", "这一节解释为什么编辑并不只是简单的字符串替换。", "編集が単なる文字列置換ではない理由を説明します。")}
         links={[
           { label: "FileEditTool.ts", href: ghBlob("tools/FileEditTool/FileEditTool.ts") },
           { label: "FileReadTool.ts", href: ghBlob("tools/FileReadTool/FileReadTool.ts") },
@@ -322,7 +338,9 @@ shouldUseSandbox.ts — Sandbox decision logic`}
 
       {/* Tool Execution */}
       <Card
+        id="tool-orchestration"
         title={tx("Tool Orchestration Strategy", "工具编排策略", "ツールオーケストレーション戦略")}
+        summary={tx("Use this section to understand how many tool calls can happen in one turn without corrupting shared state.", "如果你想理解一轮里多个工具调用如何在不破坏共享状态的前提下运行，就看这里。", "複数ツール呼び出しを状態破壊なく処理する仕組みです。")}
         links={[
           { label: "toolOrchestration.ts", href: ghBlob("services/tools/toolOrchestration.ts") },
           { label: "StreamingToolExecutor.ts", href: ghBlob("services/tools/StreamingToolExecutor.ts") },

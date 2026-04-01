@@ -1,6 +1,6 @@
 "use client";
 
-import { PageHeader, Card, CodeBlock } from "@/components/Section";
+import { PageHeader, Card, CodeBlock, SectionNav } from "@/components/Section";
 import { useTx } from "@/components/T";
 import { ghBlob, ghTree } from "@/lib/sourceLinks";
 import {
@@ -17,6 +17,14 @@ import {
 
 export default function ServicesPage() {
   const tx = useTx();
+  const sections = [
+    { id: "service-overview", label: tx("Overview", "概览", "概要"), description: tx("A quick map of the major service families.", "主要服务家族的快速地图。", "主要サービス群の地図。") },
+    { id: "compaction-system", label: tx("Compaction", "压缩", "圧縮"), description: tx("How context is kept inside model limits.", "如何让上下文保持在模型限制内。", "文脈を上限内に保つ方法。") },
+    { id: "mcp-service", label: "MCP", description: tx("External tool integration and transport handling.", "外部工具集成与传输层处理。", "外部ツール統合と転送方式。") },
+    { id: "api-policy", label: tx("API Layer", "API 层", "API 層"), description: tx("The request/stream/retry layer behind every turn.", "每一轮背后的请求、流处理与重试层。", "各ターンの背後にある要求・ストリーム・再試行層。") },
+    { id: "bridge-remote", label: tx("Bridge/Remote", "桥接/远程", "ブリッジ/リモート"), description: tx("Remote session control-plane logic.", "远程会话控制平面逻辑。", "リモートセッション制御プレーン。") },
+    { id: "speculation", label: tx("Speculation", "推测执行", "推測実行"), description: tx("PromptSuggestion and cheap background previews.", "PromptSuggestion 与低成本后台预执行。", "PromptSuggestion と安価な先読み実行。") },
+  ];
   const serviceCards = [
     { icon: VscDatabase, name: tx("Compaction", "压缩", "圧縮"), files: 13, size: "~15K", color: "var(--accent)", desc: tx("4-level context window management", "4 级上下文窗口管理", "4段階のコンテキストウィンドウ管理") },
     { icon: VscPlug, name: "MCP", files: 25, size: "470KB", color: "var(--green)", desc: tx("External tool integration (4 transports)", "外部工具集成（4 种传输方式）", "外部ツール統合（4つのトランスポート）") },
@@ -46,9 +54,10 @@ export default function ServicesPage() {
           { label: "mcp/", href: ghTree("services/mcp") },
         ]}
       />
+      <SectionNav title={tx("Jump To", "跳转到", "移動先")} sections={sections} />
 
       {/* Service Overview */}
-      <Card title={tx("Service Overview", "服务概览", "サービス概要")} className="mb-6">
+      <Card id="service-overview" title={tx("Service Overview", "服务概览", "サービス概要")} className="mb-6" summary={tx("Start here to see which responsibilities live outside the main query loop.", "如果你想先弄清哪些职责不在主 query loop 内部，先看这里。", "メイン query loop の外にある責務を整理する入口です。")}>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
           {serviceCards.map((s) => (
             <div key={s.name} className="p-3 rounded-xl bg-bg-tertiary/30 border border-border/50">
@@ -63,9 +72,11 @@ export default function ServicesPage() {
 
       {/* Compaction */}
       <Card
+        id="compaction-system"
         title={tx("Compaction System", "压缩系统", "圧縮システム")}
         className="mb-6"
         accent="var(--accent)"
+        summary={tx("This section explains how Claude Code keeps long sessions alive instead of hitting a hard wall.", "这一节解释 Claude Code 如何维持超长会话，而不是直接撞上上下文墙。", "長い会話を打ち切らずに維持する仕組みです。")}
         links={[
           { label: "services/compact/", href: ghTree("services/compact") },
           { label: "autoCompact.ts", href: ghBlob("services/compact/autoCompact.ts") },
@@ -111,9 +122,11 @@ autocompact_threshold = effective_window - 13K buffer
 
       {/* MCP */}
       <Card
+        id="mcp-service"
         title={tx("MCP (Model Context Protocol)", "MCP（模型上下文协议）", "MCP（Model Context Protocol）")}
         className="mb-6"
         accent="var(--green)"
+        summary={tx("Read this when you want to understand how Claude Code turns external MCP servers into first-class tools.", "如果你想理解 Claude Code 如何把外部 MCP 服务变成一等工具，读这一节。", "外部 MCP サーバーを一等ツールにする方法です。")}
         links={[
           { label: "services/mcp/", href: ghTree("services/mcp") },
           { label: "client.ts", href: ghBlob("services/mcp/client.ts") },
@@ -219,9 +232,11 @@ checkStatsigFeatureGate_CACHED_MAY_BE_STALE()
       </Card>
 
       <Card
+        id="api-policy"
         title={tx("API Layer Is a Policy Engine", "API 层其实是策略引擎", "API 層は単なるクライアントではない")}
         className="mb-6"
         accent="var(--accent)"
+        summary={tx("This is the deeper service section: the API layer decides caching, retries, betas, and stream normalization.", "这是更底层的一节：API 层负责缓存、重试、betas 以及流式结果规范化。", "より深いサービス層で、キャッシュ、再試行、beta、ストリーム正規化を担います。")}
         links={[
           { label: "services/api/claude.ts", href: ghBlob("services/api/claude.ts") },
           { label: "services/api/withRetry.ts", href: ghBlob("services/api/withRetry.ts") },
@@ -257,9 +272,11 @@ failure path:
       </Card>
 
       <Card
+        id="bridge-remote"
         title={tx("Bridge & Remote Execution", "桥接与远程执行", "ブリッジとリモート実行")}
         className="mb-6"
         accent="var(--pink)"
+        summary={tx("Use this section to understand how Claude Code can operate as remote capacity, not only as a local CLI loop.", "如果你想理解 Claude Code 如何不只作为本地 CLI，而是远程执行容量的一部分，就看这里。", "ローカル CLI を超えて遠隔実行基盤として動く仕組みです。")}
         links={[
           { label: "bridgeMain.ts", href: ghBlob("bridge/bridgeMain.ts") },
           { label: "bridge/", href: ghTree("bridge") },
@@ -293,9 +310,11 @@ remote/*.ts             // session manager + websocket transport`}
       </Card>
 
       <Card
+        id="speculation"
         title={tx("Speculation & Prompt Suggestions", "推测与提示建议", "推測とプロンプト提案")}
         className="mb-6"
         accent="var(--accent)"
+        summary={tx("This explains the hidden background work Claude Code performs to make the next step feel faster.", "这一节解释 Claude Code 为了让下一步更快所做的隐藏后台工作。", "次の一手を速く見せるための裏側の処理を説明します。")}
         links={[
           { label: "services/PromptSuggestion/", href: ghTree("services/PromptSuggestion") },
           { label: "speculation.ts", href: ghBlob("services/PromptSuggestion/speculation.ts") },
