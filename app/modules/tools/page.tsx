@@ -1,9 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { PageHeader, Card, FileCard, FlowStep } from "@/components/Section";
+import { PageHeader, Card, FileCard } from "@/components/Section";
 import { useTx } from "@/components/T";
 import { ghBlob, ghTree } from "@/lib/sourceLinks";
+import {
+  HiOutlineArrowRight,
+  HiOutlineArrowDown,
+} from "react-icons/hi2";
 
 const TOOL_CATEGORIES = [
   { name: "Execution", color: "var(--red)", tools: ["Bash", "PowerShell"] },
@@ -112,9 +116,65 @@ export default function ToolsModulePage() {
         accent="var(--orange)"
         summary={tx("Every tool call follows this exact sequence, no exceptions.", "每次工具调用都遵循这个确切的序列，没有例外。")}
       >
-        <div className="mt-2">
-          {LIFECYCLE_STEPS.map((s) => (
-            <FlowStep key={s.number} number={s.number} title={s.title} description={s.description} color={s.color} />
+        {/* Horizontal pipeline on desktop, vertical on mobile */}
+        <div className="mt-3 hidden sm:flex items-stretch gap-0">
+          {LIFECYCLE_STEPS.map((s, i) => (
+            <div key={s.number} className="flex items-stretch gap-0 flex-1 min-w-0">
+              <div
+                className="flex-1 rounded-xl border p-3 flex flex-col gap-1.5 min-w-0"
+                style={{
+                  borderColor: `color-mix(in srgb, ${s.color} 30%, var(--border))`,
+                  background: `color-mix(in srgb, ${s.color} 6%, var(--bg-tertiary))`,
+                }}
+              >
+                <div
+                  className="w-6 h-6 rounded-lg flex items-center justify-center text-xs font-bold text-white shrink-0"
+                  style={{ background: s.color }}
+                >
+                  {s.number}
+                </div>
+                <div className="text-[11px] font-semibold text-text-primary leading-tight">{s.title}</div>
+                <p className="text-[10px] text-text-muted leading-relaxed">{s.description}</p>
+              </div>
+              {i < LIFECYCLE_STEPS.length - 1 && (
+                <div className="flex items-center px-1 shrink-0">
+                  <HiOutlineArrowRight className="h-3.5 w-3.5 text-text-muted" />
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+        {/* Vertical on mobile */}
+        <div className="mt-3 flex flex-col gap-0 sm:hidden">
+          {LIFECYCLE_STEPS.map((s, i) => (
+            <div key={s.number} className="flex flex-col items-center">
+              <div
+                className="w-full rounded-xl border p-3"
+                style={{
+                  borderColor: `color-mix(in srgb, ${s.color} 30%, var(--border))`,
+                  background: `color-mix(in srgb, ${s.color} 6%, var(--bg-tertiary))`,
+                }}
+              >
+                <div className="flex items-start gap-3">
+                  <div
+                    className="w-6 h-6 rounded-lg flex items-center justify-center text-xs font-bold text-white shrink-0 mt-0.5"
+                    style={{ background: s.color }}
+                  >
+                    {s.number}
+                  </div>
+                  <div>
+                    <div className="text-xs font-semibold text-text-primary mb-0.5">{s.title}</div>
+                    <p className="text-[10px] text-text-muted leading-relaxed">{s.description}</p>
+                  </div>
+                </div>
+              </div>
+              {i < LIFECYCLE_STEPS.length - 1 && (
+                <div className="flex flex-col items-center py-0.5">
+                  <div className="h-2 w-px bg-border" />
+                  <HiOutlineArrowDown className="h-3 w-3 text-text-muted" />
+                </div>
+              )}
+            </div>
           ))}
         </div>
       </Card>

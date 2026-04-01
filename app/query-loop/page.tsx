@@ -214,48 +214,45 @@ export default function QueryLoopPage() {
         <div className="mt-2 flex flex-col gap-0">
           {iterationSteps.map((step, i) => (
             <div key={step.number} className="flex flex-col items-center">
-              {/* Step card */}
+              {/* Step card — iconic layout with large circle badge */}
               <div
-                className="w-full rounded-xl border p-4"
+                className="w-full rounded-xl border overflow-hidden"
                 style={{
-                  borderColor: `color-mix(in srgb, ${step.color} 30%, transparent)`,
+                  borderColor: `color-mix(in srgb, ${step.color} 30%, var(--border))`,
                   background: `color-mix(in srgb, ${step.color} 5%, var(--bg-secondary))`,
                 }}
               >
-                <div className="flex gap-3">
-                  {/* Icon + number */}
-                  <div className="flex flex-col items-center gap-1.5 shrink-0">
+                <div className="flex">
+                  {/* Large colored number circle as left accent */}
+                  <div
+                    className="flex items-center justify-center w-14 shrink-0 py-4"
+                    style={{ background: `color-mix(in srgb, ${step.color} 12%, transparent)` }}
+                  >
                     <div
-                      className="flex h-10 w-10 items-center justify-center rounded-xl shadow-sm"
-                      style={{
-                        background: `color-mix(in srgb, ${step.color} 18%, transparent)`,
-                        border: `1.5px solid color-mix(in srgb, ${step.color} 40%, transparent)`,
-                      }}
-                    >
-                      <step.icon className="h-5 w-5" style={{ color: step.color }} />
-                    </div>
-                    <span
-                      className="text-[10px] font-bold rounded px-1.5 py-0.5"
-                      style={{
-                        background: `color-mix(in srgb, ${step.color} 18%, transparent)`,
-                        color: step.color,
-                      }}
+                      className="flex h-10 w-10 items-center justify-center rounded-full shadow-sm text-white text-sm font-bold"
+                      style={{ background: step.color }}
                     >
                       {step.number}
-                    </span>
+                    </div>
                   </div>
                   {/* Content */}
-                  <div className="flex-1 min-w-0">
-                    <h3 className="text-sm font-semibold text-text-primary mb-1">{step.title}</h3>
+                  <div className="flex-1 min-w-0 p-4">
+                    <div className="flex items-center gap-2 mb-1.5">
+                      <step.icon className="h-4 w-4 shrink-0" style={{ color: step.color }} />
+                      <h3 className="text-sm font-bold text-text-primary">{step.title}</h3>
+                    </div>
                     <p className="text-[11px] text-text-muted leading-relaxed">{step.description}</p>
                   </div>
                 </div>
               </div>
               {/* Connector */}
               {i < iterationSteps.length - 1 && (
-                <div className="flex flex-col items-center py-1">
+                <div className="flex flex-col items-center py-0.5">
                   <div className="h-3 w-px bg-border" />
-                  <HiOutlineArrowDown className="h-3 w-3 text-text-muted" />
+                  <div className="phase-connector">
+                    <span className="text-[9px] text-text-muted">then</span>
+                    <HiOutlineArrowDown className="h-3 w-3 text-text-muted" />
+                  </div>
                 </div>
               )}
             </div>
@@ -474,17 +471,23 @@ handleStopHooks(...)
           {exitConditions.map(({ state, desc, icon: Icon, color }) => (
             <div
               key={state}
-              className="flex items-start gap-3 rounded-xl border border-border/50 p-3 transition-colors hover:bg-bg-tertiary/20"
+              className="rounded-xl border overflow-hidden transition-colors hover:bg-bg-tertiary/20"
+              style={{ borderColor: `color-mix(in srgb, ${color} 25%, var(--border))` }}
             >
-              <div
-                className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg"
-                style={{ background: `color-mix(in srgb, ${color} 14%, transparent)` }}
-              >
-                <Icon className="h-3.5 w-3.5" style={{ color }} />
-              </div>
-              <div>
-                <code className="text-[11px] text-accent font-semibold">{state}</code>
-                <p className="mt-0.5 text-[10px] text-text-muted leading-relaxed">{desc}</p>
+              <div className="flex">
+                <div className="w-1 shrink-0" style={{ background: color }} />
+                <div className="flex items-start gap-3 p-3">
+                  <div
+                    className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg"
+                    style={{ background: `color-mix(in srgb, ${color} 14%, transparent)` }}
+                  >
+                    <Icon className="h-3.5 w-3.5" style={{ color }} />
+                  </div>
+                  <div>
+                    <code className="text-[11px] font-semibold" style={{ color }}>{state}</code>
+                    <p className="mt-0.5 text-[10px] text-text-muted leading-relaxed">{desc}</p>
+                  </div>
+                </div>
               </div>
             </div>
           ))}

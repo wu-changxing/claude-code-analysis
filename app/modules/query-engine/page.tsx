@@ -57,14 +57,32 @@ const PHASES = [
   },
 ];
 
-const LOOP_STATE_FIELDS = [
-  { field: "messages", type: "Message[]", desc: "Full conversation history, including all tool calls and results" },
-  { field: "systemPrompt", type: "string", desc: "Assembled system prompt including project context, CLAUDE.md, memory" },
-  { field: "tools", type: "Tool[]", desc: "Active tools for this query — built-in + MCP-proxied" },
-  { field: "tokenBudget", type: "TokenBudget", desc: "Tracks used/remaining tokens across prompt, output, and tool results" },
-  { field: "permissionRules", type: "PermissionRule[]", desc: "Session-scoped rules the user has approved during this conversation" },
-  { field: "loopCount", type: "number", desc: "Current iteration count — guard against infinite tool loops" },
-  { field: "stopReason", type: "StopReason | null", desc: "end_turn | max_tokens | tool_use | error | cancelled" },
+const LOOP_STATE_GROUPS = [
+  {
+    group: "Conversation",
+    color: "var(--accent)",
+    fields: [
+      { field: "messages", type: "Message[]", desc: "Full conversation history, including all tool calls and results" },
+      { field: "systemPrompt", type: "string", desc: "Assembled system prompt including project context, CLAUDE.md, memory" },
+      { field: "tools", type: "Tool[]", desc: "Active tools for this query — built-in + MCP-proxied" },
+    ],
+  },
+  {
+    group: "Tracking",
+    color: "var(--orange)",
+    fields: [
+      { field: "tokenBudget", type: "TokenBudget", desc: "Tracks used/remaining tokens across prompt, output, and tool results" },
+      { field: "loopCount", type: "number", desc: "Current iteration count — guard against infinite tool loops" },
+      { field: "stopReason", type: "StopReason | null", desc: "end_turn | max_tokens | tool_use | error | cancelled" },
+    ],
+  },
+  {
+    group: "Security",
+    color: "var(--red)",
+    fields: [
+      { field: "permissionRules", type: "PermissionRule[]", desc: "Session-scoped rules the user has approved during this conversation" },
+    ],
+  },
 ];
 
 const TOKEN_BUDGET = [
@@ -108,33 +126,33 @@ export default function QueryEnginePage() {
         className="mb-6"
         accent="var(--green)"
       >
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          {[
-            {
-              name: "QueryEngine",
-              color: "var(--green)",
-              role: tx("Stateful class", "有状态类"),
-              desc: tx("Owns the conversation: message history, system prompt assembly, session config. You instantiate one QueryEngine per conversation. It is an async generator — call .input() with user text, get an async iterator of SDKMessage objects back.", "负责会话：消息历史、系统提示构建、会话配置。每个对话实例化一个 QueryEngine。它是一个 async generator — 使用用户文本调用 .input()，返回 SDKMessage 对象的异步迭代器。"),
-            },
-            {
-              name: "query()",
-              color: "var(--orange)",
-              role: tx("Stateless loop function", "无状态循环函数"),
-              desc: tx("The inner loop. Called by QueryEngine for each turn. It runs the 7 phases using whatever state QueryEngine passes in. It does NOT store state — each call is independent. This is what makes the loop testable and forkable for subagents.", "内部循环。每次轮次由 QueryEngine 调用。它使用 QueryEngine 传入的状态运行 7 个阶段。它不存储状态——每次调用都是独立的。这使循环可测试，子代理可 fork。"),
-            },
-          ].map((item) => (
-            <div
-              key={item.name}
-              className="rounded-xl p-4 border border-border/60"
-              style={{ background: `color-mix(in srgb, ${item.color} 8%, var(--bg-tertiary))`, borderTop: `3px solid ${item.color}` }}
-            >
-              <div className="flex items-center gap-2 mb-2">
-                <code className="text-sm font-bold" style={{ color: item.color }}>{item.name}</code>
-                <span className="text-[9px] px-1.5 py-0.5 rounded border border-border text-text-muted">{item.role}</span>
+        {/* Visual outer-shell diagram */}
+        <div className="rounded-xl border-2 p-4 mb-4" style={{ borderColor: "color-mix(in srgb, var(--green) 40%, var(--border))", background: "color-mix(in srgb, var(--green) 5%, var(--bg-tertiary))" }}>
+          <div className="flex items-center gap-2 mb-3">
+            <div className="h-3 w-3 rounded-full" style={{ background: "var(--green)" }} />
+            <code className="text-sm font-bold" style={{ color: "var(--green)" }}>QueryEngine</code>
+            <span className="text-[9px] px-1.5 py-0.5 rounded border border-border text-text-muted">{tx("Stateful class · one per conversation", "有状态类 · 每对话一个")}</span>
+          </div>
+          <p className="text-[11px] text-text-muted leading-relaxed mb-4">
+            {tx("Owns the conversation: message history, system prompt assembly, session config. Async generator — call .input() with user text, get an async iterator of SDKMessage back.", "负责会话：消息历史、系统提示构建、会话配置。Async generator — 用用户文本调用 .input()，返回 SDKMessage 的异步迭代器。")}
+          </p>
+          {/* Inner box: query() delegated to */}
+          <div className="rounded-xl border-2 p-4" style={{ borderColor: "color-mix(in srgb, var(--orange) 40%, var(--border))", background: "color-mix(in srgb, var(--orange) 6%, var(--bg-secondary))" }}>
+            <div className="flex items-center gap-2 mb-2">
+              <div className="flex items-center gap-1.5 text-[10px] text-text-muted">
+                <span style={{ color: "var(--green)" }}>QueryEngine</span>
+                <span className="text-[9px]">→ delegates each turn →</span>
               </div>
-              <p className="text-[11px] text-text-muted leading-relaxed">{item.desc}</p>
             </div>
-          ))}
+            <div className="flex items-center gap-2 mb-2">
+              <div className="h-3 w-3 rounded-full" style={{ background: "var(--orange)" }} />
+              <code className="text-sm font-bold" style={{ color: "var(--orange)" }}>query()</code>
+              <span className="text-[9px] px-1.5 py-0.5 rounded border border-border text-text-muted">{tx("Stateless loop · called per turn", "无状态循环 · 每轮调用")}</span>
+            </div>
+            <p className="text-[11px] text-text-muted leading-relaxed">
+              {tx("The inner loop. Runs the 7 phases using state QueryEngine passes in. Does NOT store state — each call is independent. This makes the loop testable and forkable for subagents.", "内部循环。使用 QueryEngine 传入的状态运行 7 个阶段。不存储状态——每次调用都独立。这使循环可测试，子代理可 fork。")}
+            </p>
+          </div>
         </div>
       </Card>
 
@@ -181,15 +199,30 @@ export default function QueryEnginePage() {
         accent="var(--purple)"
         summary={tx("The state object passed through all 7 phases. Each phase reads and mutates parts of it.", "贯穿 7 个阶段传递的状态对象。每个阶段都读取并修改其中的部分内容。")}
       >
-        <div className="space-y-1.5">
-          {LOOP_STATE_FIELDS.map((f) => (
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+          {LOOP_STATE_GROUPS.map((group) => (
             <div
-              key={f.field}
-              className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 rounded-lg px-3 py-2 border border-border/40 hover:border-border/70 transition-colors"
+              key={group.group}
+              className="rounded-xl border border-border/60 overflow-hidden"
+              style={{ background: `color-mix(in srgb, ${group.color} 4%, var(--bg-tertiary))` }}
             >
-              <code className="text-[11px] font-semibold text-accent shrink-0 min-w-[140px]">{f.field}</code>
-              <span className="text-[10px] font-mono text-purple-400 shrink-0 hidden sm:inline">{f.type}</span>
-              <p className="text-[10px] text-text-muted leading-relaxed">{f.desc}</p>
+              <div
+                className="px-3 py-2 text-[10px] font-bold uppercase tracking-wider border-b border-border/40"
+                style={{ color: group.color, background: `color-mix(in srgb, ${group.color} 10%, transparent)` }}
+              >
+                {group.group}
+              </div>
+              <div className="p-3 space-y-2.5">
+                {group.fields.map((f) => (
+                  <div key={f.field}>
+                    <div className="flex items-baseline gap-1.5 flex-wrap">
+                      <code className="text-[10px] font-semibold" style={{ color: group.color }}>{f.field}</code>
+                      <span className="text-[9px] font-mono text-text-muted">{f.type}</span>
+                    </div>
+                    <p className="text-[10px] text-text-muted leading-relaxed mt-0.5">{f.desc}</p>
+                  </div>
+                ))}
+              </div>
             </div>
           ))}
         </div>

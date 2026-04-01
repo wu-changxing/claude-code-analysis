@@ -112,6 +112,42 @@ export default function ArchitecturePage() {
           { label: "bridge/", href: ghTree("bridge") },
         ]}
       >
+        {/* Overview stats card */}
+        <div className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
+          <div className="rounded-xl border border-border/60 bg-bg-tertiary/40 p-3 sm:col-span-1">
+            <div className="text-[10px] font-semibold uppercase tracking-wider text-text-muted mb-2">
+              {tx("Codebase Scale", "代码库规模", "コードベース規模")}
+            </div>
+            <div className="space-y-1">
+              <div className="flex items-baseline gap-1.5">
+                <span className="text-xl font-bold text-text-primary stat-number">512K</span>
+                <span className="text-[10px] text-text-muted">{tx("lines", "行", "行")}</span>
+              </div>
+              <div className="flex items-baseline gap-1.5">
+                <span className="text-lg font-bold text-text-primary stat-number">~1,800</span>
+                <span className="text-[10px] text-text-muted">{tx("files", "文件", "ファイル")}</span>
+              </div>
+            </div>
+          </div>
+          <div className="rounded-xl border border-border/60 bg-bg-tertiary/40 p-3 sm:col-span-2">
+            <div className="text-[10px] font-semibold uppercase tracking-wider text-text-muted mb-2">
+              {tx("3 Key Entry Points", "3 个关键入口", "3つの主要エントリ")}
+            </div>
+            <div className="space-y-1.5">
+              {[
+                { file: "entrypoints/cli.tsx", desc: tx("Bootstrap, fast-path & full init", "引导、快速路径与完整初始化", "起動、高速パスと完全初期化"), color: "var(--accent)" },
+                { file: "QueryEngine.ts", desc: tx("Conversation lifecycle owner", "会话生命周期管理者", "会話ライフサイクルの管理者"), color: "var(--green)" },
+                { file: "query.ts", desc: tx("7-phase agentic loop ~1700 lines", "7阶段代理循环 约1700行", "7段階ループ 約1700行"), color: "var(--orange)" },
+              ].map((e) => (
+                <div key={e.file} className="flex items-center gap-2">
+                  <span className="h-1.5 w-1.5 rounded-full shrink-0" style={{ background: e.color }} />
+                  <code className="text-[10px] font-semibold" style={{ color: e.color }}>{e.file}</code>
+                  <span className="text-[10px] text-text-muted truncate">{e.desc}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
         <CodeBlock
           code={`src/
 ├── entrypoints/       # CLI & SDK entry points
@@ -300,51 +336,62 @@ export default function ArchitecturePage() {
         <div className="flex flex-col items-stretch gap-0">
           {dataFlowLayers.map((layer, i) => (
             <div key={layer.id} className="flex flex-col items-center">
-              {/* Layer Box */}
+              {/* Layer Box — poster style with colored left border */}
               <div
-                className="w-full rounded-xl border p-4"
+                className="w-full rounded-xl border overflow-hidden"
                 style={{
-                  borderColor: `color-mix(in srgb, ${layer.color} 35%, transparent)`,
-                  background: `color-mix(in srgb, ${layer.color} 6%, var(--bg-secondary))`,
+                  borderColor: `color-mix(in srgb, ${layer.color} 30%, var(--border))`,
+                  background: `color-mix(in srgb, ${layer.color} 5%, var(--bg-secondary))`,
                 }}
               >
-                <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:gap-4">
-                  <div
-                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
-                    style={{
-                      background: `color-mix(in srgb, ${layer.color} 18%, transparent)`,
-                      border: `1.5px solid color-mix(in srgb, ${layer.color} 35%, transparent)`,
-                    }}
-                  >
-                    <layer.icon className="h-5 w-5" style={{ color: layer.color }} />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex flex-wrap items-baseline gap-2 mb-1">
-                      <span className="text-sm font-semibold text-text-primary">{layer.label}</span>
-                      <code
-                        className="text-[10px] rounded px-1.5 py-0.5"
+                <div className="flex">
+                  {/* Colored left border stripe */}
+                  <div className="w-1 shrink-0" style={{ background: layer.color }} />
+                  <div className="flex-1 p-4">
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:gap-4">
+                      <div
+                        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
                         style={{
-                          background: `color-mix(in srgb, ${layer.color} 14%, transparent)`,
-                          color: layer.color,
+                          background: `color-mix(in srgb, ${layer.color} 18%, transparent)`,
+                          border: `1.5px solid color-mix(in srgb, ${layer.color} 35%, transparent)`,
                         }}
                       >
-                        {layer.sublabel}
-                      </code>
-                      {layer.isLoop && (
-                        <span className="text-[9px] rounded-full border px-2 py-0.5 text-text-muted border-border">
-                          {tx("loops while tools called", "工具调用期间持续循环", "ツール呼び出し中はループ")}
-                        </span>
-                      )}
+                        <layer.icon className="h-5 w-5" style={{ color: layer.color }} />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex flex-wrap items-baseline gap-2 mb-1.5">
+                          <span className="text-sm font-bold text-text-primary">{layer.label}</span>
+                          <code
+                            className="text-[10px] rounded-md px-2 py-0.5 font-mono"
+                            style={{
+                              background: `color-mix(in srgb, ${layer.color} 14%, transparent)`,
+                              color: layer.color,
+                              border: `1px solid color-mix(in srgb, ${layer.color} 25%, transparent)`,
+                            }}
+                          >
+                            {layer.sublabel}
+                          </code>
+                          {layer.isLoop && (
+                            <span className="text-[9px] rounded-full border px-2 py-0.5 text-text-muted border-border">
+                              {tx("loops while tools called", "工具调用期间持续循环", "ツール呼び出し中はループ")}
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-[11px] text-text-muted leading-relaxed break-words">{layer.items}</p>
+                      </div>
                     </div>
-                    <p className="text-[11px] text-text-muted leading-relaxed break-words">{layer.items}</p>
                   </div>
                 </div>
               </div>
               {/* Connector arrow between layers */}
               {i < dataFlowLayers.length - 1 && (
-                <div className="flex flex-col items-center py-1">
-                  <div className="h-4 w-px bg-border" />
-                  <HiOutlineArrowDown className="h-3.5 w-3.5 text-text-muted" />
+                <div className="phase-connector">
+                  <div className="h-5 w-px bg-border" />
+                  <div className="flex flex-col items-center gap-0.5">
+                    <span className="text-[9px] text-text-muted">delegates to</span>
+                    <HiOutlineArrowDown className="h-3.5 w-3.5 text-text-muted" />
+                  </div>
+                  <div className="h-5 w-px bg-border" />
                 </div>
               )}
             </div>
