@@ -8,15 +8,16 @@ export default function ContextPage() {
   return (
     <div className="page-shell">
       <PageHeader
-        title={tx("Context & Memory", "上下文与记忆")}
+        title={tx("Context & Memory", "上下文与记忆", "コンテキストとメモリ")}
         description={tx(
           "How Claude Code builds its system prompt, loads CLAUDE.md files, manages auto-memory, and provides context to the model at every turn.",
-          "Claude Code 如何构建系统提示、加载 CLAUDE.md 文件、管理自动记忆，以及在每一轮对话中向模型提供上下文。"
+          "Claude Code 如何构建系统提示、加载 CLAUDE.md 文件、管理自动记忆，以及在每一轮对话中向模型提供上下文。",
+          "Claude Code がどのようにシステムプロンプトを構築し、CLAUDE.md を読み込み、自動メモリを管理し、各ターンでモデルへ文脈を渡しているかを説明します。"
         )}
       />
 
       {/* System Prompt Assembly */}
-      <Card title="System Prompt Assembly" className="mb-6" accent="var(--accent)">
+      <Card title={tx("System Prompt Assembly", "系统提示构建", "システムプロンプト構築")} className="mb-6" accent="var(--accent)">
         <div className="pt-2">
           <FlowStep
             number={1}
@@ -54,7 +55,7 @@ const systemPrompt = asSystemPrompt([
       </Card>
 
       {/* CLAUDE.md */}
-      <Card title="CLAUDE.md Loading" className="mb-6" accent="var(--green)">
+      <Card title={tx("CLAUDE.md Loading", "CLAUDE.md 加载", "CLAUDE.md の読み込み")} className="mb-6" accent="var(--green)">
         <p className="text-sm text-text-secondary mb-4">
           CLAUDE.md files provide project-specific instructions. They&apos;re loaded from
           multiple locations and concatenated into the user context:
@@ -76,7 +77,7 @@ const systemPrompt = asSystemPrompt([
       </Card>
 
       {/* Memory System */}
-      <Card title="Auto-Memory System (memdir/)" className="mb-6" accent="var(--purple)">
+      <Card title={tx("Auto-Memory System (memdir/)", "自动记忆系统（memdir/）", "自動メモリシステム（memdir/）")} className="mb-6" accent="var(--purple)">
         <p className="text-sm text-text-secondary mb-4">
           Persistent project-scoped memory stored at{" "}
           <code className="text-accent">~/.claude/projects/&lt;path&gt;/memory/</code>.
@@ -111,7 +112,7 @@ type: user | feedback | project | reference
       </Card>
 
       {/* Memory Extraction */}
-      <Card title="Memory Extraction Pipeline" className="mb-6">
+      <Card title={tx("Memory Extraction Pipeline", "记忆提取流水线", "メモリ抽出パイプライン")} className="mb-6">
         <CodeBlock
           code={`// extractMemories.ts — runs after each query loop
 
@@ -134,7 +135,7 @@ type: user | feedback | project | reference
       </Card>
 
       {/* State Management */}
-      <Card title="AppState Store" className="mb-6" accent="var(--orange)">
+      <Card title={tx("AppState Store", "AppState 存储", "AppState ストア")} className="mb-6" accent="var(--orange)">
         <p className="text-sm text-text-secondary mb-4">
           Central application state using Zustand-like pattern with{" "}
           <code className="text-accent">DeepImmutable</code> for type safety:
@@ -177,7 +178,7 @@ type: user | feedback | project | reference
       </Card>
 
       {/* Message Types */}
-      <Card title="Message Types">
+      <Card title={tx("Message Types", "消息类型", "メッセージ種別")}>
         <CodeBlock
           code={`// API-compatible types:
 UserMessage      → user input, tool results, text content

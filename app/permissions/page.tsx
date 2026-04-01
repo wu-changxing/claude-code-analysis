@@ -22,17 +22,18 @@ export default function PermissionsPage() {
   return (
     <div className="page-shell">
       <PageHeader
-        title={tx("Permissions", "权限系统")}
+        title={tx("Permissions", "权限系统", "権限システム")}
         description={tx(
           "Claude Code has a sophisticated 5-layer permission system that gates every tool execution. From input validation to ML classifiers to user confirmation dialogs.",
-          "Claude Code 有一个精密的 5 层权限系统，控制每一次工具执行。从输入验证到 ML 分类器到用户确认对话框。"
+          "Claude Code 有一个精密的 5 层权限系统，控制每一次工具执行。从输入验证到 ML 分类器到用户确认对话框。",
+          "Claude Code には、あらゆるツール実行を制御する5層の権限システムがあります。入力検証、ML分類器、ユーザー確認ダイアログまで含みます。"
         )}
-        badge={tx("5 layers", "5 层")}
+        badge={tx("5 layers", "5 层", "5層")}
       />
 
       {/* Permission Modes */}
-      <Card title="Permission Modes" className="mb-6">
-        <div className="grid grid-cols-3 gap-3">
+      <Card title={tx("Permission Modes", "权限模式", "権限モード")} className="mb-6">
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
           {[
             { mode: "default", desc: "Ask user for each potentially unsafe operation", color: "var(--accent)", icon: HiOutlineUserCircle, safety: "Safe" },
             { mode: "plan", desc: "All tools require explicit plan approval first", color: "var(--purple)", icon: HiOutlineAdjustmentsHorizontal, safety: "Safe" },
@@ -63,7 +64,7 @@ export default function PermissionsPage() {
       </Card>
 
       {/* 5-Layer Flow */}
-      <Card title="Permission Decision Flow" className="mb-6">
+      <Card title={tx("Permission Decision Flow", "权限决策流程", "権限判定フロー")} className="mb-6">
         <div className="pt-2">
           <FlowStep
             number={1}
@@ -99,7 +100,7 @@ export default function PermissionsPage() {
       </Card>
 
       {/* Security Stats */}
-      <div className="grid grid-cols-4 gap-3 mb-6">
+      <div className="mb-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
         {[
           { icon: VscShield, value: "5", label: "Security layers", color: "var(--accent)" },
           { icon: VscLock, value: "300KB+", label: "BashTool security code", color: "var(--red)" },
@@ -115,7 +116,7 @@ export default function PermissionsPage() {
       </div>
 
       {/* Permission Rules */}
-      <Card title="Permission Rules" className="mb-6">
+      <Card title={tx("Permission Rules", "权限规则", "権限ルール")} className="mb-6">
         <p className="text-sm text-text-secondary mb-4">
           Rules are defined in <code className="text-accent">settings.json</code> with three
           possible behaviors: <code className="text-green">allow</code>,{" "}
@@ -147,7 +148,7 @@ export default function PermissionsPage() {
       </Card>
 
       {/* Permission Result */}
-      <Card title="Permission Result Types" className="mb-6">
+      <Card title={tx("Permission Result Types", "权限结果类型", "権限結果の型")} className="mb-6">
         <CodeBlock
           code={`type PermissionResult =
   | { behavior: 'allow'; message?: string }     // Auto-approve
@@ -166,7 +167,7 @@ pushToQueue()          // Queue management for UI`}
       </Card>
 
       {/* Filesystem Permissions */}
-      <Card title="Filesystem Permission Checks">
+      <Card title={tx("Filesystem Permission Checks", "文件系统权限检查", "ファイルシステム権限チェック")}>
         <p className="text-sm text-text-secondary mb-4">
           File operations go through additional path-level security checks:
         </p>

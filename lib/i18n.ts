@@ -1,4 +1,6 @@
 export type Lang = "en" | "zh" | "ja";
+export const LANG_STORAGE_KEY = "cc-lang";
+export const LANG_COOKIE_KEY = "cc-lang";
 
 export const LANG_LABELS: Record<Lang, string> = {
   en: "EN",
@@ -79,7 +81,11 @@ export function t(key: TransKey, lang: Lang): string {
   return translations[key]?.[lang] ?? translations[key]?.en ?? key;
 }
 
+export function coerceLang(value?: string | null): Lang {
+  return value === "zh" || value === "ja" ? value : "en";
+}
+
 export function useLangFromStorage(): Lang {
   if (typeof window === "undefined") return "en";
-  return (localStorage.getItem("cc-lang") as Lang) || "en";
+  return coerceLang(localStorage.getItem(LANG_STORAGE_KEY));
 }

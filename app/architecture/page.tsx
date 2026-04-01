@@ -17,16 +17,17 @@ export default function ArchitecturePage() {
   return (
     <div className="page-shell">
       <PageHeader
-        title={tx("Architecture", "系统架构")}
+        title={tx("Architecture", "系统架构", "アーキテクチャ")}
         description={tx(
           "High-level system design of Claude Code — how the TypeScript monolith is organized, key abstractions, and the data flow between components.",
-          "Claude Code 的高层系统设计 — TypeScript 单体应用的组织方式、核心抽象和组件间的数据流。"
+          "Claude Code 的高层系统设计 — TypeScript 单体应用的组织方式、核心抽象和组件间的数据流。",
+          "Claude Code の高レベルなシステム設計。TypeScript モノリスの構成、主要な抽象、コンポーネント間のデータフローを解説。"
         )}
-        badge="~1800 files"
+        badge={tx("~1800 files", "约 1800 个文件", "約1800ファイル")}
       />
 
       {/* Directory Map */}
-      <Card title="Directory Structure" className="mb-6">
+      <Card title={tx("Directory Structure", "目录结构", "ディレクトリ構成")} className="mb-6">
         <CodeBlock
           code={`src/
 ├── entrypoints/       # CLI & SDK entry points
@@ -74,8 +75,8 @@ export default function ArchitecturePage() {
       </Card>
 
       {/* Key Abstractions */}
-      <div className="grid grid-cols-2 gap-4 mb-6">
-        <Card title="Core Abstractions" accent="var(--accent)">
+      <div className="mb-6 grid grid-cols-1 gap-4 xl:grid-cols-2">
+        <Card title={tx("Core Abstractions", "核心抽象", "主要な抽象")} accent="var(--accent)">
           <div className="space-y-3 text-sm text-text-secondary">
             <div>
               <code className="text-accent text-xs">QueryEngine</code>
@@ -110,7 +111,7 @@ export default function ArchitecturePage() {
           </div>
         </Card>
 
-        <Card title="Design Patterns" accent="var(--green)">
+        <Card title={tx("Design Patterns", "设计模式", "設計パターン")} accent="var(--green)">
           <div className="space-y-3 text-sm text-text-secondary">
             <div>
               <strong className="text-text-primary text-xs">Async Generator Architecture</strong>
@@ -145,7 +146,7 @@ export default function ArchitecturePage() {
       </div>
 
       {/* Size Comparison */}
-      <Card title="Codebase Size Comparison" className="mb-6" accent="var(--accent)">
+      <Card title={tx("Codebase Size Comparison", "代码库规模对比", "コードベース規模の比較")} className="mb-6" accent="var(--accent)">
         <p className="text-xs text-text-muted mb-4">
           Lines of code compared to well-known projects (approximate):
         </p>
@@ -181,7 +182,7 @@ export default function ArchitecturePage() {
       </Card>
 
       {/* Largest Files */}
-      <Card title="Top 10 Largest Files" className="mb-6" accent="var(--red)">
+      <Card title={tx("Top 10 Largest Files", "最大文件 Top 10", "最大ファイル Top 10")} className="mb-6" accent="var(--red)">
         <div className="overflow-x-auto">
           <div className="min-w-[560px] space-y-1.5">
           {[
@@ -214,8 +215,8 @@ export default function ArchitecturePage() {
       </Card>
 
       {/* Module Size Breakdown */}
-      <Card title="Module Size Breakdown" className="mb-6">
-        <div className="grid grid-cols-4 gap-3">
+      <Card title={tx("Module Size Breakdown", "模块规模拆解", "モジュール別規模")} className="mb-6">
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-4">
           {[
             { icon: VscExtensions, name: "Tools", files: 140, lines: "~65K", color: "var(--orange)" },
             { icon: VscDatabase, name: "Services", files: 110, lines: "~80K", color: "var(--green)" },
@@ -236,9 +237,13 @@ export default function ArchitecturePage() {
       </Card>
 
       {/* Tech Stack */}
-      <Card title="Technology Stack" className="mb-6">
+      <Card title={tx("Technology Stack", "技术栈", "技術スタック")} className="mb-6">
         <Table
-          headers={["Technology", "Usage", "Notes"]}
+          headers={[
+            tx("Technology", "技术", "技術"),
+            tx("Usage", "用途", "用途"),
+            tx("Notes", "说明", "メモ"),
+          ]}
           rows={[
             ["TypeScript", "Primary language", "Strict mode, Zod for runtime validation"],
             ["Ink (React)", "Terminal UI", "Custom fork with layout engine, focus, selection"],
@@ -254,7 +259,7 @@ export default function ArchitecturePage() {
       </Card>
 
       {/* Data Flow */}
-      <Card title="High-Level Data Flow">
+      <Card title={tx("High-Level Data Flow", "高层数据流", "高レベルなデータフロー")}>
         <CodeBlock
           code={`┌─ Entry Point (cli.tsx / SDK) ─────────────────────────────────────┐
 │  Fast-path: --version, --dump-system-prompt, daemon workers       │

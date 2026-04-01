@@ -185,7 +185,7 @@ export default function HomePage() {
             CC
           </div>
           <div>
-            <h1 className="text-3xl font-bold mb-1">{t("home.title", lang)}</h1>
+            <h1 className="mb-1 text-2xl font-bold sm:text-3xl">{t("home.title", lang)}</h1>
             <p className="text-text-secondary text-sm">
               {t("home.subtitle", lang)}{" "}
               <code className="text-accent text-sm bg-bg-secondary px-1.5 py-0.5 rounded border border-border">
@@ -205,7 +205,7 @@ export default function HomePage() {
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="grid grid-cols-4 gap-4 mb-10"
+        className="mb-10 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4"
       >
         {stats.map((s) => (
           <div
@@ -219,7 +219,7 @@ export default function HomePage() {
               </span>
             </div>
             <div
-              className="text-3xl font-bold font-mono tracking-tight"
+              className="text-2xl font-bold font-mono tracking-tight sm:text-3xl"
               style={{ color: s.color }}
             >
               {s.value}
@@ -285,7 +285,7 @@ export default function HomePage() {
             {lang === "zh" ? "查看全部 20+ →" : "See all 20+ →"}
           </Link>
         </div>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
           {[
             {
               emoji: "🐧",
@@ -331,7 +331,7 @@ export default function HomePage() {
           {t("home.explore", lang)}
         </h2>
       </motion.div>
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
         {sections.map((s, i) => (
           <motion.div
             key={s.href}
@@ -364,7 +364,7 @@ export default function HomePage() {
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.55 }}
-        className="mt-10 grid grid-cols-3 gap-3"
+        className="mt-10 grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3"
       >
         {innovations.map((item) => (
           <div

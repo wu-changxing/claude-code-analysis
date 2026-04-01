@@ -29,17 +29,18 @@ export default function ServicesPage() {
   return (
     <div className="page-shell">
       <PageHeader
-        title={tx("Services", "服务")}
+        title={tx("Services", "服务", "サービス")}
         description={tx(
           "Claude Code's service layer handles compaction, MCP integration, LSP, analytics, memory extraction, and more. These run as background processes alongside the main query loop.",
-          "Claude Code 的服务层处理压缩、MCP 集成、LSP、分析、记忆提取等。这些作为后台进程与主查询循环并行运行。"
+          "Claude Code 的服务层处理压缩、MCP 集成、LSP、分析、记忆提取等。这些作为后台进程与主查询循环并行运行。",
+          "Claude Code のサービス層は、圧縮、MCP 統合、LSP、分析、メモリ抽出などを担います。これらはメインのクエリループと並行して動作します。"
         )}
-        badge={tx("20+ services", "20+ 服务")}
+        badge={tx("20+ services", "20+ 服务", "20+ サービス")}
       />
 
       {/* Service Overview */}
-      <Card title="Service Overview" className="mb-6">
-        <div className="grid grid-cols-4 gap-3">
+      <Card title={tx("Service Overview", "服务概览", "サービス概要")} className="mb-6">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
           {SERVICE_CARDS.map((s) => (
             <div key={s.name} className="p-3 rounded-xl bg-bg-tertiary/30 border border-border/50">
               <s.icon className="w-4 h-4 mb-2" style={{ color: s.color }} />
@@ -52,7 +53,7 @@ export default function ServicesPage() {
       </Card>
 
       {/* Compaction */}
-      <Card title="Compaction System" className="mb-6" accent="var(--accent)">
+      <Card title={tx("Compaction System", "压缩系统", "圧縮システム")} className="mb-6" accent="var(--accent)">
         <p className="text-sm text-text-secondary mb-4">
           Multi-level context window management keeps conversations within token limits.
           The system uses 4 strategies with increasing aggressiveness:
@@ -89,7 +90,7 @@ autocompact_threshold = effective_window - 13K buffer
       </Card>
 
       {/* MCP */}
-      <Card title="MCP (Model Context Protocol)" className="mb-6" accent="var(--green)">
+      <Card title={tx("MCP (Model Context Protocol)", "MCP（模型上下文协议）", "MCP（Model Context Protocol）")} className="mb-6" accent="var(--green)">
         <p className="text-sm text-text-secondary mb-4">
           The MCP service is the largest service at 470KB across 25 files. It enables
           Claude Code to integrate external tools from any MCP-compatible server.
@@ -119,7 +120,7 @@ elicitationHandler.ts — User prompts during tool calls`}
       </Card>
 
       {/* LSP */}
-      <Card title="LSP (Language Server Protocol)" className="mb-6" accent="var(--orange)">
+      <Card title={tx("LSP (Language Server Protocol)", "LSP（语言服务器协议）", "LSP（Language Server Protocol）")} className="mb-6" accent="var(--orange)">
         <CodeBlock
           code={`// LSP provides IDE-like features:
 - Diagnostics (errors, warnings)
@@ -146,7 +147,7 @@ LSPTool → Direct query interface for the model`}
       </Card>
 
       {/* Analytics */}
-      <Card title="Analytics Pipeline" className="mb-6" accent="var(--purple)">
+      <Card title={tx("Analytics Pipeline", "分析流水线", "分析パイプライン")} className="mb-6" accent="var(--purple)">
         <CodeBlock
           code={`// Event pipeline with queue-until-sink pattern:
 logEvent(name, metadata)        → Sync event logging
@@ -170,7 +171,7 @@ checkStatsigFeatureGate_CACHED_MAY_BE_STALE()
       </Card>
 
       {/* Tool Orchestration */}
-      <Card title="Tool Orchestration Service">
+      <Card title={tx("Tool Orchestration Service", "工具编排服务", "ツールオーケストレーションサービス")}>
         <CodeBlock
           code={`// services/tools/ — Two key files:
 

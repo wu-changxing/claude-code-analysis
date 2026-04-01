@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
 import "./globals.css";
 import { Sidebar } from "@/components/Sidebar";
 import { LangProvider } from "@/lib/LangContext";
+import { coerceLang, LANG_COOKIE_KEY } from "@/lib/i18n";
 
 export const metadata: Metadata = {
   title: "Claude Code Analysis | Deep Dive into Claude Code Architecture",
@@ -43,17 +45,20 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const cookieStore = await cookies();
+  const initialLang = coerceLang(cookieStore.get(LANG_COOKIE_KEY)?.value);
+
   return (
     <html lang="en" className="h-full antialiased">
       <body className="min-h-full bg-bg-primary text-text-primary">
-        <LangProvider>
+        <LangProvider initialLang={initialLang}>
           <Sidebar />
-          <main className="min-h-screen min-w-0 pt-16 md:ml-64 md:pt-0">
+          <main className="min-h-screen min-w-0 pt-16 lg:ml-64 lg:pt-0">
             {children}
           </main>
         </LangProvider>

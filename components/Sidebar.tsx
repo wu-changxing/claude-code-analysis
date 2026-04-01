@@ -178,7 +178,7 @@ export function Sidebar() {
 
   return (
     <>
-      <div className="fixed inset-x-0 top-0 z-40 border-b border-border bg-bg-secondary/95 backdrop-blur md:hidden">
+      <div className="fixed inset-x-0 top-0 z-40 border-b border-border bg-bg-secondary/95 backdrop-blur lg:hidden">
         <div className="flex h-16 items-center justify-between px-4">
           <Link
             href="/"
@@ -209,7 +209,7 @@ export function Sidebar() {
       </div>
 
       <div
-        className={`fixed inset-0 z-50 md:hidden ${
+        className={`fixed inset-0 z-50 lg:hidden ${
           isOpen ? "pointer-events-auto" : "pointer-events-none"
         }`}
         aria-hidden={!isOpen}
@@ -261,7 +261,7 @@ export function Sidebar() {
         </aside>
       </div>
 
-      <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col border-r border-border bg-bg-secondary md:flex">
+      <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col border-r border-border bg-bg-secondary lg:flex">
         <div className="p-5 border-b border-border">
           <Link href="/" className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl bg-text-primary flex items-center justify-center text-bg-primary font-bold text-sm shadow-sm">

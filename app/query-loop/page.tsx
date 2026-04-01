@@ -17,16 +17,17 @@ export default function QueryLoopPage() {
   return (
     <div className="page-shell">
       <PageHeader
-        title={tx("Query Loop", "查询循环")}
+        title={tx("Query Loop", "查询循环", "クエリループ")}
         description={tx(
           "The core agentic execution cycle — how messages flow from user input through the API to tool execution and back. The main loop lives in query.ts (~1700 lines).",
-          "核心代理执行循环 — 消息如何从用户输入流经 API 到工具执行再返回。主循环位于 query.ts（约 1700 行）。"
+          "核心代理执行循环 — 消息如何从用户输入流经 API 到工具执行再返回。主循环位于 query.ts（约 1700 行）。",
+          "中核となるエージェント実行ループ。ユーザー入力から API、ツール実行、結果の往復までの流れを追います。主ループは query.ts（約1700行）にあります。"
         )}
         badge="query.ts"
       />
 
       {/* State Machine */}
-      <Card title="Loop State Machine" className="mb-6">
+      <Card title={tx("Loop State Machine", "循环状态机", "ループ状態機械")} className="mb-6">
         <CodeBlock
           code={`type LoopState = {
   messages: Message[]
@@ -44,7 +45,7 @@ export default function QueryLoopPage() {
       </Card>
 
       {/* Flow Steps */}
-      <Card title="Loop Iteration Flow" className="mb-6">
+      <Card title={tx("Loop Iteration Flow", "循环迭代流程", "ループ反復フロー")} className="mb-6">
         <div className="pt-2">
           <FlowStep
             number={1}
@@ -92,7 +93,7 @@ export default function QueryLoopPage() {
       </Card>
 
       {/* Streaming Tool Execution */}
-      <Card title="Streaming Tool Execution" className="mb-6" accent="var(--green)">
+      <Card title={tx("Streaming Tool Execution", "流式工具执行", "ストリーミングツール実行")} className="mb-6" accent="var(--green)">
         <p className="text-sm text-text-secondary mb-4">
           The <code className="text-accent">StreamingToolExecutor</code> is a key innovation —
           tools start executing while the model is still generating tokens. This significantly
@@ -119,11 +120,11 @@ class StreamingToolExecutor {
       </Card>
 
       {/* Recovery Cascade */}
-      <Card title="Error Recovery Cascade" className="mb-6" accent="var(--orange)">
+      <Card title={tx("Error Recovery Cascade", "错误恢复级联", "エラー回復カスケード")} className="mb-6" accent="var(--orange)">
         <p className="text-sm text-text-secondary mb-4">
           When things go wrong, the loop tries 4 recovery strategies in order — each more aggressive:
         </p>
-        <div className="grid grid-cols-4 gap-2">
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-4">
           {[
             { step: "1", title: "Collapse Drain", desc: "Drain staged context collapses", color: "var(--accent)", icon: VscDebugRestart },
             { step: "2", title: "Reactive Compact", desc: "Full conversation summary", color: "var(--orange)", icon: HiOutlineArrowPath },
@@ -141,8 +142,8 @@ class StreamingToolExecutor {
       </Card>
 
       {/* Exit Conditions */}
-      <Card title="Loop Exit Conditions" className="mb-6">
-        <div className="grid grid-cols-2 gap-2">
+      <Card title={tx("Loop Exit Conditions", "循环退出条件", "ループ終了条件")} className="mb-6">
+        <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
           {[
             { state: "completed", desc: "Natural end of response", icon: VscCheck, color: "var(--green)" },
             { state: "prompt_too_long", desc: "Unrecoverable context overflow", icon: VscError, color: "var(--red)" },
@@ -165,7 +166,7 @@ class StreamingToolExecutor {
       </Card>
 
       {/* Message Example */}
-      <Card title="Message Flow Example">
+      <Card title={tx("Message Flow Example", "消息流示例", "メッセージフロー例")}>
         <CodeBlock
           code={`User: "write a hello.py file"
     ↓

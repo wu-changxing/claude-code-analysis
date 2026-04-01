@@ -53,7 +53,7 @@ export default function FunFactsPage() {
           <HiOutlineFire className="w-5 h-5 text-red" />
           <h2 className="text-sm font-semibold">{t("fun.numbers", lang)}</h2>
         </div>
-        <div className="grid grid-cols-3 gap-3 mb-8">
+        <div className="mb-8 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
           {[
             { value: "512,664", label: "Lines of TypeScript", note: { en: "That's roughly 10 novels worth of code", zh: "大约相当于10本小说的篇幅", ja: "小説約10冊分のコード量" }, icon: VscTerminalBash, color: "var(--accent)" },
             { value: "1,884", label: "Source files", note: { en: "Your IDE just fainted", zh: "你的 IDE 已经晕倒了", ja: "あなたのIDEは気絶しました" }, icon: VscSymbolMisc, color: "var(--green)" },
@@ -81,16 +81,16 @@ export default function FunFactsPage() {
       {/* Buddy System - Enhanced */}
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>
         <Card title={`${t("fun.buddy", lang)} — ${t("fun.buddyDesc", lang)}`} className="mb-6" accent="var(--pink)">
-          <div className="grid grid-cols-5 gap-3 mb-5">
+          <div className="mb-5 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
             {Object.entries(BUDDY_ART).map(([name, art]) => (
               <div key={name} className="rounded-xl p-4 text-center bg-bg-tertiary border border-border/50">
-                <div className="font-mono text-xs leading-tight whitespace-pre mb-2 text-text-primary">{art}</div>
+                <div className="mb-2 whitespace-pre font-mono text-[10px] leading-tight text-text-primary sm:text-xs">{art}</div>
                 <span className="text-[11px] text-text-muted capitalize font-medium">{name}</span>
               </div>
             ))}
           </div>
 
-          <div className="grid grid-cols-2 gap-3 mb-4">
+          <div className="mb-4 grid grid-cols-1 gap-3 lg:grid-cols-2">
             <div className="p-3 rounded-lg bg-bg-tertiary/30 border border-border/50">
               <div className="text-[10px] text-text-muted uppercase tracking-wider mb-1.5 font-semibold">18 Species</div>
               <div className="flex flex-wrap gap-1">
@@ -108,7 +108,7 @@ export default function FunFactsPage() {
                   ))}
                 </div>
               </div>
-              <div className="flex gap-3">
+              <div className="flex flex-col gap-3 sm:flex-row">
                 <div className="flex-1 p-3 rounded-lg bg-bg-tertiary/30 border border-border/50">
                   <div className="text-[10px] text-text-muted uppercase tracking-wider mb-1 font-semibold">Eyes</div>
                   <div className="text-lg font-mono tracking-widest text-text-primary">· ✦ × ◉ @ °</div>
@@ -202,7 +202,7 @@ export default function FunFactsPage() {
             ? "Claude Codeの内部コードネームは天狗。全てのfeature flagは tengu_ で始まります："
             : "Internally, Claude Code is codenamed Tengu (a Japanese mythological creature). Every feature flag starts with tengu_:"}
         </p>
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-3">
           {[
             { name: "tengu_scratch", desc: "Coordinator", emoji: "🎯" },
             { name: "tengu_thinkback", desc: "Year in Review", emoji: "📅" },
@@ -230,7 +230,7 @@ export default function FunFactsPage() {
 
       {/* Hidden Commands */}
       <Card title={t("fun.commands", lang)} className="mb-6" accent="var(--orange)">
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 xl:grid-cols-2">
           {[
             { cmd: "/btw", desc: { en: "Spawn a forked agent for your shower thought while the main conversation continues. The name is perfect.", zh: "在主对话继续的同时，为你的灵光一现生成一个分支代理。名字取得太好了。", ja: "メインの会話を中断せずに、思いつきの質問を投げる。名前が完璧。" }, icon: VscCommentDiscussion, color: "var(--accent)" },
             { cmd: "/think-back", desc: { en: "Your Year in Review. Like Spotify Wrapped, but for your coding sessions.", zh: "你的年度回顾。就像 Spotify 年度总结，但是是给你的编程会话的。", ja: "年間レビュー。Spotify Wrappedのコーディング版。" }, icon: HiOutlineSparkles, color: "var(--purple)" },
@@ -279,7 +279,7 @@ export default function FunFactsPage() {
 
       {/* Architecture Hot Takes */}
       <Card title={t("fun.hotTakes", lang)} className="mb-6" accent="var(--red)">
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 xl:grid-cols-2">
           {[
             {
               title: { en: "BashTool = small OS", zh: "BashTool = 小型操作系统", ja: "BashTool = 小さなOS" },
@@ -320,7 +320,7 @@ export default function FunFactsPage() {
             ? "Claude Code 有一个后台记忆整合系统，会在满足条件时自动触发——就像做梦一样。"
             : "Claude Code has a background memory consolidation system that auto-triggers when thresholds are met — like dreaming."}
         </p>
-        <div className="grid grid-cols-3 gap-3 mb-3">
+        <div className="mb-3 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
           {[
             { gate: lang === "zh" ? "时间门" : "Time Gate", rule: lang === "zh" ? "距上次整合 24+ 小时" : "24+ hours since last consolidation", icon: "⏰" },
             { gate: lang === "zh" ? "会话门" : "Sessions Gate", rule: lang === "zh" ? "5+ 个新会话" : "5+ new sessions created", icon: "📝" },
@@ -341,7 +341,7 @@ export default function FunFactsPage() {
       </Card>
 
       {/* Buddy Deep Mechanics */}
-      <Card title={lang === "zh" ? "宠物伙伴的数学原理" : "The Math Behind Your Buddy Pet"} className="mb-6" accent="var(--accent)">
+      <Card title={lang === "zh" ? "宠物伙伴的数学原理" : lang === "ja" ? "バディペットを生む数理" : "The Math Behind Your Buddy Pet"} className="mb-6" accent="var(--accent)">
         <p className="text-sm text-text-secondary mb-4">
           {lang === "zh"
             ? "你的宠物伙伴不是随机的——它是由确定性算法生成的："
@@ -369,13 +369,13 @@ Stats: DEBUGGING, PATIENCE, CHAOS, WISDOM, SNARK
       </Card>
 
       {/* Commit Attribution */}
-      <Card title={lang === "zh" ? "提交归属：谁写了这段代码？" : "Commit Attribution: Who Wrote This?"} className="mb-6" accent="var(--orange)">
+      <Card title={lang === "zh" ? "提交归属：谁写了这段代码？" : lang === "ja" ? "コミット帰属: 誰がこのコードを書いたのか" : "Commit Attribution: Who Wrote This?"} className="mb-6" accent="var(--orange)">
         <p className="text-sm text-text-secondary mb-4">
           {lang === "zh"
             ? "Claude Code 精确追踪每次提交中人类 vs Claude 的贡献比例——962 行代码专门用于此："
             : "Claude Code precisely tracks human vs Claude contribution per commit — 962 lines dedicated to this:"}
         </p>
-        <div className="grid grid-cols-2 gap-3 mb-3">
+        <div className="mb-3 grid grid-cols-1 gap-3 xl:grid-cols-2">
           <div className="p-3 rounded-xl bg-bg-tertiary/20 border border-border/50">
             <div className="text-xs font-semibold text-text-primary mb-1">
               {lang === "zh" ? "字符级归属" : "Character-Level Attribution"}
@@ -405,7 +405,7 @@ Stats: DEBUGGING, PATIENCE, CHAOS, WISDOM, SNARK
       </Card>
 
       {/* Session Slug Words */}
-      <Card title={lang === "zh" ? "会话 ID 中藏着计算机科学家" : "Computer Scientists Hidden in Session IDs"} className="mb-6" accent="var(--green)">
+      <Card title={lang === "zh" ? "会话 ID 中藏着计算机科学家" : lang === "ja" ? "セッションIDに隠れた計算機科学者たち" : "Computer Scientists Hidden in Session IDs"} className="mb-6" accent="var(--green)">
         <p className="text-sm text-text-secondary mb-3">
           {lang === "zh"
             ? "会话名称由 adjective-verb-noun 三段式组成，名词列表 (415 个) 中藏着计算机科学先驱："
@@ -424,7 +424,7 @@ Stats: DEBUGGING, PATIENCE, CHAOS, WISDOM, SNARK
       </Card>
 
       {/* DO NOT Comments */}
-      <Card title={lang === "zh" ? "代码中的'禁止'标记" : "Load-Bearing 'DO NOT' Comments"} className="mb-6" accent="var(--red)">
+      <Card title={lang === "zh" ? "代码中的'禁止'标记" : lang === "ja" ? "構造を支える『DO NOT』コメント" : "Load-Bearing 'DO NOT' Comments"} className="mb-6" accent="var(--red)">
         <p className="text-sm text-text-secondary mb-3">
           {lang === "zh"
             ? "这些注释编码了血泪教训——每一条背后都有一个 bug 故事："
@@ -479,7 +479,7 @@ Stats: DEBUGGING, PATIENCE, CHAOS, WISDOM, SNARK
       </Card>
 
       {/* Speculation Engine */}
-      <Card title={lang === "zh" ? "推测引擎：Claude 在猜你下一步" : "Speculation Engine: Claude Predicts Your Next Move"} className="mb-6" accent="var(--green)">
+      <Card title={lang === "zh" ? "推测引擎：Claude 在猜你下一步" : lang === "ja" ? "推測エンジン: Claude が次の一手を読む" : "Speculation Engine: Claude Predicts Your Next Move"} className="mb-6" accent="var(--green)">
         <p className="text-sm text-text-secondary mb-4">
           {lang === "zh"
             ? "Claude Code 有一个后台推测系统，在你还没打字的时候就预执行了可能的下一步操作："
@@ -518,7 +518,7 @@ Stats: DEBUGGING, PATIENCE, CHAOS, WISDOM, SNARK
       </Card>
 
       {/* Compaction Agent */}
-      <Card title={lang === "zh" ? "压缩代理的怒吼" : "The Compaction Agent's Rage"} className="mb-6" accent="var(--orange)">
+      <Card title={lang === "zh" ? "压缩代理的怒吼" : lang === "ja" ? "圧縮エージェントの怒号" : "The Compaction Agent's Rage"} className="mb-6" accent="var(--orange)">
         <div className="p-4 rounded-xl bg-bg-tertiary/20 border-l-2" style={{ borderLeftColor: "var(--orange)" }}>
           <p className="text-sm text-text-secondary italic leading-relaxed">
             &quot;CRITICAL: Respond with TEXT ONLY. Do NOT call any tools. Tool calls will be REJECTED
@@ -536,7 +536,7 @@ Stats: DEBUGGING, PATIENCE, CHAOS, WISDOM, SNARK
       </Card>
 
       {/* Context-Aware Tips */}
-      <Card title={lang === "zh" ? "有情商的提示系统" : "The Emotionally Intelligent Tip System"} className="mb-6" accent="var(--accent)">
+      <Card title={lang === "zh" ? "有情商的提示系统" : lang === "ja" ? "空気を読むヒントシステム" : "The Emotionally Intelligent Tip System"} className="mb-6" accent="var(--accent)">
         <p className="text-sm text-text-secondary mb-3">
           {lang === "zh"
             ? "Claude Code 的提示不是随机弹出的——每条都有精确的触发条件："
@@ -584,13 +584,13 @@ Stats: DEBUGGING, PATIENCE, CHAOS, WISDOM, SNARK
       </Card>
 
       {/* Unicode Symbols */}
-      <Card title={lang === "zh" ? "特殊符号图书馆" : "The Unicode Symbol Library"} className="mb-6" accent="var(--purple)">
+      <Card title={lang === "zh" ? "特殊符号图书馆" : lang === "ja" ? "Unicode 記号ライブラリ" : "The Unicode Symbol Library"} className="mb-6" accent="var(--purple)">
         <p className="text-sm text-text-secondary mb-3">
           {lang === "zh"
             ? "Claude Code 在 figures.ts 中策划了一个精心挑选的 Unicode 符号库："
             : "Claude Code curates a carefully chosen Unicode symbol library in figures.ts:"}
         </p>
-        <div className="grid grid-cols-4 gap-2">
+        <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
           {[
             { sym: "↯", name: "LIGHTNING_BOLT", use: "Fast mode" },
             { sym: "○ ◐ ● ◉", name: "EFFORT_*", use: "Effort levels" },
@@ -611,13 +611,13 @@ Stats: DEBUGGING, PATIENCE, CHAOS, WISDOM, SNARK
       </Card>
 
       {/* Prompt Suggestion */}
-      <Card title={lang === "zh" ? "提示建议的过滤器有多严格？" : "How Strict Is the Suggestion Filter?"} className="mb-6" accent="var(--pink)">
+      <Card title={lang === "zh" ? "提示建议的过滤器有多严格？" : lang === "ja" ? "提案フィルターはどれほど厳しいか" : "How Strict Is the Suggestion Filter?"} className="mb-6" accent="var(--pink)">
         <p className="text-sm text-text-secondary mb-3">
           {lang === "zh"
             ? "提示建议系统的标准是：'用户会不会想——我正准备打这个！'。它过滤掉 46+ 种模式："
             : "The prompt suggestion system's bar: 'Would they think I was just about to type that!' It filters 46+ patterns:"}
         </p>
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
           {[
             { blocked: lang === "zh" ? "评价性评论" : "Evaluative comments", example: "'Looks good', 'Nice work'" },
             { blocked: lang === "zh" ? "Claude 口吻" : "Claude-voice", example: "'Let me...', 'I'll...'" },
@@ -662,8 +662,8 @@ Stats: DEBUGGING, PATIENCE, CHAOS, WISDOM, SNARK
       </Card>
 
       {/* Good Claude / Bad Claude */}
-      <Card title={lang === "zh" ? "/good-claude 和 /issue：胡萝卜加大棒" : "/good-claude & /issue: Carrot and Stick"} className="mb-6" accent="var(--pink)">
-        <div className="grid grid-cols-2 gap-3">
+      <Card title={lang === "zh" ? "/good-claude 和 /issue：胡萝卜加大棒" : lang === "ja" ? "/good-claude と /issue: 飴と鞭" : "/good-claude & /issue: Carrot and Stick"} className="mb-6" accent="var(--pink)">
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
           <div className="p-4 rounded-xl border border-green/30 bg-green/5">
             <div className="text-lg mb-1">😊</div>
             <code className="text-sm font-semibold text-green">/good-claude</code>
@@ -705,7 +705,7 @@ Stats: DEBUGGING, PATIENCE, CHAOS, WISDOM, SNARK
   fucking? (broken|useless|terrible|awful)|
   fuck you|screw (this|you)|
   so frustrating|this sucks|damn it)\\b/`} />
-        <div className="mt-4 grid grid-cols-3 gap-2">
+        <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-3">
           <div className="p-3 rounded-xl bg-red/5 border border-red/20 text-center">
             <div className="text-lg mb-1">😤</div>
             <div className="text-xs font-semibold text-red">{lang === "zh" ? "检测" : "Detect"}</div>
@@ -787,7 +787,7 @@ Stats: DEBUGGING, PATIENCE, CHAOS, WISDOM, SNARK
             ? "好消息：没有代码内容或文件路径。类型名 AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS 说明了一切。"
             : "Good news: no code content or file paths. The type name says it all: AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS."}
         </p>
-        <div className="grid grid-cols-3 gap-3 mb-4">
+        <div className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
           <div className="p-3 rounded-xl bg-bg-tertiary/20 border border-border/50 text-center">
             <div className="text-lg mb-1">📊</div>
             <div className="text-xs font-semibold text-text-primary mb-1">Analytics</div>
@@ -847,7 +847,7 @@ Stats: DEBUGGING, PATIENCE, CHAOS, WISDOM, SNARK
       </Card>
 
       {/* Anti-ptrace Defense */}
-      <Card title={lang === "zh" ? "反 ptrace 防御：防止被 GDB 读内存" : "Anti-ptrace Defense: Blocking GDB Memory Reads"} className="mb-6" accent="var(--red)">
+      <Card title={lang === "zh" ? "反 ptrace 防御：防止被 GDB 读内存" : lang === "ja" ? "anti-ptrace 防御: GDB のメモリ読み出しを防ぐ" : "Anti-ptrace Defense: Blocking GDB Memory Reads"} className="mb-6" accent="var(--red)">
         <CodeBlock filename="upstreamproxy.ts" code={`// In CCR containers, Claude Code calls:
 prctl(PR_SET_DUMPABLE, 0)
 // via Bun FFI → libc
@@ -869,7 +869,7 @@ prctl(PR_SET_DUMPABLE, 0)
       </Card>
 
       {/* Caffeinate */}
-      <Card title={lang === "zh" ? "caffeinate：Claude 不让你的 Mac 睡觉" : "caffeinate: Claude Won't Let Your Mac Sleep"} className="mb-6" accent="var(--green)">
+      <Card title={lang === "zh" ? "caffeinate：Claude 不让你的 Mac 睡觉" : lang === "ja" ? "caffeinate: Claude は Mac を眠らせない" : "caffeinate: Claude Won't Let Your Mac Sleep"} className="mb-6" accent="var(--green)">
         <CodeBlock filename="preventSleep.ts" code={`spawn('caffeinate', ['-i', '-t', '300'], { stdio: 'ignore' })
 
 // -i = prevent idle sleep
@@ -884,7 +884,7 @@ prctl(PR_SET_DUMPABLE, 0)
       </Card>
 
       {/* Fennec Codename */}
-      <Card title={lang === "zh" ? "Opus 4.6 曾经叫 Fennec（耳廓狐）" : "Opus 4.6 Was Once Called Fennec"} className="mb-6" accent="var(--orange)">
+      <Card title={lang === "zh" ? "Opus 4.6 曾经叫 Fennec（耳廓狐）" : lang === "ja" ? "Opus 4.6 の旧コードネームは Fennec" : "Opus 4.6 Was Once Called Fennec"} className="mb-6" accent="var(--orange)">
         <CodeBlock filename="migrateFennecToOpus.ts" code={`// Ant-only migration script reveals internal codename:
 if (model.startsWith('fennec-latest[1m]')) {
   updateSettings({ model: 'opus[1m]' })
@@ -899,7 +899,7 @@ if (model.startsWith('fennec-latest[1m]')) {
       </Card>
 
       {/* Undercover Mode */}
-      <Card title={lang === "zh" ? "潜伏模式：Anthropic 员工匿名贡献开源" : "Undercover Mode: Anthropic Staff Go Incognito"} className="mb-6" accent="var(--purple)">
+      <Card title={lang === "zh" ? "潜伏模式：Anthropic 员工匿名贡献开源" : lang === "ja" ? "潜伏モード: Anthropic 社員が匿名でOSSに貢献" : "Undercover Mode: Anthropic Staff Go Incognito"} className="mb-6" accent="var(--purple)">
         <CodeBlock filename="undercover.ts" code={`// UNDERCOVER MODE — CRITICAL
 // You are operating UNDERCOVER in a PUBLIC repository.
 // Do not blow your cover.
@@ -920,8 +920,8 @@ if (model.startsWith('fennec-latest[1m]')) {
       </Card>
 
       {/* date command trap */}
-      <Card title={lang === "zh" ? "`date` 命令的陷阱" : "The `date` Command Trap"} className="mb-6" accent="var(--orange)">
-        <div className="grid grid-cols-2 gap-3">
+      <Card title={lang === "zh" ? "`date` 命令的陷阱" : lang === "ja" ? "`date` コマンドの罠" : "The `date` Command Trap"} className="mb-6" accent="var(--orange)">
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
           <div className="p-3 rounded-xl bg-green/5 border border-green/20">
             <code className="text-xs text-green font-semibold">date +%Y-%m-%d</code>
             <p className="text-[10px] text-text-muted mt-1">
@@ -943,7 +943,7 @@ if (model.startsWith('fennec-latest[1m]')) {
       </Card>
 
       {/* 56-char type name */}
-      <Card title={lang === "zh" ? "世界上最长的类型名（56 个字符）" : "World's Longest Type Name (56 chars)"} className="mb-6" accent="var(--accent)">
+      <Card title={lang === "zh" ? "世界上最长的类型名（56 个字符）" : lang === "ja" ? "世界最長級の型名（56文字）" : "World's Longest Type Name (56 chars)"} className="mb-6" accent="var(--accent)">
         <CodeBlock filename="metadata.ts" code={`type AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS = never
 
 // Every telemetry string must be cast:

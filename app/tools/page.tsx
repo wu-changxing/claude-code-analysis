@@ -53,16 +53,17 @@ export default function ToolsPage() {
   return (
     <div className="page-shell">
       <PageHeader
-        title={tx("Tools", "工具")}
+        title={tx("Tools", "工具", "ツール")}
         description={tx(
           "Claude Code has 43 built-in tools, each implementing a unified Tool<Input, Output, Progress> interface. Tools are built via the buildTool() factory and validated with Zod schemas at runtime.",
-          "Claude Code 有 43 个内置工具，每个都实现统一的 Tool<Input, Output, Progress> 接口。通过 buildTool() 工厂构建，运行时用 Zod schema 验证。"
+          "Claude Code 有 43 个内置工具，每个都实现统一的 Tool<Input, Output, Progress> 接口。通过 buildTool() 工厂构建，运行时用 Zod schema 验证。",
+          "Claude Code には43個の組み込みツールがあり、すべてが統一された Tool<Input, Output, Progress> インターフェースを実装しています。buildTool() で構築され、実行時に Zod で検証されます。"
         )}
         badge="43 tools"
       />
 
       {/* Tool Interface */}
-      <Card title="Tool Interface (Tool.ts)" className="mb-6">
+      <Card title={tx("Tool Interface (Tool.ts)", "工具接口（Tool.ts）", "ツールインターフェース（Tool.ts）")} className="mb-6">
         <CodeBlock
           code={`interface Tool<Input, Output, Progress> {
   name: string
@@ -99,8 +100,8 @@ export default function ToolsPage() {
       </Card>
 
       {/* Tool Registry Visual */}
-      <Card title="Built-in Tools (43 total)" className="mb-6">
-        <div className="grid grid-cols-4 gap-2">
+      <Card title={tx("Built-in Tools (43 total)", "内置工具（共 43 个）", "組み込みツール（全43種）")} className="mb-6">
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-4">
           {TOOL_CARDS.map((t) => (
             <div key={t.name} className="p-3 rounded-lg bg-bg-tertiary/30 border border-border/50 hover:border-accent/30 transition-colors">
               <div className="flex items-center gap-2 mb-1.5">
@@ -120,7 +121,7 @@ export default function ToolsPage() {
       </Card>
 
       {/* BashTool Deep Dive */}
-      <Card title="BashTool Deep Dive" className="mb-6" accent="var(--orange)">
+      <Card title={tx("BashTool Deep Dive", "BashTool 深入解析", "BashTool 詳解")} className="mb-6" accent="var(--orange)">
         <p className="text-sm text-text-secondary mb-4">
           The BashTool is the largest and most complex tool (~300KB across 5 files).
           It has multi-layered security to prevent dangerous command execution.
@@ -165,7 +166,7 @@ shouldUseSandbox.ts — Sandbox decision logic`}
       </Card>
 
       {/* FileEdit Deep Dive */}
-      <Card title="FileEditTool" className="mb-6" accent="var(--accent)">
+      <Card title={tx("FileEditTool", "FileEditTool", "FileEditTool")} className="mb-6" accent="var(--accent)">
         <CodeBlock
           code={`// Input schema:
 {
@@ -197,7 +198,7 @@ shouldUseSandbox.ts — Sandbox decision logic`}
       </Card>
 
       {/* Tool Execution */}
-      <Card title="Tool Orchestration Strategy">
+      <Card title={tx("Tool Orchestration Strategy", "工具编排策略", "ツールオーケストレーション戦略")}>
         <p className="text-sm text-text-secondary mb-4">
           Tools declare <code className="text-accent">isConcurrencySafe()</code> to enable
           parallel execution. The orchestrator partitions tool calls into batches.

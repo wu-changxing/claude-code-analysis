@@ -8,18 +8,23 @@ export default function FileMapPage() {
   return (
     <div className="page-shell">
       <PageHeader
-        title={tx("File Map", "文件地图")}
+        title={tx("File Map", "文件地图", "ファイルマップ")}
         description={tx(
           "Complete reference of key files in the Claude Code source tree. Use this as a starting point for exploring specific areas of the codebase.",
-          "Claude Code 源码树中关键文件的完整参考。以此作为探索代码库特定区域的起点。"
+          "Claude Code 源码树中关键文件的完整参考。以此作为探索代码库特定区域的起点。",
+          "Claude Code のソースツリーにある主要ファイルの完全リファレンスです。特定領域を掘り下げる起点として使えます。"
         )}
-        badge={tx("1800+ files", "1800+ 文件")}
+        badge={tx("1800+ files", "1800+ 文件", "1800+ ファイル")}
       />
 
       {/* Critical Files */}
-      <Card title="Critical Files (Start Here)" className="mb-6">
+      <Card title={tx("Critical Files (Start Here)", "关键文件（从这里开始）", "重要ファイル（ここから）")} className="mb-6">
         <Table
-          headers={["File", "Lines", "Purpose"]}
+          headers={[
+            tx("File", "文件", "ファイル"),
+            tx("Lines", "行数", "行数"),
+            tx("Purpose", "用途", "目的"),
+          ]}
           rows={[
             ["src/QueryEngine.ts", "~1295", "Query lifecycle, message buffering, system prompt assembly"],
             ["src/query.ts", "~1729", "Main agentic loop state machine, API streaming, recovery"],
@@ -31,9 +36,13 @@ export default function FileMapPage() {
       </Card>
 
       {/* Tools */}
-      <Card title="Tools Directory" className="mb-6">
+      <Card title={tx("Tools Directory", "工具目录", "ツールディレクトリ")} className="mb-6">
         <Table
-          headers={["Path", "Size", "Purpose"]}
+          headers={[
+            tx("Path", "路径", "パス"),
+            tx("Size", "大小", "サイズ"),
+            tx("Purpose", "用途", "目的"),
+          ]}
           rows={[
             ["tools/BashTool/BashTool.tsx", "~160KB", "Command execution with security"],
             ["tools/BashTool/bashPermissions.ts", "98KB", "Permission rules + ML classifier"],
@@ -57,9 +66,13 @@ export default function FileMapPage() {
       </Card>
 
       {/* Services */}
-      <Card title="Services Directory" className="mb-6">
+      <Card title={tx("Services Directory", "服务目录", "サービスディレクトリ")} className="mb-6">
         <Table
-          headers={["Path", "Size", "Purpose"]}
+          headers={[
+            tx("Path", "路径", "パス"),
+            tx("Size", "大小", "サイズ"),
+            tx("Purpose", "用途", "目的"),
+          ]}
           rows={[
             ["services/api/claude.ts", "3500+", "Claude API client + streaming parser"],
             ["services/compact/compact.ts", "—", "Full conversation compaction"],
@@ -81,9 +94,12 @@ export default function FileMapPage() {
       </Card>
 
       {/* Other Key Directories */}
-      <Card title="Other Key Directories" className="mb-6">
+      <Card title={tx("Other Key Directories", "其他关键目录", "その他の主要ディレクトリ")} className="mb-6">
         <Table
-          headers={["Path", "Purpose"]}
+          headers={[
+            tx("Path", "路径", "パス"),
+            tx("Purpose", "用途", "目的"),
+          ]}
           rows={[
             ["state/AppStateStore.ts", "Central state definition (DeepImmutable)"],
             ["coordinator/coordinatorMode.ts", "Multi-worker orchestration (~370 lines)"],
@@ -110,12 +126,21 @@ export default function FileMapPage() {
       </Card>
 
       {/* Commands */}
-      <Card title="Slash Commands (90+)">
+      <Card title={tx("Slash Commands (90+)", "斜杠命令（90+）", "スラッシュコマンド（90+）")}>
         <p className="text-sm text-text-secondary mb-4">
-          Each command lives in its own directory under <code className="text-accent">src/commands/</code>.
-          Here are some notable ones:
+          {tx(
+            "Each command lives in its own directory under ",
+            "每个命令都位于 ",
+            "各コマンドは "
+          )}
+          <code className="text-accent">src/commands/</code>
+          {tx(
+            ". Here are some notable ones:",
+            " 下的独立目录中。下面是一些值得注意的命令：",
+            " 配下の個別ディレクトリにあります。代表的なものは次の通りです："
+          )}
         </p>
-        <div className="grid grid-cols-3 gap-2 text-xs">
+        <div className="grid grid-cols-2 gap-2 text-xs sm:grid-cols-3 xl:grid-cols-4">
           {[
             "/compact", "/model", "/clear", "/help", "/config",
             "/permissions", "/memory", "/resume", "/diff", "/cost",

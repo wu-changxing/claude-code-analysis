@@ -16,16 +16,17 @@ export default function AgentsPage() {
   return (
     <div className="page-shell">
       <PageHeader
-        title={tx("Agents & Subagents", "代理与子代理")}
+        title={tx("Agents & Subagents", "代理与子代理", "エージェントとサブエージェント")}
         description={tx(
           "Claude Code can spawn isolated sub-agents with separate token budgets, custom prompts, and optional isolation (worktree or remote). The Agent system enables multi-agent coordination and parallel work.",
-          "Claude Code 可以生成隔离的子代理，拥有独立的 token 预算、自定义提示和可选隔离（工作树或远程）。代理系统支持多代理协调和并行工作。"
+          "Claude Code 可以生成隔离的子代理，拥有独立的 token 预算、自定义提示和可选隔离（工作树或远程）。代理系统支持多代理协调和并行工作。",
+          "Claude Code は、独立したトークン予算、カスタムプロンプト、任意の隔離（worktree または remote）を持つサブエージェントを起動できます。エージェント機構は並列作業とマルチエージェント協調を支えます。"
         )}
         badge="AgentTool"
       />
 
       {/* Agent Input */}
-      <Card title="Agent Input Schema" className="mb-6">
+      <Card title={tx("Agent Input Schema", "代理输入模式", "エージェント入力スキーマ")} className="mb-6">
         <CodeBlock
           code={`// AgentTool.tsx input schema
 {
@@ -44,8 +45,8 @@ export default function AgentsPage() {
       </Card>
 
       {/* Execution Modes */}
-      <Card title="Execution Modes" className="mb-6">
-        <div className="grid grid-cols-3 gap-3">
+      <Card title={tx("Execution Modes", "执行模式", "実行モード")} className="mb-6">
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
           {[
             {
               icon: HiOutlineBolt, color: "var(--accent)", title: "Local (in-process)",
@@ -77,7 +78,7 @@ export default function AgentsPage() {
       </Card>
 
       {/* Cache Sharing */}
-      <Card title="Zero-Cost Cache Sharing" className="mb-6" accent="var(--green)">
+      <Card title={tx("Zero-Cost Cache Sharing", "零成本缓存共享", "ゼロコストのキャッシュ共有")} className="mb-6" accent="var(--green)">
         <p className="text-sm text-text-secondary mb-4">
           The most important performance optimization. When spawning subagents,{" "}
           <code className="text-accent">CacheSafeParams</code> are frozen at fork time.
@@ -104,7 +105,7 @@ export default function AgentsPage() {
       </Card>
 
       {/* Coordinator Mode */}
-      <Card title="Coordinator Mode" className="mb-6" accent="var(--purple)">
+      <Card title={tx("Coordinator Mode", "协调器模式", "コーディネーターモード")} className="mb-6" accent="var(--purple)">
         <p className="text-sm text-text-secondary mb-4">
           Multi-worker orchestration via a central coordinator agent.
           Workers report results as <code className="text-accent">&lt;task-notification&gt;</code> XML.
@@ -129,9 +130,13 @@ export default function AgentsPage() {
       </Card>
 
       {/* Agent Types */}
-      <Card title="Built-in Agent Types" className="mb-6">
+      <Card title={tx("Built-in Agent Types", "内置代理类型", "組み込みエージェント種別")} className="mb-6">
         <Table
-          headers={["Type", "Purpose", "Key Capability"]}
+          headers={[
+            tx("Type", "类型", "種類"),
+            tx("Purpose", "用途", "目的"),
+            tx("Key Capability", "关键能力", "主要機能"),
+          ]}
           rows={[
             ["general-purpose", "Default agent for complex tasks", "Full tool access"],
             ["Explore", "Fast codebase exploration", "Search-focused, no write tools"],
@@ -144,11 +149,11 @@ export default function AgentsPage() {
       </Card>
 
       {/* Forked Agents */}
-      <Card title="Forked Agents (Lightweight)" className="mb-6">
+      <Card title={tx("Forked Agents (Lightweight)", "分叉代理（轻量）", "フォーク型エージェント（軽量）")} className="mb-6">
         <p className="text-sm text-text-secondary mb-4">
           Lightweight background queries that share the parent&apos;s cache. Used for tasks you never see:
         </p>
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-3">
           {[
             { name: "extractMemories", desc: "Auto-memory after each query", icon: VscSymbolEvent, color: "var(--purple)" },
             { name: "sessionMemory", desc: "Periodic conversation notes", icon: VscServerProcess, color: "var(--accent)" },
@@ -167,7 +172,7 @@ export default function AgentsPage() {
       </Card>
 
       {/* Coordinator Quote */}
-      <Card title="Coordinator&apos;s Golden Rule" accent="var(--orange)">
+      <Card title={tx("Coordinator's Golden Rule", "协调器黄金法则", "コーディネーターの黄金律")} accent="var(--orange)">
         <div className="p-4 rounded-xl bg-bg-tertiary/20 border-l-2" style={{ borderLeftColor: "var(--orange)" }}>
           <p className="text-sm text-text-secondary italic leading-relaxed">
             &quot;When workers report research findings, <strong className="text-text-primary">you must understand them before
