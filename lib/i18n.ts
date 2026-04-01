@@ -85,6 +85,14 @@ export function coerceLang(value?: string | null): Lang {
   return value === "zh" || value === "ja" ? value : "en";
 }
 
+export function parsePreferredLang(value?: string | null): Lang {
+  if (!value) return "en";
+  const normalized = value.toLowerCase();
+  if (normalized.includes("zh")) return "zh";
+  if (normalized.includes("ja")) return "ja";
+  return "en";
+}
+
 export function useLangFromStorage(): Lang {
   if (typeof window === "undefined") return "en";
   return coerceLang(localStorage.getItem(LANG_STORAGE_KEY));

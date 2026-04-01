@@ -21,26 +21,42 @@ export default function ContextPage() {
         <div className="pt-2">
           <FlowStep
             number={1}
-            title="Default System Prompt"
-            description="Base Claude instructions (2000+ tokens). Tool definitions dynamically generated from all registered tools. MCP server instructions. Agent definitions. Skill/command discovery hints. Model-specific variants (Opus: full, Sonnet: abbreviated if >50 tools)."
+            title={tx("Default System Prompt", "默认系统提示", "デフォルトのシステムプロンプト")}
+            description={tx(
+              "Base Claude instructions (2000+ tokens). Tool definitions dynamically generated from all registered tools. MCP server instructions. Agent definitions. Skill/command discovery hints. Model-specific variants (Opus: full, Sonnet: abbreviated if >50 tools).",
+              "Claude 的基础指令（2000+ tokens）。工具定义会根据所有已注册工具动态生成，同时包含 MCP 服务器指令、代理定义、技能/命令发现提示，以及模型特定变体（Opus 完整版，Sonnet 在工具超过 50 个时缩略）。",
+              "Claude の基本指示（2000+ トークン）。全登録ツールから動的生成されるツール定義、MCP サーバー指示、エージェント定義、スキル/コマンド発見ヒント、モデル別バリアント（Opus は完全版、Sonnet は50ツール超で短縮）を含みます。"
+            )}
             color="var(--accent)"
           />
           <FlowStep
             number={2}
-            title="User Context"
-            description="Working directory, platform, shell, git status (branch, recent commits, truncated to 2000 chars). Additional directories permissions. Project metadata. Prepended to messages via prependUserContext()."
+            title={tx("User Context", "用户上下文", "ユーザーコンテキスト")}
+            description={tx(
+              "Working directory, platform, shell, git status (branch, recent commits, truncated to 2000 chars). Additional directories permissions. Project metadata. Prepended to messages via prependUserContext().",
+              "工作目录、平台、shell、git 状态（分支、最近提交，截断到 2000 字符）、额外目录权限以及项目元数据。通过 prependUserContext() 预置到消息前。",
+              "作業ディレクトリ、プラットフォーム、シェル、git 状態（ブランチ、最近のコミット、2000文字までに切り詰め）、追加ディレクトリ権限、プロジェクト情報。prependUserContext() によりメッセージ先頭へ付加されます。"
+            )}
             color="var(--green)"
           />
           <FlowStep
             number={3}
-            title="System Context"
-            description="Available resources, MCP server capabilities, coordinator context (if multi-agent mode). Appended via appendSystemContext()."
+            title={tx("System Context", "系统上下文", "システムコンテキスト")}
+            description={tx(
+              "Available resources, MCP server capabilities, coordinator context (if multi-agent mode). Appended via appendSystemContext().",
+              "可用资源、MCP 服务器能力，以及协调器上下文（多代理模式下）。通过 appendSystemContext() 追加。",
+              "利用可能なリソース、MCP サーバーの能力、そして必要ならコーディネーター文脈（マルチエージェント時）。appendSystemContext() で追加されます。"
+            )}
             color="var(--orange)"
           />
           <FlowStep
             number={4}
-            title="Memory Mechanics"
-            description="If auto-memory enabled, injects memory mechanics prompt with instructions for reading/writing to memory directory."
+            title={tx("Memory Mechanics", "记忆机制", "メモリ機構")}
+            description={tx(
+              "If auto-memory enabled, injects memory mechanics prompt with instructions for reading/writing to memory directory.",
+              "如果启用自动记忆，会注入记忆机制提示，指导如何读取/写入记忆目录。",
+              "自動メモリが有効な場合、メモリディレクトリの読み書き手順を含む専用プロンプトが挿入されます。"
+            )}
             color="var(--purple)"
           />
         </div>
@@ -57,8 +73,11 @@ const systemPrompt = asSystemPrompt([
       {/* CLAUDE.md */}
       <Card title={tx("CLAUDE.md Loading", "CLAUDE.md 加载", "CLAUDE.md の読み込み")} className="mb-6" accent="var(--green)">
         <p className="text-sm text-text-secondary mb-4">
-          CLAUDE.md files provide project-specific instructions. They&apos;re loaded from
-          multiple locations and concatenated into the user context:
+          {tx(
+            "CLAUDE.md files provide project-specific instructions. They're loaded from multiple locations and concatenated into the user context:",
+            "CLAUDE.md 文件提供项目特定指令。它们会从多个位置加载并拼接进用户上下文：",
+            "CLAUDE.md はプロジェクト固有の指示を提供します。複数の場所から読み込まれ、ユーザーコンテキストへ連結されます："
+          )}
         </p>
         <CodeBlock
           code={`// Load order (all concatenated):
@@ -79,9 +98,17 @@ const systemPrompt = asSystemPrompt([
       {/* Memory System */}
       <Card title={tx("Auto-Memory System (memdir/)", "自动记忆系统（memdir/）", "自動メモリシステム（memdir/）")} className="mb-6" accent="var(--purple)">
         <p className="text-sm text-text-secondary mb-4">
-          Persistent project-scoped memory stored at{" "}
+          {tx(
+            "Persistent project-scoped memory stored at ",
+            "持久化的项目级记忆存储在 ",
+            "永続的なプロジェクト単位のメモリは "
+          )}{" "}
           <code className="text-accent">~/.claude/projects/&lt;path&gt;/memory/</code>.
-          Four memory types with structured format.
+          {tx(
+            " Four memory types with structured format.",
+            " ，共有四种结构化记忆类型。",
+            " に保存され、4種類の構造化メモリに分かれます。"
+          )}
         </p>
         <CodeBlock
           code={`// Directory structure:
@@ -137,8 +164,13 @@ type: user | feedback | project | reference
       {/* State Management */}
       <Card title={tx("AppState Store", "AppState 存储", "AppState ストア")} className="mb-6" accent="var(--orange)">
         <p className="text-sm text-text-secondary mb-4">
-          Central application state using Zustand-like pattern with{" "}
+          {tx(
+            "Central application state using Zustand-like pattern with ",
+            "使用类似 Zustand 的模式管理中心应用状态，并通过 ",
+            "Zustand 風のパターンで中央状態を管理し、"
+          )}{" "}
           <code className="text-accent">DeepImmutable</code> for type safety:
+          {tx("", " 提供类型安全：", " により型安全性を確保しています：")}
         </p>
         <CodeBlock
           code={`// AppStateStore.ts — key state fields:

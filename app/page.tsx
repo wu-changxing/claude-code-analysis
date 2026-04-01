@@ -282,7 +282,7 @@ export default function HomePage() {
             {lang === "zh" ? "趣闻精选" : lang === "ja" ? "おもしろ事実" : "Fun Facts Highlights"}
           </h2>
           <Link href="/fun-facts" className="text-[11px] text-accent hover:underline">
-            {lang === "zh" ? "查看全部 20+ →" : "See all 20+ →"}
+            {lang === "zh" ? "查看全部 20+ →" : lang === "ja" ? "20件以上をすべて見る →" : "See all 20+ →"}
           </Link>
         </div>
         <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
@@ -394,16 +394,20 @@ export default function HomePage() {
         <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
           <div>
             <p className="text-sm font-semibold text-text-primary mb-1">
-              {lang === "zh" ? "Claude Code 源码解析与重写" : "Claude Code Pattern Study & Rewrite"}
+              {lang === "zh" ? "Claude Code 源码解析与重写" : lang === "ja" ? "Claude Code パターン研究と再実装" : "Claude Code Pattern Study & Rewrite"}
             </p>
             <p className="text-[11px] text-text-muted mb-2">
               {lang === "zh"
                 ? "由 @ConnectOnionAI 出品 — 开源 AI 代理框架"
+                : lang === "ja"
+                ? "@ConnectOnionAI によるオープンソースAIエージェント基盤"
                 : "By @ConnectOnionAI — Open-source AI Agent Framework"}
             </p>
             <p className="text-[11px] text-text-secondary leading-relaxed">
               {lang === "zh"
                 ? "你的编程助手里藏了一只鸭子 — 从反 ptrace 防御到 AI 做梦机制，50 个你不知道的设计决策。"
+                : lang === "ja"
+                ? "あなたのコーディング助手の中にはアヒルがいる。anti-ptrace防御からAIの夢機構まで、知らなかった50の設計判断。"
                 : "Your coding assistant has a duck hiding inside — from anti-ptrace defense to AI dreaming, 50 design decisions you didn't know about."}
             </p>
           </div>

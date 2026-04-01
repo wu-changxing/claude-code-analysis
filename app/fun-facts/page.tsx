@@ -55,12 +55,12 @@ export default function FunFactsPage() {
         </div>
         <div className="mb-8 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
           {[
-            { value: "512,664", label: "Lines of TypeScript", note: { en: "That's roughly 10 novels worth of code", zh: "大约相当于10本小说的篇幅", ja: "小説約10冊分のコード量" }, icon: VscTerminalBash, color: "var(--accent)" },
-            { value: "1,884", label: "Source files", note: { en: "Your IDE just fainted", zh: "你的 IDE 已经晕倒了", ja: "あなたのIDEは気絶しました" }, icon: VscSymbolMisc, color: "var(--green)" },
-            { value: "101", label: "Slash commands", note: { en: "More commands than a military base", zh: "命令比军事基地还多", ja: "軍事基地より多いコマンド" }, icon: VscWand, color: "var(--orange)" },
-            { value: "5,594", label: "Lines in print.ts", note: { en: "The single largest file. It just prints things.", zh: "最大的单个文件。它只是打印东西。", ja: "最大のファイル。表示するだけなのに。" }, icon: VscFlame, color: "var(--red)" },
-            { value: "300KB+", label: "BashTool security", note: { en: "More security than most banks", zh: "安全性比大多数银行还高", ja: "ほとんどの銀行より高いセキュリティ" }, icon: VscBeaker, color: "var(--purple)" },
-            { value: "160+", label: "Loading spinner verbs", note: { en: "'Clauding...' is now a verb", zh: "'Clauding...' 现在是一个动词了", ja: "「Clauding...」は動詞になった" }, icon: VscSmiley, color: "var(--pink)" },
+            { value: "512,664", label: lang === "zh" ? "TypeScript 代码行数" : lang === "ja" ? "TypeScriptの行数" : "Lines of TypeScript", note: { en: "That's roughly 10 novels worth of code", zh: "大约相当于10本小说的篇幅", ja: "小説約10冊分のコード量" }, icon: VscTerminalBash, color: "var(--accent)" },
+            { value: "1,884", label: lang === "zh" ? "源文件数" : lang === "ja" ? "ソースファイル数" : "Source files", note: { en: "Your IDE just fainted", zh: "你的 IDE 已经晕倒了", ja: "あなたのIDEは気絶しました" }, icon: VscSymbolMisc, color: "var(--green)" },
+            { value: "101", label: lang === "zh" ? "斜杠命令" : lang === "ja" ? "スラッシュコマンド" : "Slash commands", note: { en: "More commands than a military base", zh: "命令比军事基地还多", ja: "軍事基地より多いコマンド" }, icon: VscWand, color: "var(--orange)" },
+            { value: "5,594", label: lang === "zh" ? "print.ts 行数" : lang === "ja" ? "print.ts の行数" : "Lines in print.ts", note: { en: "The single largest file. It just prints things.", zh: "最大的单个文件。它只是打印东西。", ja: "最大のファイル。表示するだけなのに。" }, icon: VscFlame, color: "var(--red)" },
+            { value: "300KB+", label: lang === "zh" ? "BashTool 安全代码" : lang === "ja" ? "BashToolの安全コード" : "BashTool security", note: { en: "More security than most banks", zh: "安全性比大多数银行还高", ja: "ほとんどの銀行より高いセキュリティ" }, icon: VscBeaker, color: "var(--purple)" },
+            { value: "160+", label: lang === "zh" ? "加载动画动词" : lang === "ja" ? "ローディング動詞" : "Loading spinner verbs", note: { en: "'Clauding...' is now a verb", zh: "'Clauding...' 现在是一个动词了", ja: "「Clauding...」は動詞になった" }, icon: VscSmiley, color: "var(--pink)" },
           ].map((s, i) => (
             <motion.div
               key={s.label}
@@ -92,7 +92,7 @@ export default function FunFactsPage() {
 
           <div className="mb-4 grid grid-cols-1 gap-3 lg:grid-cols-2">
             <div className="p-3 rounded-lg bg-bg-tertiary/30 border border-border/50">
-              <div className="text-[10px] text-text-muted uppercase tracking-wider mb-1.5 font-semibold">18 Species</div>
+              <div className="text-[10px] text-text-muted uppercase tracking-wider mb-1.5 font-semibold">{lang === "zh" ? "18 种物种" : lang === "ja" ? "18種の種族" : "18 Species"}</div>
               <div className="flex flex-wrap gap-1">
                 {["duck", "goose", "blob", "cat", "dragon", "octopus", "owl", "penguin", "turtle", "snail", "ghost", "axolotl", "capybara", "cactus", "robot", "rabbit", "mushroom", "chonk"].map((s) => (
                   <span key={s} className="px-1.5 py-0.5 bg-bg-secondary rounded text-[10px] font-mono text-text-secondary">{s}</span>
@@ -101,7 +101,7 @@ export default function FunFactsPage() {
             </div>
             <div className="space-y-2">
               <div className="p-3 rounded-lg bg-bg-tertiary/30 border border-border/50">
-                <div className="text-[10px] text-text-muted uppercase tracking-wider mb-1 font-semibold">8 Hats</div>
+                <div className="text-[10px] text-text-muted uppercase tracking-wider mb-1 font-semibold">{lang === "zh" ? "8 顶帽子" : lang === "ja" ? "8種類の帽子" : "8 Hats"}</div>
                 <div className="flex flex-wrap gap-1">
                   {["crown", "tophat", "propeller", "halo", "wizard", "beanie", "tinyduck"].map((h) => (
                     <span key={h} className="px-1.5 py-0.5 bg-bg-secondary rounded text-[10px] font-mono text-text-secondary">{h}</span>
@@ -110,11 +110,11 @@ export default function FunFactsPage() {
               </div>
               <div className="flex flex-col gap-3 sm:flex-row">
                 <div className="flex-1 p-3 rounded-lg bg-bg-tertiary/30 border border-border/50">
-                  <div className="text-[10px] text-text-muted uppercase tracking-wider mb-1 font-semibold">Eyes</div>
+                  <div className="text-[10px] text-text-muted uppercase tracking-wider mb-1 font-semibold">{lang === "zh" ? "眼睛" : lang === "ja" ? "目" : "Eyes"}</div>
                   <div className="text-lg font-mono tracking-widest text-text-primary">· ✦ × ◉ @ °</div>
                 </div>
                 <div className="flex-1 p-3 rounded-lg bg-bg-tertiary/30 border border-border/50">
-                  <div className="text-[10px] text-text-muted uppercase tracking-wider mb-1 font-semibold">Rarities</div>
+                  <div className="text-[10px] text-text-muted uppercase tracking-wider mb-1 font-semibold">{lang === "zh" ? "稀有度" : lang === "ja" ? "レア度" : "Rarities"}</div>
                   <div className="flex gap-1 flex-wrap">
                     {[
                       { r: "common", c: "#8b949e" }, { r: "uncommon", c: "#1a7f37" },

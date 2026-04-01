@@ -50,6 +50,87 @@ const TOOL_CARDS = [
 
 export default function ToolsPage() {
   const tx = useTx();
+  const toolCards = TOOL_CARDS.map((tool) => ({
+    ...tool,
+    type: tx(tool.type, ({
+      Execution: "执行",
+      Modification: "修改",
+      Read: "读取",
+      Search: "搜索",
+      Spawning: "派生",
+      Invocation: "调用",
+      Proxy: "代理",
+      Isolation: "隔离",
+      Comms: "通信",
+      Management: "管理",
+      Discovery: "发现",
+      Integration: "集成",
+      Utility: "工具",
+      Cleanup: "清理",
+    } as Record<string, string>)[tool.type], ({
+      Execution: "実行",
+      Modification: "変更",
+      Read: "読み取り",
+      Search: "検索",
+      Spawning: "起動",
+      Invocation: "呼び出し",
+      Proxy: "プロキシ",
+      Isolation: "隔離",
+      Comms: "通信",
+      Management: "管理",
+      Discovery: "探索",
+      Integration: "統合",
+      Utility: "ユーティリティ",
+      Cleanup: "終了処理",
+    } as Record<string, string>)[tool.type]),
+    desc: tx(
+      tool.desc,
+      ({
+        "Shell commands with AST security analysis, sandbox, ML classifier": "带 AST 安全分析、沙箱和 ML 分类器的 shell 命令执行",
+        "String find/replace with fuzzy matching and unified diff": "支持模糊匹配和统一 diff 的字符串查找替换",
+        "Full content atomic file replacement": "原子化整文件内容替换",
+        "Read files with PDF, notebook, image handling": "读取文件，并支持 PDF、notebook、图片处理",
+        "Ripgrep-based content search with permission filtering": "基于 ripgrep 的内容搜索，并带权限过滤",
+        "Fast file pattern matching, mod-time sorted": "快速文件模式匹配，并按修改时间排序",
+        "Isolated sub-agents with zero-cost cache sharing": "隔离子代理，并共享零成本缓存",
+        "User-defined prompt templates from .md files": "从 .md 文件加载用户定义的提示模板",
+        "Wraps external tools via Model Context Protocol": "通过 Model Context Protocol 包装外部工具",
+        "Web search integration": "Web 搜索集成",
+        "Fetch web page content": "抓取网页内容",
+        "Jupyter notebook cell editing": "Jupyter notebook 单元格编辑",
+        "Git worktree creation and cleanup": "Git worktree 创建与清理",
+        "Inter-agent messaging": "代理间消息传递",
+        "Create, get, update, stop tracked subtasks": "创建、获取、更新、停止已跟踪子任务",
+        "Deferred tool loading for large tool sets": "面向大型工具集的延迟工具加载",
+        "Language Server Protocol queries": "Language Server Protocol 查询",
+        "Windows PowerShell execution": "Windows PowerShell 执行",
+        "Async wait/delay": "异步等待/延迟",
+        "Exit worktree/plan with safety checks": "带安全检查地退出 worktree/plan",
+      } as Record<string, string>)[tool.desc],
+      ({
+        "Shell commands with AST security analysis, sandbox, ML classifier": "AST安全解析、サンドボックス、ML分類器付きのシェル実行",
+        "String find/replace with fuzzy matching and unified diff": "あいまい一致と unified diff を伴う文字列置換",
+        "Full content atomic file replacement": "ファイル全体の原子的置換",
+        "Read files with PDF, notebook, image handling": "PDF・notebook・画像対応のファイル読み取り",
+        "Ripgrep-based content search with permission filtering": "権限フィルタ付きの ripgrep ベース検索",
+        "Fast file pattern matching, mod-time sorted": "更新時刻順の高速ファイルパターン照合",
+        "Isolated sub-agents with zero-cost cache sharing": "ゼロコストキャッシュ共有付きの隔離サブエージェント",
+        "User-defined prompt templates from .md files": ".md ファイル由来のユーザー定義プロンプトテンプレート",
+        "Wraps external tools via Model Context Protocol": "Model Context Protocol 経由で外部ツールをラップ",
+        "Web search integration": "Web検索統合",
+        "Fetch web page content": "Webページ内容の取得",
+        "Jupyter notebook cell editing": "Jupyter notebook セル編集",
+        "Git worktree creation and cleanup": "Git worktree の作成と掃除",
+        "Inter-agent messaging": "エージェント間メッセージ",
+        "Create, get, update, stop tracked subtasks": "追跡サブタスクの作成・取得・更新・停止",
+        "Deferred tool loading for large tool sets": "大規模ツール群向けの遅延ロード",
+        "Language Server Protocol queries": "Language Server Protocol クエリ",
+        "Windows PowerShell execution": "Windows PowerShell 実行",
+        "Async wait/delay": "非同期待機/遅延",
+        "Exit worktree/plan with safety checks": "安全検査付きで worktree/plan を終了",
+      } as Record<string, string>)[tool.desc],
+    ),
+  }));
   return (
     <div className="page-shell">
       <PageHeader
@@ -102,7 +183,7 @@ export default function ToolsPage() {
       {/* Tool Registry Visual */}
       <Card title={tx("Built-in Tools (43 total)", "内置工具（共 43 个）", "組み込みツール（全43種）")} className="mb-6">
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-4">
-          {TOOL_CARDS.map((t) => (
+          {toolCards.map((t) => (
             <div key={t.name} className="p-3 rounded-lg bg-bg-tertiary/30 border border-border/50 hover:border-accent/30 transition-colors">
               <div className="flex items-center gap-2 mb-1.5">
                 <t.icon className="w-3.5 h-3.5 shrink-0" style={{ color: t.color }} />
@@ -123,8 +204,11 @@ export default function ToolsPage() {
       {/* BashTool Deep Dive */}
       <Card title={tx("BashTool Deep Dive", "BashTool 深入解析", "BashTool 詳解")} className="mb-6" accent="var(--orange)">
         <p className="text-sm text-text-secondary mb-4">
-          The BashTool is the largest and most complex tool (~300KB across 5 files).
-          It has multi-layered security to prevent dangerous command execution.
+          {tx(
+            "The BashTool is the largest and most complex tool (~300KB across 5 files). It has multi-layered security to prevent dangerous command execution.",
+            "BashTool 是体积最大也最复杂的工具（5 个文件约 300KB），采用多层安全防护来阻止危险命令执行。",
+            "BashTool は最大かつ最も複雑なツールです（5ファイル合計約300KB）。危険なコマンド実行を防ぐため多層防御を備えています。"
+          )}
         </p>
         <CodeBlock
           code={`// Execution flow:
@@ -200,8 +284,15 @@ shouldUseSandbox.ts — Sandbox decision logic`}
       {/* Tool Execution */}
       <Card title={tx("Tool Orchestration Strategy", "工具编排策略", "ツールオーケストレーション戦略")}>
         <p className="text-sm text-text-secondary mb-4">
-          Tools declare <code className="text-accent">isConcurrencySafe()</code> to enable
-          parallel execution. The orchestrator partitions tool calls into batches.
+          {tx(
+            "Tools declare ",
+            "工具通过声明 ",
+            "ツールは "
+          )}<code className="text-accent">isConcurrencySafe()</code>{tx(
+            " to enable parallel execution. The orchestrator partitions tool calls into batches.",
+            " 来启用并行执行。编排器会把工具调用拆分成多个批次。",
+            " を宣言して並列実行可否を示します。オーケストレーターはそれを基にツール呼び出しをバッチ分割します。"
+          )}
         </p>
         <CodeBlock
           code={`// toolOrchestration.ts — runTools() generator

@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
+import { headers } from "next/headers";
 import "./globals.css";
 import { Sidebar } from "@/components/Sidebar";
 import { LangProvider } from "@/lib/LangContext";
-import { coerceLang, LANG_COOKIE_KEY } from "@/lib/i18n";
+import { coerceLang, LANG_COOKIE_KEY, parsePreferredLang } from "@/lib/i18n";
 
 export const metadata: Metadata = {
   title: "Claude Code Analysis | Deep Dive into Claude Code Architecture",
@@ -51,10 +52,13 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const cookieStore = await cookies();
-  const initialLang = coerceLang(cookieStore.get(LANG_COOKIE_KEY)?.value);
+  const headerStore = await headers();
+  const initialLang = cookieStore.get(LANG_COOKIE_KEY)?.value
+    ? coerceLang(cookieStore.get(LANG_COOKIE_KEY)?.value)
+    : parsePreferredLang(headerStore.get("accept-language"));
 
   return (
-    <html lang="en" className="h-full antialiased">
+    <html lang={initialLang} className="h-full antialiased">
       <body className="min-h-full bg-bg-primary text-text-primary">
         <LangProvider initialLang={initialLang}>
           <Sidebar />

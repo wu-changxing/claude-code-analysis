@@ -13,6 +13,59 @@ import { HiOutlineBolt, HiOutlineGlobeAlt, HiOutlineCpuChip } from "react-icons/
 
 export default function AgentsPage() {
   const tx = useTx();
+  const executionModes = [
+    {
+      icon: HiOutlineBolt,
+      color: "var(--accent)",
+      title: tx("Local (in-process)", "本地（进程内）", "ローカル（同一プロセス）"),
+      items: [
+        tx("Runs in LocalAgentTask", "运行在 LocalAgentTask 中", "LocalAgentTask 上で動作"),
+        tx("Shares parent AppState", "共享父级 AppState", "親 AppState を共有"),
+        tx("Read/write parent filesystem", "可读写父级文件系统", "親ファイルシステムを読み書き"),
+        tx("Token budget tracked separately", "Token 预算单独跟踪", "トークン予算は個別追跡"),
+      ],
+    },
+    {
+      icon: VscGitCompare,
+      color: "var(--green)",
+      title: tx("Worktree Isolation", "Worktree 隔离", "Worktree 隔離"),
+      items: [
+        tx("Creates git worktree", "创建 git worktree", "git worktree を作成"),
+        tx("Isolated git workspace", "隔离的 git 工作区", "隔離された git ワークスペース"),
+        tx("Temporary branch", "临时分支", "一時ブランチ"),
+        tx("Prevents code conflicts", "避免代码冲突", "コード競合を防止"),
+      ],
+    },
+    {
+      icon: HiOutlineGlobeAlt,
+      color: "var(--purple)",
+      title: tx("Remote (CCR)", "远程（CCR）", "リモート（CCR）"),
+      items: [
+        tx("Runs on remote servers", "运行在远程服务器上", "リモートサーバーで実行"),
+        tx("Full isolation from local", "与本地完全隔离", "ローカルから完全隔離"),
+        tx("Always runs in background", "始终在后台运行", "常にバックグラウンド実行"),
+        tx("Requires isolation: 'remote'", "要求 isolation: 'remote'", "isolation: 'remote' が必須"),
+      ],
+    },
+  ];
+
+  const agentRows = [
+    [tx("general-purpose", "general-purpose", "general-purpose"), tx("Default agent for complex tasks", "复杂任务的默认代理", "複雑タスク向けの標準エージェント"), tx("Full tool access", "完整工具访问", "完全なツールアクセス")],
+    [tx("Explore", "Explore", "Explore"), tx("Fast codebase exploration", "快速探索代码库", "高速コード探索"), tx("Search-focused, no write tools", "专注搜索，不含写工具", "検索特化、書き込みなし")],
+    [tx("Plan", "Plan", "Plan"), tx("Architecture planning", "架构规划", "設計プランニング"), tx("Design docs, no code changes", "设计文档，不改代码", "設計文書中心、コード変更なし")],
+    [tx("code-review", "code-review", "code-review"), tx("PR code review", "PR 代码审查", "PRコードレビュー"), tx("Read-only analysis", "只读分析", "読み取り専用分析")],
+    [tx("simplicity-engineer", "simplicity-engineer", "simplicity-engineer"), tx("Over-engineering review", "过度设计审查", "過剰設計レビュー"), tx("Complexity analysis", "复杂度分析", "複雑性分析")],
+    [tx("Custom (.claude/agents/)", "自定义（.claude/agents/）", "カスタム（.claude/agents/）"), tx("User-defined agents", "用户自定义代理", "ユーザー定義エージェント"), tx("YAML/MD with frontmatter", "带 frontmatter 的 YAML/MD", "frontmatter付き YAML/MD")],
+  ];
+
+  const forkedAgents = [
+    { name: "extractMemories", desc: tx("Auto-memory after each query", "每次查询后的自动记忆", "各クエリ後の自動メモリ"), icon: VscSymbolEvent, color: "var(--purple)" },
+    { name: "sessionMemory", desc: tx("Periodic conversation notes", "周期性会话笔记", "定期的な会話メモ"), icon: VscServerProcess, color: "var(--accent)" },
+    { name: "promptSuggestion", desc: tx("Next prompt suggestions", "下一条提示建议", "次のプロンプト提案"), icon: VscLightbulb, color: "var(--orange)" },
+    { name: "compaction", desc: tx("Conversation summary", "对话摘要", "会話要約"), icon: VscGitMerge, color: "var(--green)" },
+    { name: "autoDream", desc: tx("Background memory consolidation", "后台记忆整合", "バックグラウンドの記憶統合"), icon: HiOutlineCpuChip, color: "var(--pink)" },
+    { name: "speculation", desc: tx("Fast hypothetical execution", "快速假设执行", "高速な仮想実行"), icon: HiOutlineBolt, color: "var(--red)" },
+  ];
   return (
     <div className="page-shell">
       <PageHeader
@@ -47,20 +100,7 @@ export default function AgentsPage() {
       {/* Execution Modes */}
       <Card title={tx("Execution Modes", "执行模式", "実行モード")} className="mb-6">
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
-          {[
-            {
-              icon: HiOutlineBolt, color: "var(--accent)", title: "Local (in-process)",
-              items: ["Runs in LocalAgentTask", "Shares parent AppState", "Read/write parent filesystem", "Token budget tracked separately"],
-            },
-            {
-              icon: VscGitCompare, color: "var(--green)", title: "Worktree Isolation",
-              items: ["Creates git worktree", "Isolated git workspace", "Temporary branch", "Prevents code conflicts"],
-            },
-            {
-              icon: HiOutlineGlobeAlt, color: "var(--purple)", title: "Remote (CCR)",
-              items: ["Runs on remote servers", "Full isolation from local", "Always runs in background", "Requires isolation: 'remote'"],
-            },
-          ].map(({ icon: Icon, color, title, items }) => (
+          {executionModes.map(({ icon: Icon, color, title, items }) => (
             <div key={title} className="p-4 rounded-xl bg-bg-tertiary/20 border border-border/50">
               <Icon className="w-5 h-5 mb-2" style={{ color }} />
               <h4 className="text-xs font-semibold text-text-primary mb-2">{title}</h4>
@@ -80,10 +120,15 @@ export default function AgentsPage() {
       {/* Cache Sharing */}
       <Card title={tx("Zero-Cost Cache Sharing", "零成本缓存共享", "ゼロコストのキャッシュ共有")} className="mb-6" accent="var(--green)">
         <p className="text-sm text-text-secondary mb-4">
-          The most important performance optimization. When spawning subagents,{" "}
-          <code className="text-accent">CacheSafeParams</code> are frozen at fork time.
-          If the system prompt bytes are identical, the API returns a prompt cache hit — making
-          forked queries essentially free.
+          {tx(
+            "The most important performance optimization. When spawning subagents, ",
+            "这是最关键的性能优化。生成子代理时，",
+            "最重要な性能最適化です。サブエージェント起動時に "
+          )}<code className="text-accent">CacheSafeParams</code>{tx(
+            " are frozen at fork time. If the system prompt bytes are identical, the API returns a prompt cache hit — making forked queries essentially free.",
+            " 会在 fork 时被冻结。如果系统提示的字节完全相同，API 会直接命中 prompt cache，使 fork 查询几乎零成本。",
+            " は fork 時点で凍結されます。システムプロンプトのバイト列が同一なら API は prompt cache hit を返し、fork クエリはほぼ無料になります。"
+          )}
         </p>
         <CodeBlock
           code={`// CacheSafeParams — frozen at fork time
@@ -107,8 +152,15 @@ export default function AgentsPage() {
       {/* Coordinator Mode */}
       <Card title={tx("Coordinator Mode", "协调器模式", "コーディネーターモード")} className="mb-6" accent="var(--purple)">
         <p className="text-sm text-text-secondary mb-4">
-          Multi-worker orchestration via a central coordinator agent.
-          Workers report results as <code className="text-accent">&lt;task-notification&gt;</code> XML.
+          {tx(
+            "Multi-worker orchestration via a central coordinator agent. Workers report results as ",
+            "通过中央协调器代理实现多 worker 编排。各 worker 以 ",
+            "中央コーディネーターエージェントを通じたマルチワーカー編成です。各ワーカーは "
+          )}<code className="text-accent">&lt;task-notification&gt;</code>{tx(
+            " XML.",
+            " XML 的形式回传结果。",
+            " XML で結果を報告します。"
+          )}
         </p>
         <CodeBlock
           code={`// Coordinator workflow:
@@ -137,31 +189,21 @@ export default function AgentsPage() {
             tx("Purpose", "用途", "目的"),
             tx("Key Capability", "关键能力", "主要機能"),
           ]}
-          rows={[
-            ["general-purpose", "Default agent for complex tasks", "Full tool access"],
-            ["Explore", "Fast codebase exploration", "Search-focused, no write tools"],
-            ["Plan", "Architecture planning", "Design docs, no code changes"],
-            ["code-review", "PR code review", "Read-only analysis"],
-            ["simplicity-engineer", "Over-engineering review", "Complexity analysis"],
-            ["Custom (.claude/agents/)", "User-defined agents", "YAML/MD with frontmatter"],
-          ]}
+          rows={agentRows}
         />
       </Card>
 
       {/* Forked Agents */}
       <Card title={tx("Forked Agents (Lightweight)", "分叉代理（轻量）", "フォーク型エージェント（軽量）")} className="mb-6">
         <p className="text-sm text-text-secondary mb-4">
-          Lightweight background queries that share the parent&apos;s cache. Used for tasks you never see:
+          {tx(
+            "Lightweight background queries that share the parent&apos;s cache. Used for tasks you never see:",
+            "共享父级缓存的轻量后台查询，用于那些你通常看不到的任务：",
+            "親キャッシュを共有する軽量バックグラウンドクエリです。普段は見えない次の処理に使われます："
+          )}
         </p>
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-3">
-          {[
-            { name: "extractMemories", desc: "Auto-memory after each query", icon: VscSymbolEvent, color: "var(--purple)" },
-            { name: "sessionMemory", desc: "Periodic conversation notes", icon: VscServerProcess, color: "var(--accent)" },
-            { name: "promptSuggestion", desc: "Next prompt suggestions", icon: VscLightbulb, color: "var(--orange)" },
-            { name: "compaction", desc: "Conversation summary", icon: VscGitMerge, color: "var(--green)" },
-            { name: "autoDream", desc: "Background memory consolidation", icon: HiOutlineCpuChip, color: "var(--pink)" },
-            { name: "speculation", desc: "Fast hypothetical execution", icon: HiOutlineBolt, color: "var(--red)" },
-          ].map(({ name, desc, icon: Icon, color }) => (
+          {forkedAgents.map(({ name, desc, icon: Icon, color }) => (
             <div key={name} className="p-3 rounded-xl bg-bg-tertiary/20 border border-border/50">
               <Icon className="w-3.5 h-3.5 mb-1.5" style={{ color }} />
               <code className="text-[10px] text-accent block mb-0.5">{name}</code>
@@ -175,16 +217,28 @@ export default function AgentsPage() {
       <Card title={tx("Coordinator's Golden Rule", "协调器黄金法则", "コーディネーターの黄金律")} accent="var(--orange)">
         <div className="p-4 rounded-xl bg-bg-tertiary/20 border-l-2" style={{ borderLeftColor: "var(--orange)" }}>
           <p className="text-sm text-text-secondary italic leading-relaxed">
-            &quot;When workers report research findings, <strong className="text-text-primary">you must understand them before
-            directing follow-up work</strong>. Read the findings. Identify the approach. Then write a prompt
-            that proves you understood by including specific file paths, line numbers, and exactly what to change.&quot;
+            {tx(
+              "\"When workers report research findings, ",
+              "“当 worker 回报研究结论时，",
+              "「ワーカーが調査結果を返したら、"
+            )}<strong className="text-text-primary">{tx(
+              "you must understand them before directing follow-up work",
+              "你必须先理解它们，再去安排后续工作",
+              "追加作業を指示する前に必ず内容を理解しなければならない"
+            )}</strong>{tx(
+              ". Read the findings. Identify the approach. Then write a prompt that proves you understood by including specific file paths, line numbers, and exactly what to change.\"",
+              "。先读结论，确认方案，再写出能证明你确实理解的提示，其中要包含具体文件路径、行号以及明确的改动内容。”",
+              "。結果を読み、方針を特定し、その理解を示すために具体的なファイルパス、行番号、変更内容を含むプロンプトを書け。」"
+            )}
           </p>
-          <p className="text-[10px] text-text-muted mt-2">— coordinator system prompt, line ~180</p>
+          <p className="text-[10px] text-text-muted mt-2">{tx("— coordinator system prompt, line ~180", "— 协调器系统提示，约第 180 行", "— コーディネーターシステムプロンプト、約180行目")}</p>
         </div>
         <p className="text-[11px] text-text-muted mt-3 italic">
-          The coordinator can&apos;t just throw tasks at workers blindly — the system prompt
-          explicitly requires it to prove comprehension before delegating. Even AI managers
-          have to actually read the reports.
+          {tx(
+            "The coordinator can&apos;t just throw tasks at workers blindly — the system prompt explicitly requires it to prove comprehension before delegating. Even AI managers have to actually read the reports.",
+            "协调器不能盲目把任务甩给 workers。系统提示明确要求它在委派前证明自己已经理解，连 AI 管理者也得认真读报告。",
+            "コーディネーターは盲目的にタスクを投げられません。委任前に理解を証明することが明示的に求められており、AIマネージャーですら報告を読む必要があります。"
+          )}
         </p>
       </Card>
     </div>

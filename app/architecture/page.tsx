@@ -81,31 +81,41 @@ export default function ArchitecturePage() {
             <div>
               <code className="text-accent text-xs">QueryEngine</code>
               <p className="mt-1 text-xs">
-                Owns the complete conversation lifecycle. Async generator that
-                yields SDKMessage objects. Handles system prompt assembly,
-                user input processing, and delegates to query() loop.
+                {tx(
+                  "Owns the complete conversation lifecycle. Async generator that yields SDKMessage objects. Handles system prompt assembly, user input processing, and delegates to query() loop.",
+                  "负责完整的会话生命周期。它是会产出 SDKMessage 的异步生成器，处理系统提示构建、用户输入处理，并把执行委派给 query() 循环。",
+                  "会話ライフサイクル全体を担います。SDKMessage を yield する async generator であり、システムプロンプト構築、ユーザー入力処理、query() ループへの委譲を行います。"
+                )}
               </p>
             </div>
             <div>
               <code className="text-accent text-xs">query()</code>
               <p className="mt-1 text-xs">
-                The main agentic loop — a state machine that streams API
-                responses, executes tools, handles recovery, and decides
-                whether to continue or exit.
+                {tx(
+                  "The main agentic loop — a state machine that streams API responses, executes tools, handles recovery, and decides whether to continue or exit.",
+                  "主代理循环，是一个负责流式处理 API 响应、执行工具、处理恢复逻辑并决定继续还是退出的状态机。",
+                  "メインのエージェントループであり、API 応答のストリーミング、ツール実行、回復処理、継続/終了判定を行う状態機械です。"
+                )}
               </p>
             </div>
             <div>
               <code className="text-accent text-xs">Tool&lt;Input, Output, Progress&gt;</code>
               <p className="mt-1 text-xs">
-                Unified interface for all tools. Built via buildTool() factory.
-                Declares permissions, concurrency safety, and rendering.
+                {tx(
+                  "Unified interface for all tools. Built via buildTool() factory. Declares permissions, concurrency safety, and rendering.",
+                  "所有工具统一遵循的接口。通过 buildTool() 工厂构建，并声明权限、并发安全性和渲染行为。",
+                  "全ツール共通のインターフェースです。buildTool() ファクトリで構築され、権限、並行安全性、レンダリング方法を宣言します。"
+                )}
               </p>
             </div>
             <div>
               <code className="text-accent text-xs">ToolUseContext</code>
               <p className="mt-1 text-xs">
-                Central communication channel between tools and the query loop.
-                Contains options, state accessors, abort controller, analytics.
+                {tx(
+                  "Central communication channel between tools and the query loop. Contains options, state accessors, abort controller, analytics.",
+                  "工具与查询循环之间的中央通信通道，包含选项、状态访问器、中止控制器和分析能力。",
+                  "ツールとクエリループの中心的な通信経路です。options、状態アクセサ、abort controller、analytics を含みます。"
+                )}
               </p>
             </div>
           </div>
@@ -116,29 +126,41 @@ export default function ArchitecturePage() {
             <div>
               <strong className="text-text-primary text-xs">Async Generator Architecture</strong>
               <p className="mt-1 text-xs">
-                Both QueryEngine and query() are async generators that yield
-                intermediate results for real-time streaming.
+                {tx(
+                  "Both QueryEngine and query() are async generators that yield intermediate results for real-time streaming.",
+                  "QueryEngine 和 query() 都是 async generator，会产出中间结果以支持实时流式输出。",
+                  "QueryEngine と query() はどちらも async generator であり、リアルタイム配信のために中間結果を yield します。"
+                )}
               </p>
             </div>
             <div>
               <strong className="text-text-primary text-xs">Streaming Concurrency</strong>
               <p className="mt-1 text-xs">
-                Tools start executing while the model is still generating.
-                StreamingToolExecutor queues tool_use blocks as they arrive.
+                {tx(
+                  "Tools start executing while the model is still generating. StreamingToolExecutor queues tool_use blocks as they arrive.",
+                  "模型仍在生成时工具就开始执行。StreamingToolExecutor 会在 tool_use 块到达时立即入队。",
+                  "モデルがまだ生成中でもツール実行を開始します。StreamingToolExecutor は到着した tool_use ブロックを即座にキューへ入れます。"
+                )}
               </p>
             </div>
             <div>
               <strong className="text-text-primary text-xs">Cache Sharing (CacheSafeParams)</strong>
               <p className="mt-1 text-xs">
-                Frozen system prompt bytes enable zero-cost forked queries for
-                subagents. Identical bytes = automatic prompt cache hit.
+                {tx(
+                  "Frozen system prompt bytes enable zero-cost forked queries for subagents. Identical bytes = automatic prompt cache hit.",
+                  "被冻结的系统提示字节使子代理的 fork 查询几乎零成本。字节完全一致就会自动命中 prompt cache。",
+                  "凍結されたシステムプロンプトのバイト列により、サブエージェントの fork クエリがほぼ無料になります。同一バイト列なら自動で prompt cache hit です。"
+                )}
               </p>
             </div>
             <div>
               <strong className="text-text-primary text-xs">DeepImmutable State</strong>
               <p className="mt-1 text-xs">
-                Zustand-like AppState with type-safe mutations.
-                setAppState(prev =&gt; &#123;...prev, field: newValue&#125;).
+                {tx(
+                  "Zustand-like AppState with type-safe mutations. setAppState(prev => {...prev, field: newValue}).",
+                  "类似 Zustand 的 AppState，并支持类型安全的状态变更，例如 setAppState(prev => {...prev, field: newValue})。",
+                  "Zustand 風の AppState と型安全な更新方式です。例: setAppState(prev => {...prev, field: newValue})。"
+                )}
               </p>
             </div>
           </div>
@@ -148,7 +170,11 @@ export default function ArchitecturePage() {
       {/* Size Comparison */}
       <Card title={tx("Codebase Size Comparison", "代码库规模对比", "コードベース規模の比較")} className="mb-6" accent="var(--accent)">
         <p className="text-xs text-text-muted mb-4">
-          Lines of code compared to well-known projects (approximate):
+          {tx(
+            "Lines of code compared to well-known projects (approximate):",
+            "与知名项目对比的大致代码行数：",
+            "著名プロジェクトと比較した概算行数："
+          )}
         </p>
         <div className="space-y-2.5">
           {[
@@ -186,16 +212,16 @@ export default function ArchitecturePage() {
         <div className="overflow-x-auto">
           <div className="min-w-[560px] space-y-1.5">
           {[
-            { file: "cli/print.ts", lines: 5594, desc: "Formatted terminal output" },
-            { file: "utils/messages.ts", lines: 5512, desc: "Message creation & formatting" },
-            { file: "utils/sessionStorage.ts", lines: 5105, desc: "Session persistence" },
-            { file: "utils/hooks.ts", lines: 5022, desc: "React hooks for REPL" },
-            { file: "screens/REPL.tsx", lines: 5005, desc: "Main REPL screen" },
-            { file: "main.tsx", lines: 4683, desc: "CLI initialization" },
-            { file: "utils/bash/bashParser.ts", lines: 4436, desc: "Bash AST parser" },
-            { file: "utils/attachments.ts", lines: 3997, desc: "Attachment prefetch" },
-            { file: "services/api/claude.ts", lines: 3419, desc: "API client + streaming" },
-            { file: "services/mcp/client.ts", lines: 3348, desc: "MCP protocol client" },
+            { file: "cli/print.ts", lines: 5594, desc: tx("Formatted terminal output", "格式化终端输出", "整形済みターミナル出力") },
+            { file: "utils/messages.ts", lines: 5512, desc: tx("Message creation & formatting", "消息创建与格式化", "メッセージ生成と整形") },
+            { file: "utils/sessionStorage.ts", lines: 5105, desc: tx("Session persistence", "会话持久化", "セッション永続化") },
+            { file: "utils/hooks.ts", lines: 5022, desc: tx("React hooks for REPL", "REPL 用 React hooks", "REPL 向け React hooks") },
+            { file: "screens/REPL.tsx", lines: 5005, desc: tx("Main REPL screen", "主 REPL 界面", "メイン REPL 画面") },
+            { file: "main.tsx", lines: 4683, desc: tx("CLI initialization", "CLI 初始化", "CLI 初期化") },
+            { file: "utils/bash/bashParser.ts", lines: 4436, desc: tx("Bash AST parser", "Bash AST 解析器", "Bash AST パーサ") },
+            { file: "utils/attachments.ts", lines: 3997, desc: tx("Attachment prefetch", "附件预取", "添付の事前取得") },
+            { file: "services/api/claude.ts", lines: 3419, desc: tx("API client + streaming", "API 客户端 + 流式处理", "API クライアント + ストリーミング") },
+            { file: "services/mcp/client.ts", lines: 3348, desc: tx("MCP protocol client", "MCP 协议客户端", "MCP プロトコルクライアント") },
           ].map((f, i) => (
             <div key={f.file} className="flex items-center gap-3 py-1">
               <span className="text-[10px] text-text-muted w-4 text-right font-mono">{i + 1}</span>
@@ -218,19 +244,21 @@ export default function ArchitecturePage() {
       <Card title={tx("Module Size Breakdown", "模块规模拆解", "モジュール別規模")} className="mb-6">
         <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-4">
           {[
-            { icon: VscExtensions, name: "Tools", files: 140, lines: "~65K", color: "var(--orange)" },
-            { icon: VscDatabase, name: "Services", files: 110, lines: "~80K", color: "var(--green)" },
-            { icon: VscCode, name: "Utils", files: 220, lines: "~60K", color: "var(--accent)" },
-            { icon: VscSymbolStructure, name: "Components", files: 346, lines: "~40K", color: "var(--purple)" },
-            { icon: VscTerminalBash, name: "Commands", files: 110, lines: "~8K", color: "var(--orange)" },
-            { icon: VscServerProcess, name: "Query/Engine", files: 15, lines: "~15K", color: "var(--green)" },
-            { icon: VscShield, name: "Permissions", files: 30, lines: "~20K", color: "var(--red)" },
-            { icon: VscDatabase, name: "Bridge", files: 12, lines: "~13K", color: "var(--pink)" },
+            { icon: VscExtensions, name: tx("Tools", "工具", "ツール"), files: 140, lines: "~65K", color: "var(--orange)" },
+            { icon: VscDatabase, name: tx("Services", "服务", "サービス"), files: 110, lines: "~80K", color: "var(--green)" },
+            { icon: VscCode, name: tx("Utils", "工具库", "ユーティリティ"), files: 220, lines: "~60K", color: "var(--accent)" },
+            { icon: VscSymbolStructure, name: tx("Components", "组件", "コンポーネント"), files: 346, lines: "~40K", color: "var(--purple)" },
+            { icon: VscTerminalBash, name: tx("Commands", "命令", "コマンド"), files: 110, lines: "~8K", color: "var(--orange)" },
+            { icon: VscServerProcess, name: tx("Query/Engine", "查询/引擎", "Query/Engine"), files: 15, lines: "~15K", color: "var(--green)" },
+            { icon: VscShield, name: tx("Permissions", "权限", "権限"), files: 30, lines: "~20K", color: "var(--red)" },
+            { icon: VscDatabase, name: tx("Bridge", "桥接层", "ブリッジ"), files: 12, lines: "~13K", color: "var(--pink)" },
           ].map((m) => (
             <div key={m.name} className="p-3 rounded-lg bg-bg-tertiary/30 border border-border/50">
               <m.icon className="w-4 h-4 mb-2" style={{ color: m.color }} />
               <div className="text-xs font-semibold text-text-primary">{m.name}</div>
-              <div className="text-[10px] text-text-muted mt-0.5">{m.files} files &middot; {m.lines} lines</div>
+              <div className="text-[10px] text-text-muted mt-0.5">
+                {m.files} {tx("files", "个文件", "ファイル")} &middot; {m.lines} {tx("lines", "行", "行")}
+              </div>
             </div>
           ))}
         </div>
@@ -245,15 +273,15 @@ export default function ArchitecturePage() {
             tx("Notes", "说明", "メモ"),
           ]}
           rows={[
-            ["TypeScript", "Primary language", "Strict mode, Zod for runtime validation"],
-            ["Ink (React)", "Terminal UI", "Custom fork with layout engine, focus, selection"],
-            ["Zod", "Schema validation", "Tool input/output schemas, config validation"],
-            ["Yoga Layout", "Terminal layout", "Flexbox for terminal via yoga-layout"],
-            ["Ripgrep", "File search", "GrepTool wraps rg for fast content search"],
-            ["Tree-sitter", "Bash parsing", "AST-based security analysis of shell commands"],
-            ["Sharp", "Image processing", "Resize/compress images for API token limits"],
-            ["MCP Protocol", "External tools", "stdio, SSE, HTTP, WebSocket transports"],
-            ["GrowthBook", "Feature flags", "A/B testing with cached gate values"],
+            ["TypeScript", tx("Primary language", "主要语言", "主要言語"), tx("Strict mode, Zod for runtime validation", "严格模式，运行时使用 Zod 校验", "strict mode と Zod による実行時検証")],
+            ["Ink (React)", tx("Terminal UI", "终端 UI", "ターミナルUI"), tx("Custom fork with layout engine, focus, selection", "带布局引擎、焦点和选区能力的自定义 fork", "レイアウト、フォーカス、選択機能付きの独自 fork")],
+            ["Zod", tx("Schema validation", "Schema 校验", "スキーマ検証"), tx("Tool input/output schemas, config validation", "工具输入输出 schema 与配置校验", "ツール入出力スキーマと設定検証")],
+            ["Yoga Layout", tx("Terminal layout", "终端布局", "ターミナルレイアウト"), tx("Flexbox for terminal via yoga-layout", "通过 yoga-layout 为终端提供 Flexbox", "yoga-layout による端末向け Flexbox")],
+            ["Ripgrep", tx("File search", "文件搜索", "ファイル検索"), tx("GrepTool wraps rg for fast content search", "GrepTool 封装 rg 以实现快速内容搜索", "GrepTool が rg を包み高速検索を実現")],
+            ["Tree-sitter", tx("Bash parsing", "Bash 解析", "Bash 解析"), tx("AST-based security analysis of shell commands", "基于 AST 的 shell 命令安全分析", "AST ベースのシェル安全解析")],
+            ["Sharp", tx("Image processing", "图像处理", "画像処理"), tx("Resize/compress images for API token limits", "为适应 API token 限制而缩放和压缩图片", "API のトークン制限に合わせて画像を縮小・圧縮")],
+            ["MCP Protocol", tx("External tools", "外部工具", "外部ツール"), tx("stdio, SSE, HTTP, WebSocket transports", "支持 stdio、SSE、HTTP、WebSocket 传输", "stdio、SSE、HTTP、WebSocket をサポート")],
+            ["GrowthBook", tx("Feature flags", "功能开关", "機能フラグ"), tx("A/B testing with cached gate values", "基于缓存 gate 值的 A/B 测试", "キャッシュ済み gate 値による A/B テスト")],
           ]}
         />
       </Card>

@@ -1,7 +1,7 @@
 "use client";
 
-import { createContext, useContext, useState, ReactNode } from "react";
-import { Lang, LANG_COOKIE_KEY, LANG_STORAGE_KEY } from "./i18n";
+import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { Lang, LANG_COOKIE_KEY, LANG_STORAGE_KEY, parsePreferredLang } from "./i18n";
 
 const LangContext = createContext<{
   lang: Lang;
@@ -15,12 +15,25 @@ export function LangProvider({
   children: ReactNode;
   initialLang?: Lang;
 }) {
-  const [lang, setLangState] = useState<Lang>(initialLang);
+  const [lang, setLangState] = useState<Lang>(() => {
+    if (typeof window === "undefined") return initialLang;
+
+    const stored = window.localStorage.getItem(LANG_STORAGE_KEY);
+    if (stored) return parsePreferredLang(stored);
+
+    return parsePreferredLang(
+      navigator.languages?.join(",") || navigator.language || initialLang
+    );
+  });
+
+  useEffect(() => {
+    document.documentElement.lang = lang;
+    window.localStorage.setItem(LANG_STORAGE_KEY, lang);
+    document.cookie = `${LANG_COOKIE_KEY}=${lang}; path=/; max-age=31536000; samesite=lax`;
+  }, [lang]);
 
   const setLang = (l: Lang) => {
     setLangState(l);
-    window.localStorage.setItem(LANG_STORAGE_KEY, l);
-    document.cookie = `${LANG_COOKIE_KEY}=${l}; path=/; max-age=31536000; samesite=lax`;
   };
 
   return (

@@ -13,19 +13,18 @@ import {
   VscSymbolNumeric,
 } from "react-icons/vsc";
 
-const SERVICE_CARDS = [
-  { icon: VscDatabase, name: "Compaction", files: 13, size: "~15K", color: "var(--accent)", desc: "4-level context window management" },
-  { icon: VscPlug, name: "MCP", files: 25, size: "470KB", color: "var(--green)", desc: "External tool integration (4 transports)" },
-  { icon: VscServerProcess, name: "LSP", files: 6, size: "~5K", color: "var(--orange)", desc: "Language Server Protocol" },
-  { icon: VscGraphLine, name: "Analytics", files: 6, size: "~8K", color: "var(--purple)", desc: "Datadog + GrowthBook pipeline" },
-  { icon: VscLightbulb, name: "Memory", files: 5, size: "~6K", color: "var(--pink)", desc: "Auto-extraction + session memory" },
-  { icon: VscExtensions, name: "Tools", files: 2, size: "~1K", color: "var(--orange)", desc: "StreamingToolExecutor + orchestration" },
-  { icon: VscPackage, name: "Plugins", files: 8, size: "~10K", color: "var(--green)", desc: "Plugin install + marketplace" },
-  { icon: VscSymbolNumeric, name: "Tokens", files: 1, size: "~2K", color: "var(--accent)", desc: "Multi-provider token counting" },
-];
-
 export default function ServicesPage() {
   const tx = useTx();
+  const serviceCards = [
+    { icon: VscDatabase, name: tx("Compaction", "压缩", "圧縮"), files: 13, size: "~15K", color: "var(--accent)", desc: tx("4-level context window management", "4 级上下文窗口管理", "4段階のコンテキストウィンドウ管理") },
+    { icon: VscPlug, name: "MCP", files: 25, size: "470KB", color: "var(--green)", desc: tx("External tool integration (4 transports)", "外部工具集成（4 种传输方式）", "外部ツール統合（4つのトランスポート）") },
+    { icon: VscServerProcess, name: "LSP", files: 6, size: "~5K", color: "var(--orange)", desc: tx("Language Server Protocol", "语言服务器协议", "言語サーバープロトコル") },
+    { icon: VscGraphLine, name: tx("Analytics", "分析", "分析"), files: 6, size: "~8K", color: "var(--purple)", desc: tx("Datadog + GrowthBook pipeline", "Datadog + GrowthBook 流水线", "Datadog + GrowthBook パイプライン") },
+    { icon: VscLightbulb, name: tx("Memory", "记忆", "メモリ"), files: 5, size: "~6K", color: "var(--pink)", desc: tx("Auto-extraction + session memory", "自动提取 + 会话记忆", "自動抽出 + セッションメモリ") },
+    { icon: VscExtensions, name: tx("Tools", "工具", "ツール"), files: 2, size: "~1K", color: "var(--orange)", desc: tx("StreamingToolExecutor + orchestration", "StreamingToolExecutor + 编排", "StreamingToolExecutor + オーケストレーション") },
+    { icon: VscPackage, name: tx("Plugins", "插件", "プラグイン"), files: 8, size: "~10K", color: "var(--green)", desc: tx("Plugin install + marketplace", "插件安装 + 市场", "プラグイン導入 + マーケットプレイス") },
+    { icon: VscSymbolNumeric, name: tx("Tokens", "Token", "トークン"), files: 1, size: "~2K", color: "var(--accent)", desc: tx("Multi-provider token counting", "多提供商 token 计数", "複数プロバイダーのトークン計数") },
+  ];
   return (
     <div className="page-shell">
       <PageHeader
@@ -41,7 +40,7 @@ export default function ServicesPage() {
       {/* Service Overview */}
       <Card title={tx("Service Overview", "服务概览", "サービス概要")} className="mb-6">
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
-          {SERVICE_CARDS.map((s) => (
+          {serviceCards.map((s) => (
             <div key={s.name} className="p-3 rounded-xl bg-bg-tertiary/30 border border-border/50">
               <s.icon className="w-4 h-4 mb-2" style={{ color: s.color }} />
               <div className="text-xs font-semibold text-text-primary mb-0.5">{s.name}</div>
@@ -55,8 +54,11 @@ export default function ServicesPage() {
       {/* Compaction */}
       <Card title={tx("Compaction System", "压缩系统", "圧縮システム")} className="mb-6" accent="var(--accent)">
         <p className="text-sm text-text-secondary mb-4">
-          Multi-level context window management keeps conversations within token limits.
-          The system uses 4 strategies with increasing aggressiveness:
+          {tx(
+            "Multi-level context window management keeps conversations within token limits. The system uses 4 strategies with increasing aggressiveness:",
+            "多级上下文窗口管理使对话保持在 token 限制内。系统提供 4 种逐步增强的策略：",
+            "多段階のコンテキスト管理により会話をトークン上限内に保ちます。システムは強度の異なる4つの戦略を使います："
+          )}
         </p>
         <CodeBlock
           code={`// Token budget calculation:
@@ -92,8 +94,11 @@ autocompact_threshold = effective_window - 13K buffer
       {/* MCP */}
       <Card title={tx("MCP (Model Context Protocol)", "MCP（模型上下文协议）", "MCP（Model Context Protocol）")} className="mb-6" accent="var(--green)">
         <p className="text-sm text-text-secondary mb-4">
-          The MCP service is the largest service at 470KB across 25 files. It enables
-          Claude Code to integrate external tools from any MCP-compatible server.
+          {tx(
+            "The MCP service is the largest service at 470KB across 25 files. It enables Claude Code to integrate external tools from any MCP-compatible server.",
+            "MCP 是最大的服务模块，25 个文件共 470KB。它让 Claude Code 能接入任何兼容 MCP 的外部工具服务器。",
+            "MCP は25ファイル・470KBに及ぶ最大級のサービスです。Claude Code が MCP 互換サーバー上の外部ツールを統合できるようにします。"
+          )}
         </p>
         <CodeBlock
           code={`// MCP client supports 4 transport types:

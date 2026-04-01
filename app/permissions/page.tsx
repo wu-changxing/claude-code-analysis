@@ -19,6 +19,58 @@ import {
 
 export default function PermissionsPage() {
   const tx = useTx();
+  const modes = [
+    {
+      mode: "default",
+      desc: tx("Ask user for each potentially unsafe operation", "对每个潜在不安全操作都询问用户", "潜在的に危険な操作ごとにユーザー確認"),
+      color: "var(--accent)",
+      icon: HiOutlineUserCircle,
+      safety: tx("Safe", "安全", "安全"),
+    },
+    {
+      mode: "plan",
+      desc: tx("All tools require explicit plan approval first", "所有工具都必须先获得计划审批", "すべてのツールが事前の計画承認を必要とする"),
+      color: "var(--purple)",
+      icon: HiOutlineAdjustmentsHorizontal,
+      safety: tx("Safe", "安全", "安全"),
+    },
+    {
+      mode: "acceptEdits",
+      desc: tx("Auto-approve file edits without asking", "无需询问即可自动批准文件编辑", "確認なしでファイル編集を自動承認"),
+      color: "var(--green)",
+      icon: HiOutlineCheckBadge,
+      safety: tx("Moderate", "中等", "中程度"),
+    },
+    {
+      mode: "bypassPermissions",
+      desc: tx("Auto-approve everything (dangerous!)", "自动批准一切（很危险）", "すべて自動承認（危険）"),
+      color: "var(--red)",
+      icon: HiOutlineShieldExclamation,
+      safety: tx("Dangerous", "危险", "危険"),
+    },
+    {
+      mode: "dontAsk",
+      desc: tx("Auto-deny everything silently", "静默自动拒绝一切", "すべてを無言で自動拒否"),
+      color: "var(--orange)",
+      icon: VscClose,
+      safety: tx("Restrictive", "严格", "制限的"),
+    },
+    {
+      mode: "auto",
+      desc: tx("ML 'yoloClassifier' auto-approval", "ML“yoloClassifier”自动审批", "ML「yoloClassifier」による自動承認"),
+      color: "var(--pink)",
+      icon: HiOutlineCpuChip,
+      safety: tx("AI-gated", "AI 把关", "AI判定"),
+    },
+  ];
+
+  const securityStats = [
+    { icon: VscShield, value: "5", label: tx("Security layers", "安全层级", "セキュリティ層"), color: "var(--accent)" },
+    { icon: VscLock, value: "300KB+", label: tx("BashTool security code", "BashTool 安全代码", "BashTool のセキュリティコード"), color: "var(--red)" },
+    { icon: VscKey, value: "6", label: tx("Permission modes", "权限模式", "権限モード"), color: "var(--green)" },
+    { icon: VscEye, value: "3", label: tx("HackerOne patches", "HackerOne 修复", "HackerOne 修正"), color: "var(--orange)" },
+  ];
+
   return (
     <div className="page-shell">
       <PageHeader
@@ -34,14 +86,7 @@ export default function PermissionsPage() {
       {/* Permission Modes */}
       <Card title={tx("Permission Modes", "权限模式", "権限モード")} className="mb-6">
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
-          {[
-            { mode: "default", desc: "Ask user for each potentially unsafe operation", color: "var(--accent)", icon: HiOutlineUserCircle, safety: "Safe" },
-            { mode: "plan", desc: "All tools require explicit plan approval first", color: "var(--purple)", icon: HiOutlineAdjustmentsHorizontal, safety: "Safe" },
-            { mode: "acceptEdits", desc: "Auto-approve file edits without asking", color: "var(--green)", icon: HiOutlineCheckBadge, safety: "Moderate" },
-            { mode: "bypassPermissions", desc: "Auto-approve everything (dangerous!)", color: "var(--red)", icon: HiOutlineShieldExclamation, safety: "Dangerous" },
-            { mode: "dontAsk", desc: "Auto-deny everything silently", color: "var(--orange)", icon: VscClose, safety: "Restrictive" },
-            { mode: "auto", desc: "ML 'yoloClassifier' auto-approval", color: "var(--pink)", icon: HiOutlineCpuChip, safety: "AI-gated" },
-          ].map(({ mode, desc, color, icon: Icon, safety }) => (
+          {modes.map(({ mode, desc, color, icon: Icon, safety }) => (
             <div key={mode} className="p-4 rounded-xl bg-bg-tertiary/30 border border-border/50">
               <div className="flex items-center gap-2 mb-2">
                 <Icon className="w-5 h-5" style={{ color }} />
@@ -58,8 +103,17 @@ export default function PermissionsPage() {
           ))}
         </div>
         <p className="text-[11px] text-text-muted mt-3 italic">
-          The ML classifier is literally named &quot;yoloClassifier&quot; in the source code.
-          File: utils/permissions/yoloClassifier.ts. You can&apos;t make this up.
+          {tx(
+            "The ML classifier is literally named ",
+            "这个 ML 分类器在源码里就叫 ",
+            "このML分類器はソース内で文字通り "
+          )}
+          &quot;yoloClassifier&quot;
+          {tx(
+            ". File: utils/permissions/yoloClassifier.ts. You can&apos;t make this up.",
+            "。文件：utils/permissions/yoloClassifier.ts。这名字真的不是玩笑。",
+            " です。ファイル: utils/permissions/yoloClassifier.ts。冗談ではありません。"
+          )}
         </p>
       </Card>
 
@@ -68,32 +122,52 @@ export default function PermissionsPage() {
         <div className="pt-2">
           <FlowStep
             number={1}
-            title="validateInput()"
-            description="Pre-checks before permission evaluation. Validates file exists, isn't stale, path is safe. Returns early with error if validation fails."
+            title={tx("validateInput()", "validateInput()", "validateInput()")}
+            description={tx(
+              "Pre-checks before permission evaluation. Validates file exists, isn't stale, path is safe. Returns early with error if validation fails.",
+              "在权限判定前先做预检查。确认文件存在、未过期、路径安全；若校验失败则直接返回错误。",
+              "権限判定の前段チェックです。ファイルの存在、古さ、パスの安全性を検証し、失敗時は即座にエラーで終了します。"
+            )}
             color="var(--accent)"
           />
           <FlowStep
             number={2}
-            title="checkPermissions()"
-            description="Tool-specific permission rules. BashTool has the most complex rules — AST parsing of shell commands, dangerous pattern detection, redirect analysis. Returns allow/deny/ask/passthrough."
+            title={tx("checkPermissions()", "checkPermissions()", "checkPermissions()")}
+            description={tx(
+              "Tool-specific permission rules. BashTool has the most complex rules — AST parsing of shell commands, dangerous pattern detection, redirect analysis. Returns allow/deny/ask/passthrough.",
+              "工具级权限规则。BashTool 的规则最复杂，包含 shell AST 解析、危险模式识别和重定向分析。返回 allow/deny/ask/passthrough。",
+              "ツール固有の権限ルールです。BashTool が最も複雑で、shell AST 解析、危険パターン検出、リダイレクト解析を含みます。allow/deny/ask/passthrough を返します。"
+            )}
             color="var(--green)"
           />
           <FlowStep
             number={3}
-            title="ML Classifier (opt-in)"
-            description="AI-based safety evaluation with confidence scoring. Can auto-approve safe patterns (git status, ls). Integrated via tryClassifier() in PermissionContext. Only available in 'auto' mode."
+            title={tx("ML Classifier (opt-in)", "ML 分类器（可选）", "ML分類器（任意）")}
+            description={tx(
+              "AI-based safety evaluation with confidence scoring. Can auto-approve safe patterns (git status, ls). Integrated via tryClassifier() in PermissionContext. Only available in 'auto' mode.",
+              "基于 AI 的安全评估，带置信度评分。可自动批准安全模式（如 git status、ls），通过 PermissionContext 中的 tryClassifier() 接入，仅在 auto 模式下可用。",
+              "信頼度付きのAI安全評価です。git status や ls のような安全パターンを自動承認でき、PermissionContext の tryClassifier() に統合されています。auto モード限定です。"
+            )}
             color="var(--orange)"
           />
           <FlowStep
             number={4}
-            title="Permission Hooks"
-            description="Custom permission logic from settings.json. Users can define hooks that run shell commands to evaluate tool safety. Hook results can allow, deny, or escalate to user."
+            title={tx("Permission Hooks", "权限 Hook", "権限フック")}
+            description={tx(
+              "Custom permission logic from settings.json. Users can define hooks that run shell commands to evaluate tool safety. Hook results can allow, deny, or escalate to user.",
+              "来自 settings.json 的自定义权限逻辑。用户可以定义执行 shell 命令的 hooks 来评估工具安全性，结果可以是允许、拒绝或升级到用户确认。",
+              "settings.json によるカスタム権限ロジックです。シェルコマンドを実行するフックで安全性を判定し、許可・拒否・ユーザー確認への昇格を返せます。"
+            )}
             color="var(--purple)"
           />
           <FlowStep
             number={5}
-            title="User UI Dialog"
-            description="Interactive confirmation dialog if no auto-decision reached. Shows tool name, input, and asks user to allow/deny. Can save decision as persistent rule."
+            title={tx("User UI Dialog", "用户确认对话框", "ユーザー確認ダイアログ")}
+            description={tx(
+              "Interactive confirmation dialog if no auto-decision reached. Shows tool name, input, and asks user to allow/deny. Can save decision as persistent rule.",
+              "如果前面都无法自动得出结论，就弹出交互式确认框，展示工具名和输入并要求用户允许或拒绝，还可以保存为持久规则。",
+              "自動判定に至らなかった場合の対話式確認ダイアログです。ツール名と入力を表示して許可/拒否を求め、永続ルールとして保存することもできます。"
+            )}
             color="var(--red)"
           />
         </div>
@@ -101,12 +175,7 @@ export default function PermissionsPage() {
 
       {/* Security Stats */}
       <div className="mb-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
-        {[
-          { icon: VscShield, value: "5", label: "Security layers", color: "var(--accent)" },
-          { icon: VscLock, value: "300KB+", label: "BashTool security code", color: "var(--red)" },
-          { icon: VscKey, value: "6", label: "Permission modes", color: "var(--green)" },
-          { icon: VscEye, value: "3", label: "HackerOne patches", color: "var(--orange)" },
-        ].map((s) => (
+        {securityStats.map((s) => (
           <div key={s.label} className="bg-bg-secondary border border-border rounded-xl p-4">
             <s.icon className="w-4 h-4 mb-2" style={{ color: s.color }} />
             <div className="text-xl font-bold font-mono" style={{ color: s.color }}>{s.value}</div>
@@ -118,8 +187,15 @@ export default function PermissionsPage() {
       {/* Permission Rules */}
       <Card title={tx("Permission Rules", "权限规则", "権限ルール")} className="mb-6">
         <p className="text-sm text-text-secondary mb-4">
-          Rules are defined in <code className="text-accent">settings.json</code> with three
-          possible behaviors: <code className="text-green">allow</code>,{" "}
+          {tx(
+            "Rules are defined in ",
+            "规则定义在 ",
+            "ルールは "
+          )}<code className="text-accent">settings.json</code>{tx(
+            " with three possible behaviors: ",
+            " 中，支持三种行为：",
+            " に定義され、3つの動作を取れます："
+          )}<code className="text-green">allow</code>,{" "}
           <code className="text-red">deny</code>, <code className="text-orange">ask</code>.
         </p>
         <CodeBlock
@@ -169,7 +245,11 @@ pushToQueue()          // Queue management for UI`}
       {/* Filesystem Permissions */}
       <Card title={tx("Filesystem Permission Checks", "文件系统权限检查", "ファイルシステム権限チェック")}>
         <p className="text-sm text-text-secondary mb-4">
-          File operations go through additional path-level security checks:
+          {tx(
+            "File operations go through additional path-level security checks:",
+            "文件操作还会经过额外的路径级安全检查：",
+            "ファイル操作には追加のパス単位セキュリティ検査があります："
+          )}
         </p>
         <CodeBlock
           code={`// filesystem.ts — checkWritePermissionForTool()
