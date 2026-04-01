@@ -301,6 +301,106 @@ export default function FunFactsPage() {
         </div>
       </Card>
 
+      <Card
+        title={lang === "zh" ? "协调器还有一块免审批草稿板" : lang === "ja" ? "コーディネーターには無許可スクラッチパッドがある" : "The Coordinator Has a No-Permission Scratchpad"}
+        className="mb-6"
+        accent="var(--accent)"
+        links={[{ label: "coordinatorMode.ts", href: ghBlob("coordinator/coordinatorMode.ts") }]}
+      >
+        <p className="text-sm text-text-secondary mb-4">
+          {lang === "zh"
+            ? "在 coordinator mode 下，如果 feature gate 打开，系统会告诉 workers 一个 scratchpad 目录，并明确写着他们可以在里面读写而无需权限提示。"
+            : lang === "ja"
+            ? "coordinator mode では、feature gate が有効なら workers に scratchpad ディレクトリが渡され、そこでは許可プロンプトなしで読み書きできると明記される。"
+            : "In coordinator mode, if the feature gate is on, workers get told about a scratchpad directory they can read and write without permission prompts."}
+        </p>
+        <CodeBlock
+          filename="coordinatorMode.ts"
+          code={`if (scratchpadDir && isScratchpadGateEnabled()) {
+  content += \`\\n\\nScratchpad directory: \${scratchpadDir}
+Workers can read and write here without permission prompts.
+Use this for durable cross-worker knowledge.\`
+}`}
+        />
+        <p className="text-[11px] text-text-muted italic mt-3">
+          {lang === "zh"
+            ? "也就是说，多代理模式真的内建了一块共享战情板。"
+            : lang === "ja"
+            ? "つまり、マルチエージェントモードには本当に共有作戦ボードがある。"
+            : "So yes, multi-agent mode literally has a shared war room."}
+        </p>
+      </Card>
+
+      <Card
+        title={lang === "zh" ? "内部代号不只天狗，还有贝果和钨丝" : lang === "ja" ? "内部コードネームは天狗だけではなく、bagel と tungsten もいる" : "Internal Codenames: Not Just Tengu, but Bagel and Tungsten Too"}
+        className="mb-6"
+        accent="var(--purple)"
+        links={[{ label: "AppStateStore.ts", href: ghBlob("state/AppStateStore.ts") }]}
+      >
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+          <div className="p-4 rounded-xl bg-bg-tertiary/20 border border-border/50">
+            <div className="text-xs font-semibold text-text-primary mb-1">bagel</div>
+            <p className="text-[11px] text-text-muted leading-relaxed">
+              {lang === "zh"
+                ? "WebBrowser 工具的内部代号。状态字段叫 bagelActive、bagelUrl、bagelPanelVisible。"
+                : lang === "ja"
+                ? "WebBrowser ツールの内部コードネーム。状態フィールドは bagelActive、bagelUrl、bagelPanelVisible。"
+                : "The internal codename for the WebBrowser tool. State fields include bagelActive, bagelUrl, and bagelPanelVisible."}
+            </p>
+          </div>
+          <div className="p-4 rounded-xl bg-bg-tertiary/20 border border-border/50">
+            <div className="text-xs font-semibold text-text-primary mb-1">tungsten</div>
+            <p className="text-[11px] text-text-muted leading-relaxed">
+              {lang === "zh"
+                ? "tmux 面板系统的代号。状态里有 tungstenActiveSession、tungstenLastCommand、tungstenPanelAutoHidden。"
+                : lang === "ja"
+                ? "tmux パネル系のコードネーム。tungstenActiveSession、tungstenLastCommand、tungstenPanelAutoHidden が並ぶ。"
+                : "The codename for the tmux panel subsystem. State includes tungstenActiveSession, tungstenLastCommand, and tungstenPanelAutoHidden."}
+            </p>
+          </div>
+        </div>
+        <p className="text-[11px] text-text-muted italic mt-3">
+          {lang === "zh"
+            ? "Claude Code 的状态机读起来像早餐菜单加元素周期表。"
+            : lang === "ja"
+            ? "Claude Code の状態名は、朝食メニューと元素表を混ぜたような雰囲気だ。"
+            : "Claude Code state reads like a breakfast menu colliding with a chemistry lab."}
+        </p>
+      </Card>
+
+      <Card
+        title={lang === "zh" ? "连加载动画都能自定义" : lang === "ja" ? "ローディング演出まで設定で差し替えられる" : "Even the Spinner Personality Is Configurable"}
+        className="mb-6"
+        accent="var(--green)"
+        links={[
+          { label: "updateConfig.ts", href: ghBlob("skills/bundled/updateConfig.ts") },
+          { label: "spinnerVerbs.ts", href: ghBlob("constants/spinnerVerbs.ts") },
+        ]}
+      >
+        <p className="text-sm text-text-secondary mb-4">
+          {lang === "zh"
+            ? "最离谱的一点是：不仅 spinner verbs 是一大串怪词，用户还可以在配置里 append、replace 甚至覆盖 spinner tips。"
+            : lang === "ja"
+            ? "さらに妙なのは、spinner verbs が妙な単語だらけなだけでなく、設定で append、replace、spinner tips override までできること。"
+            : "The funniest part is that the spinner isn't just weird by default; users can append, replace, and override spinner behavior in config."}
+        </p>
+        <CodeBlock
+          filename="skills/bundled/updateConfig.ts"
+          code={`- spinnerTipsEnabled: Show tips in spinner
+- spinnerVerbs: Customize spinner verbs
+  { "mode": "append" | "replace", "verbs": [...] }
+- spinnerTipsOverride: Override spinner tips
+  { "excludeDefault": true, "tips": ["Custom tip"] }`}
+        />
+        <p className="text-[11px] text-text-muted italic mt-3">
+          {lang === "zh"
+            ? "也就是说，如果你不喜欢 'Clauding...'，你完全可以自己造一套。"
+            : lang === "ja"
+            ? "つまり「Clauding...」が気に入らなければ、自分で新しい流儀を作れる。"
+            : "So if you don't like 'Clauding...', you can invent your own spinner religion."}
+        </p>
+      </Card>
+
       {/* Best Comments */}
       <Card title={t("fun.comments", lang)} className="mb-6" accent="var(--green)">
         <div className="space-y-4">
