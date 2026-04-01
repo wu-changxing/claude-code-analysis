@@ -2,6 +2,7 @@
 
 import { PageHeader, Card, CodeBlock } from "@/components/Section";
 import { useTx } from "@/components/T";
+import { ghBlob, ghTree } from "@/lib/sourceLinks";
 import {
   VscDatabase,
   VscPlug,
@@ -37,6 +38,12 @@ export default function ServicesPage() {
           "Claude Code のサービス層は、圧縮、MCP 統合、LSP、分析、メモリ抽出などを担います。これらはメインのクエリループと並行して動作します。"
         )}
         badge={tx("20+ services", "20+ 服务", "20+ サービス")}
+        links={[
+          { label: "services/", href: ghTree("services") },
+          { label: "bridge/", href: ghTree("bridge") },
+          { label: "remote/", href: ghTree("remote") },
+          { label: "mcp/", href: ghTree("services/mcp") },
+        ]}
       />
 
       {/* Service Overview */}
@@ -54,7 +61,15 @@ export default function ServicesPage() {
       </Card>
 
       {/* Compaction */}
-      <Card title={tx("Compaction System", "压缩系统", "圧縮システム")} className="mb-6" accent="var(--accent)">
+      <Card
+        title={tx("Compaction System", "压缩系统", "圧縮システム")}
+        className="mb-6"
+        accent="var(--accent)"
+        links={[
+          { label: "services/compact/", href: ghTree("services/compact") },
+          { label: "autoCompact.ts", href: ghBlob("services/compact/autoCompact.ts") },
+        ]}
+      >
         <p className="text-sm text-text-secondary mb-4">
           {tx(
             "Multi-level context window management keeps conversations within token limits. The system uses 4 strategies with increasing aggressiveness:",
@@ -94,7 +109,16 @@ autocompact_threshold = effective_window - 13K buffer
       </Card>
 
       {/* MCP */}
-      <Card title={tx("MCP (Model Context Protocol)", "MCP（模型上下文协议）", "MCP（Model Context Protocol）")} className="mb-6" accent="var(--green)">
+      <Card
+        title={tx("MCP (Model Context Protocol)", "MCP（模型上下文协议）", "MCP（Model Context Protocol）")}
+        className="mb-6"
+        accent="var(--green)"
+        links={[
+          { label: "services/mcp/", href: ghTree("services/mcp") },
+          { label: "client.ts", href: ghBlob("services/mcp/client.ts") },
+          { label: "auth.ts", href: ghBlob("services/mcp/auth.ts") },
+        ]}
+      >
         <p className="text-sm text-text-secondary mb-4">
           {tx(
             "The MCP service is the largest service at 470KB across 25 files. It enables Claude Code to integrate external tools from any MCP-compatible server.",
@@ -127,7 +151,15 @@ elicitationHandler.ts — User prompts during tool calls`}
       </Card>
 
       {/* LSP */}
-      <Card title={tx("LSP (Language Server Protocol)", "LSP（语言服务器协议）", "LSP（Language Server Protocol）")} className="mb-6" accent="var(--orange)">
+      <Card
+        title={tx("LSP (Language Server Protocol)", "LSP（语言服务器协议）", "LSP（Language Server Protocol）")}
+        className="mb-6"
+        accent="var(--orange)"
+        links={[
+          { label: "services/lsp/", href: ghTree("services/lsp") },
+          { label: "index.ts", href: ghBlob("services/lsp/index.ts") },
+        ]}
+      >
         <CodeBlock
           code={`// LSP provides IDE-like features:
 - Diagnostics (errors, warnings)
@@ -154,7 +186,15 @@ LSPTool → Direct query interface for the model`}
       </Card>
 
       {/* Analytics */}
-      <Card title={tx("Analytics Pipeline", "分析流水线", "分析パイプライン")} className="mb-6" accent="var(--purple)">
+      <Card
+        title={tx("Analytics Pipeline", "分析流水线", "分析パイプライン")}
+        className="mb-6"
+        accent="var(--purple)"
+        links={[
+          { label: "services/analytics/", href: ghTree("services/analytics") },
+          { label: "index.ts", href: ghBlob("services/analytics/index.ts") },
+        ]}
+      >
         <CodeBlock
           code={`// Event pipeline with queue-until-sink pattern:
 logEvent(name, metadata)        → Sync event logging
@@ -177,7 +217,16 @@ checkStatsigFeatureGate_CACHED_MAY_BE_STALE()
         />
       </Card>
 
-      <Card title={tx("Bridge & Remote Execution", "桥接与远程执行", "ブリッジとリモート実行")} className="mb-6" accent="var(--pink)">
+      <Card
+        title={tx("Bridge & Remote Execution", "桥接与远程执行", "ブリッジとリモート実行")}
+        className="mb-6"
+        accent="var(--pink)"
+        links={[
+          { label: "bridgeMain.ts", href: ghBlob("bridge/bridgeMain.ts") },
+          { label: "bridge/", href: ghTree("bridge") },
+          { label: "remote/", href: ghTree("remote") },
+        ]}
+      >
         <p className="text-sm text-text-secondary mb-4">
           {tx(
             "The newer repo has a substantial bridge/remote layer that the older analysis pages barely mentioned. bridgeMain.ts is effectively a miniature control plane: it polls for work, spawns or reconnects sessions, heartbeats active jobs, refreshes ingress tokens, manages worktrees, and tears sessions down safely.",
@@ -204,7 +253,15 @@ remote/*.ts             // session manager + websocket transport`}
         />
       </Card>
 
-      <Card title={tx("Speculation & Prompt Suggestions", "推测与提示建议", "推測とプロンプト提案")} className="mb-6" accent="var(--accent)">
+      <Card
+        title={tx("Speculation & Prompt Suggestions", "推测与提示建议", "推測とプロンプト提案")}
+        className="mb-6"
+        accent="var(--accent)"
+        links={[
+          { label: "services/PromptSuggestion/", href: ghTree("services/PromptSuggestion") },
+          { label: "speculation.ts", href: ghBlob("services/PromptSuggestion/speculation.ts") },
+        ]}
+      >
         <p className="text-sm text-text-secondary mb-4">
           {tx(
             "Another service family worth studying is PromptSuggestion. It is no longer just a UI nicety: speculation.ts creates copy-on-write overlays under /tmp, forks a cheap background agent using cache-safe params, pre-executes likely next steps, and can copy successful writes back into the main working directory.",
@@ -228,7 +285,13 @@ guards:
       </Card>
 
       {/* Tool Orchestration */}
-      <Card title={tx("Tool Orchestration Service", "工具编排服务", "ツールオーケストレーションサービス")}>
+      <Card
+        title={tx("Tool Orchestration Service", "工具编排服务", "ツールオーケストレーションサービス")}
+        links={[
+          { label: "toolOrchestration.ts", href: ghBlob("services/tools/toolOrchestration.ts") },
+          { label: "StreamingToolExecutor.ts", href: ghBlob("services/tools/StreamingToolExecutor.ts") },
+        ]}
+      >
         <p className="text-sm text-text-secondary mb-4">
           {tx(
             "There are really two orchestration layers. toolOrchestration.ts handles already-buffered tool blocks in ordered batches; StreamingToolExecutor handles the earlier phase where tool_use blocks are still arriving over the wire and must be launched optimistically without breaking ordering guarantees.",

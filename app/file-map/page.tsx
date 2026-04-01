@@ -2,6 +2,7 @@
 
 import { PageHeader, Card, Table } from "@/components/Section";
 import { useTx } from "@/components/T";
+import { CLAUDE_CODE_REPO, ghTree } from "@/lib/sourceLinks";
 
 export default function FileMapPage() {
   const tx = useTx();
@@ -15,6 +16,12 @@ export default function FileMapPage() {
           "Claude Code のソースツリーにある主要ファイルの完全リファレンスです。特定領域を掘り下げる起点として使えます。"
         )}
         badge={tx("1800+ files", "1800+ 文件", "1800+ ファイル")}
+        links={[
+          { label: tx("Repo", "仓库", "リポジトリ"), href: CLAUDE_CODE_REPO },
+          { label: "src/", href: ghTree("") },
+          { label: "tools/", href: ghTree("tools") },
+          { label: "services/", href: ghTree("services") },
+        ]}
       />
 
       {/* Critical Files */}

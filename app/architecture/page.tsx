@@ -2,6 +2,7 @@
 
 import { PageHeader, Card, CodeBlock, Table } from "@/components/Section";
 import { useTx } from "@/components/T";
+import { CLAUDE_CODE_REPO, ghBlob, ghTree } from "@/lib/sourceLinks";
 import {
   VscCode,
   VscExtensions,
@@ -24,10 +25,25 @@ export default function ArchitecturePage() {
           "Claude Code の高レベルなシステム設計。TypeScript モノリスの構成、主要な抽象、コンポーネント間のデータフローを解説。"
         )}
         badge={tx("~1800 files", "约 1800 个文件", "約1800ファイル")}
+        links={[
+          { label: tx("Repo", "仓库", "リポジトリ"), href: CLAUDE_CODE_REPO },
+          { label: "src/", href: ghTree("") },
+          { label: "QueryEngine.ts", href: ghBlob("QueryEngine.ts") },
+          { label: "query.ts", href: ghBlob("query.ts") },
+        ]}
       />
 
       {/* Directory Map */}
-      <Card title={tx("Directory Structure", "目录结构", "ディレクトリ構成")} className="mb-6">
+      <Card
+        title={tx("Directory Structure", "目录结构", "ディレクトリ構成")}
+        className="mb-6"
+        links={[
+          { label: "src/", href: ghTree("") },
+          { label: "services/", href: ghTree("services") },
+          { label: "tools/", href: ghTree("tools") },
+          { label: "bridge/", href: ghTree("bridge") },
+        ]}
+      >
         <CodeBlock
           code={`src/
 ├── entrypoints/       # CLI & SDK entry points
@@ -85,7 +101,15 @@ export default function ArchitecturePage() {
 
       {/* Key Abstractions */}
       <div className="mb-6 grid grid-cols-1 gap-4 xl:grid-cols-2">
-        <Card title={tx("Core Abstractions", "核心抽象", "主要な抽象")} accent="var(--accent)">
+        <Card
+          title={tx("Core Abstractions", "核心抽象", "主要な抽象")}
+          accent="var(--accent)"
+          links={[
+            { label: "QueryEngine.ts", href: ghBlob("QueryEngine.ts") },
+            { label: "query.ts", href: ghBlob("query.ts") },
+            { label: "Tool.ts", href: ghBlob("Tool.ts") },
+          ]}
+        >
           <div className="space-y-3 text-sm text-text-secondary">
             <div>
               <code className="text-accent text-xs">QueryEngine</code>
@@ -130,7 +154,15 @@ export default function ArchitecturePage() {
           </div>
         </Card>
 
-        <Card title={tx("Design Patterns", "设计模式", "設計パターン")} accent="var(--green)">
+        <Card
+          title={tx("Design Patterns", "设计模式", "設計パターン")}
+          accent="var(--green)"
+          links={[
+            { label: "query.ts", href: ghBlob("query.ts") },
+            { label: "services/tools/", href: ghTree("services/tools") },
+            { label: "state/", href: ghTree("state") },
+          ]}
+        >
           <div className="space-y-3 text-sm text-text-secondary">
             <div>
               <strong className="text-text-primary text-xs">Async Generator Architecture</strong>

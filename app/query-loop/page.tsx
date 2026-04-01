@@ -2,6 +2,7 @@
 
 import { PageHeader, Card, CodeBlock, FlowStep } from "@/components/Section";
 import { useTx } from "@/components/T";
+import { ghBlob } from "@/lib/sourceLinks";
 import {
   VscServerProcess,
   VscExtensions,
@@ -66,10 +67,23 @@ export default function QueryLoopPage() {
           "中核となるエージェント実行ループ。ユーザー入力から API、ツール実行、結果の往復までの流れを追います。主ループは query.ts（約1700行）にあります。"
         )}
         badge="query.ts"
+        links={[
+          { label: "query.ts", href: ghBlob("query.ts") },
+          { label: "QueryEngine.ts", href: ghBlob("QueryEngine.ts") },
+          { label: "query/tokenBudget.ts", href: ghBlob("query/tokenBudget.ts") },
+          { label: "query/stopHooks.ts", href: ghBlob("query/stopHooks.ts") },
+        ]}
       />
 
       {/* State Machine */}
-      <Card title={tx("Loop State Machine", "循环状态机", "ループ状態機械")} className="mb-6">
+      <Card
+        title={tx("Loop State Machine", "循环状态机", "ループ状態機械")}
+        className="mb-6"
+        links={[
+          { label: "query.ts", href: ghBlob("query.ts") },
+          { label: "QueryEngine.ts", href: ghBlob("QueryEngine.ts") },
+        ]}
+      >
         <CodeBlock
           code={`type LoopState = {
   messages: Message[]
@@ -170,7 +184,15 @@ export default function QueryLoopPage() {
       </Card>
 
       {/* Streaming Tool Execution */}
-      <Card title={tx("Streaming Tool Execution", "流式工具执行", "ストリーミングツール実行")} className="mb-6" accent="var(--green)">
+      <Card
+        title={tx("Streaming Tool Execution", "流式工具执行", "ストリーミングツール実行")}
+        className="mb-6"
+        accent="var(--green)"
+        links={[
+          { label: "StreamingToolExecutor.ts", href: ghBlob("services/tools/StreamingToolExecutor.ts") },
+          { label: "toolOrchestration.ts", href: ghBlob("services/tools/toolOrchestration.ts") },
+        ]}
+      >
         <p className="text-sm text-text-secondary mb-4">
           {tx(
             "The ",
@@ -223,7 +245,12 @@ class StreamingToolExecutor {
         </div>
       </Card>
 
-      <Card title={tx("Token Budget Continuation", "Token 预算续写", "トークン予算の継続判定")} className="mb-6" accent="var(--purple)">
+      <Card
+        title={tx("Token Budget Continuation", "Token 预算续写", "トークン予算の継続判定")}
+        className="mb-6"
+        accent="var(--purple)"
+        links={[{ label: "query/tokenBudget.ts", href: ghBlob("query/tokenBudget.ts") }]}
+      >
         <p className="text-sm text-text-secondary mb-4">
           {tx(
             "Newer Claude Code versions don't only stop on model limits. They also track a per-turn token budget and can proactively inject a continuation nudge before the assistant appears done, then stop once progress shows diminishing returns.",
@@ -256,7 +283,16 @@ startedAt`}
         />
       </Card>
 
-      <Card title={tx("Stop Hooks & Background Work", "停止 Hook 与后台任务", "停止フックとバックグラウンド処理")} className="mb-6" accent="var(--accent)">
+      <Card
+        title={tx("Stop Hooks & Background Work", "停止 Hook 与后台任务", "停止フックとバックグラウンド処理")}
+        className="mb-6"
+        accent="var(--accent)"
+        links={[
+          { label: "query/stopHooks.ts", href: ghBlob("query/stopHooks.ts") },
+          { label: "speculation.ts", href: ghBlob("services/PromptSuggestion/speculation.ts") },
+          { label: "extractMemories.ts", href: ghBlob("services/extractMemories/extractMemories.ts") },
+        ]}
+      >
         <p className="text-sm text-text-secondary mb-4">
           {tx(
             "The loop's 'done' path is not really the end. handleStopHooks() can still prevent continuation, summarize hook output, snapshot cache-safe params for fork reuse, kick off prompt suggestions, extract memories, and run auto-dream style background maintenance.",

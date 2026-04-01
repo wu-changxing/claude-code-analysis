@@ -3,15 +3,50 @@
 import { motion } from "framer-motion";
 import { ReactNode } from "react";
 import { HiOutlineChevronRight } from "react-icons/hi2";
+import { VscLinkExternal } from "react-icons/vsc";
+
+type SourceLink = {
+  label: string;
+  href: string;
+};
+
+export function SourceLinks({
+  links,
+  className = "",
+}: {
+  links: SourceLink[];
+  className?: string;
+}) {
+  if (!links.length) return null;
+
+  return (
+    <div className={`flex flex-wrap gap-2 ${className}`}>
+      {links.map((link) => (
+        <a
+          key={`${link.label}-${link.href}`}
+          href={link.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1.5 rounded-full border border-border bg-bg-tertiary/40 px-2.5 py-1 text-[11px] text-text-secondary transition-colors hover:bg-bg-tertiary hover:text-text-primary"
+        >
+          <span>{link.label}</span>
+          <VscLinkExternal className="h-3 w-3 shrink-0" />
+        </a>
+      ))}
+    </div>
+  );
+}
 
 export function PageHeader({
   title,
   description,
   badge,
+  links = [],
 }: {
   title: string;
   description: string;
   badge?: string;
+  links?: SourceLink[];
 }) {
   return (
     <motion.div
@@ -35,6 +70,7 @@ export function PageHeader({
       <p className="text-text-secondary text-sm leading-relaxed max-w-2xl">
         {description}
       </p>
+      <SourceLinks links={links} className="mt-4" />
     </motion.div>
   );
 }
@@ -44,11 +80,13 @@ export function Card({
   children,
   className = "",
   accent,
+  links = [],
 }: {
   title?: string;
   children: ReactNode;
   className?: string;
   accent?: string;
+  links?: SourceLink[];
 }) {
   return (
     <motion.div
@@ -57,14 +95,19 @@ export function Card({
       className={`bg-bg-secondary border border-border rounded-xl overflow-hidden ${className}`}
     >
       {title && (
-        <div className="flex items-center gap-2 border-b border-border px-4 py-3 sm:px-5">
-          {accent && (
-            <span
-              className="w-2 h-2 rounded-full shrink-0"
-              style={{ background: accent }}
-            />
-          )}
-          <h3 className="text-sm font-semibold text-text-primary">{title}</h3>
+        <div className="border-b border-border px-4 py-3 sm:px-5">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              {accent && (
+                <span
+                  className="w-2 h-2 rounded-full shrink-0"
+                  style={{ background: accent }}
+                />
+              )}
+              <h3 className="text-sm font-semibold text-text-primary">{title}</h3>
+            </div>
+            <SourceLinks links={links} />
+          </div>
         </div>
       )}
       <div className="p-4 sm:p-5">{children}</div>

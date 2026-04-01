@@ -2,6 +2,7 @@
 
 import { PageHeader, Card, CodeBlock, FlowStep } from "@/components/Section";
 import { useTx } from "@/components/T";
+import { ghBlob, ghTree } from "@/lib/sourceLinks";
 
 export default function ContextPage() {
   const tx = useTx();
@@ -14,10 +15,24 @@ export default function ContextPage() {
           "Claude Code 如何构建系统提示、加载 CLAUDE.md 文件、管理自动记忆，以及在每一轮对话中向模型提供上下文。",
           "Claude Code がどのようにシステムプロンプトを構築し、CLAUDE.md を読み込み、自動メモリを管理し、各ターンでモデルへ文脈を渡しているかを説明します。"
         )}
+        links={[
+          { label: "QueryEngine.ts", href: ghBlob("QueryEngine.ts") },
+          { label: "context/", href: ghTree("context") },
+          { label: "memdir/", href: ghTree("memdir") },
+          { label: "query/stopHooks.ts", href: ghBlob("query/stopHooks.ts") },
+        ]}
       />
 
       {/* System Prompt Assembly */}
-      <Card title={tx("System Prompt Assembly", "系统提示构建", "システムプロンプト構築")} className="mb-6" accent="var(--accent)">
+      <Card
+        title={tx("System Prompt Assembly", "系统提示构建", "システムプロンプト構築")}
+        className="mb-6"
+        accent="var(--accent)"
+        links={[
+          { label: "QueryEngine.ts", href: ghBlob("QueryEngine.ts") },
+          { label: "context/", href: ghTree("context") },
+        ]}
+      >
         <div className="pt-2">
           <FlowStep
             number={1}
@@ -71,7 +86,15 @@ const systemPrompt = asSystemPrompt([
       </Card>
 
       {/* CLAUDE.md */}
-      <Card title={tx("CLAUDE.md Loading", "CLAUDE.md 加载", "CLAUDE.md の読み込み")} className="mb-6" accent="var(--green)">
+      <Card
+        title={tx("CLAUDE.md Loading", "CLAUDE.md 加载", "CLAUDE.md の読み込み")}
+        className="mb-6"
+        accent="var(--green)"
+        links={[
+          { label: "context/", href: ghTree("context") },
+          { label: "constants/", href: ghTree("constants") },
+        ]}
+      >
         <p className="text-sm text-text-secondary mb-4">
           {tx(
             "CLAUDE.md files provide project-specific instructions. They're loaded from multiple locations and concatenated into the user context:",
@@ -96,7 +119,15 @@ const systemPrompt = asSystemPrompt([
       </Card>
 
       {/* Memory System */}
-      <Card title={tx("Auto-Memory System (memdir/)", "自动记忆系统（memdir/）", "自動メモリシステム（memdir/）")} className="mb-6" accent="var(--purple)">
+      <Card
+        title={tx("Auto-Memory System (memdir/)", "自动记忆系统（memdir/）", "自動メモリシステム（memdir/）")}
+        className="mb-6"
+        accent="var(--purple)"
+        links={[
+          { label: "memdir/", href: ghTree("memdir") },
+          { label: "SessionMemory/", href: ghTree("services/SessionMemory") },
+        ]}
+      >
         <p className="text-sm text-text-secondary mb-4">
           {tx(
             "Persistent project-scoped memory stored at ",
@@ -139,7 +170,14 @@ type: user | feedback | project | reference
       </Card>
 
       {/* Memory Extraction */}
-      <Card title={tx("Memory Extraction Pipeline", "记忆提取流水线", "メモリ抽出パイプライン")} className="mb-6">
+      <Card
+        title={tx("Memory Extraction Pipeline", "记忆提取流水线", "メモリ抽出パイプライン")}
+        className="mb-6"
+        links={[
+          { label: "extractMemories.ts", href: ghBlob("services/extractMemories/extractMemories.ts") },
+          { label: "query/stopHooks.ts", href: ghBlob("query/stopHooks.ts") },
+        ]}
+      >
         <CodeBlock
           code={`// extractMemories.ts — runs after each query loop
 
@@ -168,7 +206,15 @@ type: user | feedback | project | reference
         </p>
       </Card>
 
-      <Card title={tx("Cache-Safe Fork Context", "可缓存的 Fork 上下文", "キャッシュ安全な Fork 文脈")} className="mb-6" accent="var(--green)">
+      <Card
+        title={tx("Cache-Safe Fork Context", "可缓存的 Fork 上下文", "キャッシュ安全な Fork 文脈")}
+        className="mb-6"
+        accent="var(--green)"
+        links={[
+          { label: "query/stopHooks.ts", href: ghBlob("query/stopHooks.ts") },
+          { label: "PromptSuggestion/", href: ghTree("services/PromptSuggestion") },
+        ]}
+      >
         <p className="text-sm text-text-secondary mb-4">
           {tx(
             "A newer pattern in the real codebase is that the stop-hook stage snapshots the exact context needed for cheap background forks. saveCacheSafeParams(createCacheSafeParams(...)) captures the system prompt, contexts, and tool schema so later subagents can reuse prompt caching instead of rebuilding from scratch.",
