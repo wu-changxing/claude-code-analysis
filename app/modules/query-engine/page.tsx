@@ -1,18 +1,28 @@
 "use client";
 
-import { PageHeader, Card, Table, FlowStep } from "@/components/Section";
+import { PageHeader, Card, FileCard, ArchPosition, FlowStep } from "@/components/Section";
 import { useTx } from "@/components/T";
 import { ghBlob } from "@/lib/sourceLinks";
+
+const ARCH_LAYERS = [
+  { name: "Components / CLI", desc: "terminal UI, Ink renderer", color: "var(--purple)" },
+  { name: "Query / Engine", desc: "orchestrates the agent loop", color: "var(--green)" },
+  { name: "Commands", desc: "slash command handlers", color: "var(--orange)" },
+  { name: "Tools", desc: "43+ built-in tools", color: "var(--orange)" },
+  { name: "Services", desc: "API, MCP, compaction, LSP", color: "var(--green)" },
+  { name: "Permissions", desc: "security layer", color: "var(--red)" },
+  { name: "Utils", desc: "shared foundation", color: "var(--accent)" },
+];
 
 export default function QueryEnginePage() {
   const tx = useTx();
 
   const keyFiles = [
-    ["QueryEngine.ts", tx("~1295 lines — conversation lifecycle, system prompt assembly, message buffering", "约 1295 行 — 对话生命周期、系统提示构建、消息缓冲", "約1295行 — 会話ライフサイクル、システムプロンプト構築、メッセージバッファリング")],
-    ["query.ts", tx("~1729 lines — the main agentic loop state machine, 7 distinct phases", "约 1729 行 — 主代理循环状态机，7 个不同阶段", "約1729行 — メインエージェントループ状態機械、7つの異なるフェーズ")],
-    ["Task.ts", tx("Task abstraction for multi-agent parallel work", "多代理并行工作的任务抽象", "マルチエージェント並行作業のタスク抽象")],
-    ["entrypoints/cli.tsx", tx("CLI bootstrap, fast-path (--version, daemon), calls QueryEngine", "CLI 引导，快速路径（--version、daemon），调用 QueryEngine", "CLI ブートストラップ、高速パス（--version、daemon）、QueryEngine を呼び出し")],
-    ["entrypoints/sdk/", tx("Headless SDK entrypoint — exposes QueryEngine as a programmatic API", "无界面 SDK 入口点 — 将 QueryEngine 作为编程 API 公开", "ヘッドレス SDK エントリーポイント — QueryEngine をプログラマティック API として公開")],
+    { name: "QueryEngine.ts", size: "~1295 lines", purpose: tx("Conversation lifecycle, system prompt assembly, message buffering", "对话生命周期、系统提示构建、消息缓冲", "会話ライフサイクル、システムプロンプト構築、メッセージバッファリング"), color: "var(--green)" },
+    { name: "query.ts", size: "~1729 lines", purpose: tx("The main agentic loop state machine, 7 distinct phases", "主代理循环状态机，7 个不同阶段", "メインエージェントループ状態機械、7つの異なるフェーズ"), color: "var(--orange)" },
+    { name: "Task.ts", size: "~300 lines", purpose: tx("Task abstraction for multi-agent parallel work", "多代理并行工作的任务抽象", "マルチエージェント並行作業のタスク抽象"), color: "var(--purple)" },
+    { name: "entrypoints/cli.tsx", size: "~200 lines", purpose: tx("CLI bootstrap, fast-path (--version, daemon), calls QueryEngine", "CLI 引导，快速路径（--version、daemon），调用 QueryEngine", "CLI ブートストラップ、高速パス（--version、daemon）、QueryEngine を呼び出し"), color: "var(--accent)" },
+    { name: "entrypoints/sdk/", size: "~400 lines", purpose: tx("Headless SDK entrypoint — exposes QueryEngine as a programmatic API", "无界面 SDK 入口点 — 将 QueryEngine 作为编程 API 公开", "ヘッドレス SDK エントリーポイント — QueryEngine をプログラマティック API として公開"), color: "var(--pink)" },
   ];
 
   const phases = [
@@ -40,6 +50,18 @@ export default function QueryEnginePage() {
           { label: "query.ts", href: ghBlob("query.ts") },
         ]}
       />
+
+      {/* Architecture Position */}
+      <Card title={tx("Position in Architecture", "在架构中的位置", "アーキテクチャ上の位置")} className="mb-6" accent="var(--green)">
+        <p className="text-[11px] text-text-muted mb-4">
+          {tx(
+            "Query/Engine is layer 2 — directly below the UI. It orchestrates everything below it: tools, services, permissions, utils. It is the smallest module by file count but touches every other module.",
+            "查询/引擎是第 2 层——紧在 UI 之下。它编排所有下层模块：工具、服务、权限、工具库。按文件数计是最小的模块，但与其他所有模块都有交互。",
+            "Query/Engine はレイヤー2 — UI の直下。ツール、サービス、権限、Utilsなど下のすべてを編成します。ファイル数最小ですが、他の全モジュールに触れます。"
+          )}
+        </p>
+        <ArchPosition position={1} label={tx("here", "当前", "ここ")} color="var(--green)" layers={ARCH_LAYERS} />
+      </Card>
 
       {/* Dependency Diagram */}
       <Card title={tx("Module Dependencies", "模块依赖关系", "モジュール依存関係")} className="mb-6" accent="var(--green)">
@@ -89,20 +111,21 @@ export default function QueryEnginePage() {
             </p>
             <div className="flex justify-center gap-2 flex-wrap">
               {[
-                { name: "Tools", color: "var(--orange)" },
-                { name: "Services", color: "var(--green)" },
-                { name: "Utils", color: "var(--accent)" },
-                { name: "Commands", color: "var(--orange)" },
-                { name: "Permissions", color: "var(--red)" },
-                { name: "Components", color: "var(--purple)" },
+                { name: "Tools", color: "var(--orange)", href: "/modules/tools" },
+                { name: "Services", color: "var(--green)", href: "/modules/services" },
+                { name: "Utils", color: "var(--accent)", href: "/modules/utils" },
+                { name: "Commands", color: "var(--orange)", href: "/modules/commands" },
+                { name: "Permissions", color: "var(--red)", href: "/modules/permissions" },
+                { name: "Components", color: "var(--purple)", href: "/modules/components" },
               ].map((m) => (
-                <span
+                <a
                   key={m.name}
-                  className="px-3 py-1.5 rounded-lg border text-xs font-semibold text-text-primary"
+                  href={m.href}
+                  className="px-3 py-1.5 rounded-lg border text-xs font-semibold text-text-primary hover:opacity-80 transition-opacity"
                   style={{ borderColor: m.color, background: `color-mix(in srgb, ${m.color} 10%, transparent)` }}
                 >
                   {m.name}
-                </span>
+                </a>
               ))}
             </div>
           </div>
@@ -125,10 +148,11 @@ export default function QueryEnginePage() {
 
       {/* Key Files */}
       <Card title={tx("Key Files", "核心文件", "主要ファイル")} className="mb-6">
-        <Table
-          headers={[tx("File", "文件", "ファイル"), tx("Purpose", "用途", "目的")]}
-          rows={keyFiles}
-        />
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+          {keyFiles.map((f) => (
+            <FileCard key={f.name} name={f.name} size={f.size} purpose={f.purpose} color={f.color} />
+          ))}
+        </div>
       </Card>
 
       {/* Deep Insight */}

@@ -1,21 +1,31 @@
 "use client";
 
-import { PageHeader, Card, Table } from "@/components/Section";
+import { PageHeader, Card, FileCard, ArchPosition } from "@/components/Section";
 import { useTx } from "@/components/T";
 import { ghTree } from "@/lib/sourceLinks";
+
+const ARCH_LAYERS = [
+  { name: "Components / CLI", desc: "terminal UI, Ink renderer", color: "var(--purple)" },
+  { name: "Query / Engine", desc: "orchestrates the agent loop", color: "var(--green)" },
+  { name: "Commands", desc: "slash command handlers", color: "var(--orange)" },
+  { name: "Tools", desc: "43+ built-in tools", color: "var(--orange)" },
+  { name: "Services", desc: "API, MCP, compaction, LSP", color: "var(--green)" },
+  { name: "Permissions", desc: "security layer", color: "var(--red)" },
+  { name: "Utils", desc: "shared foundation", color: "var(--accent)" },
+];
 
 export default function CommandsModulePage() {
   const tx = useTx();
 
   const keyFiles = [
-    ["commands/compact/", tx("/compact — triggers context compaction with a user summary", "/compact — 触发带用户摘要的上下文压缩", "/compact — ユーザーサマリー付きコンテキスト圧縮をトリガー")],
-    ["commands/model/", tx("/model — switch LLM model mid-session", "/model — 会话中切换 LLM 模型", "/model — セッション途中で LLM モデルを切り替え")],
-    ["commands/mcp/", tx("/mcp — manage MCP server connections, list tools, restart servers", "/mcp — 管理 MCP 服务器连接、列出工具、重启服务器", "/mcp — MCP サーバー接続管理、ツール一覧、サーバー再起動")],
-    ["commands/clear/", tx("/clear — reset conversation context and start fresh", "/clear — 重置对话上下文，重新开始", "/clear — 会話コンテキストをリセットして再開")],
-    ["commands/help/", tx("/help — dynamic help text generated from registered commands", "/help — 从已注册命令动态生成的帮助文本", "/help — 登録済みコマンドから動的に生成されるヘルプテキスト")],
-    ["commands/stickers/", tx("/stickers — browse and equip cosmetic sticker companions", "/stickers — 浏览并装备装饰性贴纸伙伴", "/stickers — コスメティックなステッカー仲間を閲覧・装備")],
-    ["commands/color/", tx("/color — change terminal color theme", "/color — 更改终端颜色主题", "/color — ターミナルカラーテーマを変更")],
-    ["commands/doctor/", tx("/doctor — environment diagnostics, dependency checks, config validation", "/doctor — 环境诊断、依赖检查、配置验证", "/doctor — 環境診断、依存関係チェック、設定検証")],
+    { name: "commands/compact/", size: "~8KB", purpose: tx("/compact — triggers context compaction with a user summary", "/compact — 触发带用户摘要的上下文压缩", "/compact — ユーザーサマリー付きコンテキスト圧縮をトリガー"), color: "var(--green)" },
+    { name: "commands/model/", size: "~5KB", purpose: tx("/model — switch LLM model mid-session", "/model — 会话中切换 LLM 模型", "/model — セッション途中で LLM モデルを切り替え"), color: "var(--accent)" },
+    { name: "commands/mcp/", size: "~10KB", purpose: tx("/mcp — manage MCP server connections, list tools, restart servers", "/mcp — 管理 MCP 服务器连接、列出工具、重启服务器", "/mcp — MCP サーバー接続管理、ツール一覧、サーバー再起動"), color: "var(--orange)" },
+    { name: "commands/clear/", size: "~3KB", purpose: tx("/clear — reset conversation context and start fresh", "/clear — 重置对话上下文，重新开始", "/clear — 会話コンテキストをリセットして再開"), color: "var(--red)" },
+    { name: "commands/help/", size: "~4KB", purpose: tx("/help — dynamic help text generated from registered commands", "/help — 从已注册命令动态生成的帮助文本", "/help — 登録済みコマンドから動的に生成されるヘルプテキスト"), color: "var(--accent)" },
+    { name: "commands/stickers/", size: "~6KB", purpose: tx("/stickers — browse and equip cosmetic sticker companions", "/stickers — 浏览并装备装饰性贴纸伙伴", "/stickers — コスメティックなステッカー仲間を閲覧・装備"), color: "var(--pink)" },
+    { name: "commands/color/", size: "~3KB", purpose: tx("/color — change terminal color theme", "/color — 更改终端颜色主题", "/color — ターミナルカラーテーマを変更"), color: "var(--purple)" },
+    { name: "commands/doctor/", size: "~8KB", purpose: tx("/doctor — environment diagnostics, dependency checks, config validation", "/doctor — 环境诊断、依赖检查、配置验证", "/doctor — 環境診断、依存関係チェック、設定検証"), color: "var(--orange)" },
   ];
 
   const patterns = [
@@ -62,6 +72,18 @@ export default function CommandsModulePage() {
           { label: "commands/", href: ghTree("commands") },
         ]}
       />
+
+      {/* Architecture Position */}
+      <Card title={tx("Position in Architecture", "在架构中的位置", "アーキテクチャ上の位置")} className="mb-6" accent="var(--orange)">
+        <p className="text-[11px] text-text-muted mb-4">
+          {tx(
+            "Commands sit at layer 3 — parallel to Tools. Both are driven by user input (Commands) or LLM output (Tools), both routed by the Query/Engine above them.",
+            "命令层位于第 3 层——与工具并列。两者都由用户输入（命令）或 LLM 输出（工具）驱动，都由上层的查询/引擎路由。",
+            "コマンドはレイヤー3 — ツールと並列。どちらもユーザー入力（コマンド）またはLLM出力（ツール）で駆動され、上位のQuery/Engineがルーティングします。"
+          )}
+        </p>
+        <ArchPosition position={2} label={tx("here", "当前", "ここ")} color="var(--orange)" layers={ARCH_LAYERS} />
+      </Card>
 
       {/* Dependency Diagram */}
       <Card title={tx("Module Dependencies", "模块依赖关系", "モジュール依存関係")} className="mb-6" accent="var(--orange)">
@@ -129,10 +151,11 @@ export default function CommandsModulePage() {
 
       {/* Key Files */}
       <Card title={tx("Key Files", "核心文件", "主要ファイル")} className="mb-6">
-        <Table
-          headers={[tx("Command", "命令", "コマンド"), tx("Purpose", "用途", "目的")]}
-          rows={keyFiles}
-        />
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+          {keyFiles.map((f) => (
+            <FileCard key={f.name} name={f.name} size={f.size} purpose={f.purpose} color={f.color} />
+          ))}
+        </div>
       </Card>
 
       {/* Key Patterns */}

@@ -197,7 +197,7 @@ export default function HomePage() {
       >
         {/* Badge */}
         <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-border bg-bg-secondary px-3 py-1 text-[11px] text-text-muted">
-          <span className="h-1.5 w-1.5 rounded-full bg-green animate-pulse" />
+          <span className="h-1.5 w-1.5 rounded-full bg-green pulse-dot" />
           <span>@anthropic-ai/claude-code v2.1.88</span>
         </div>
 
@@ -256,6 +256,29 @@ export default function HomePage() {
         ))}
       </motion.div>
 
+      {/* Start here CTA */}
+      <motion.div
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.12 }}
+        className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-center"
+      >
+        <Link
+          href="/architecture"
+          className="inline-flex items-center gap-2 rounded-xl bg-accent px-5 py-3 text-sm font-semibold text-white hover:opacity-90 transition-opacity shadow-sm"
+        >
+          <VscSymbolStructure className="h-4 w-4 shrink-0" />
+          {lang === "zh" ? "从这里开始 →" : lang === "ja" ? "ここから始める →" : "Start here: Architecture →"}
+        </Link>
+        <Link
+          href="/query-loop"
+          className="inline-flex items-center gap-2 rounded-xl border border-border bg-bg-secondary px-5 py-3 text-sm font-medium text-text-secondary hover:text-text-primary hover:bg-bg-tertiary transition-all"
+        >
+          <VscServerProcess className="h-4 w-4 shrink-0" />
+          {lang === "zh" ? "核心循环深度分析" : lang === "ja" ? "コアループ詳細" : "Deep dive: Query Loop"}
+        </Link>
+      </motion.div>
+
       {/* Core Loop Visual Diagram */}
       <motion.div
         initial={{ opacity: 0, y: 16 }}
@@ -304,12 +327,17 @@ export default function HomePage() {
                     {step.detail[lang] || step.detail.en}
                   </span>
                 </div>
-                {/* Arrow — horizontal on desktop, hidden on mobile */}
+                {/* Arrow — horizontal on sm+, vertical on mobile */}
                 {i < flowSteps.length - 1 && (
-                  <HiOutlineArrowRight
-                    className="hidden sm:block h-4 w-4 shrink-0 text-text-muted self-center mt-4"
-                    style={{ marginLeft: "auto" }}
-                  />
+                  <>
+                    <HiOutlineArrowRight
+                      className="hidden sm:block h-4 w-4 shrink-0 text-text-muted self-center mt-4"
+                      style={{ marginLeft: "auto" }}
+                    />
+                    <HiOutlineArrowRight
+                      className="sm:hidden h-4 w-4 shrink-0 text-text-muted rotate-90 self-center"
+                    />
+                  </>
                 )}
               </div>
             ))}

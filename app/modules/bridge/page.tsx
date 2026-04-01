@@ -1,17 +1,27 @@
 "use client";
 
-import { PageHeader, Card, Table } from "@/components/Section";
+import { PageHeader, Card, FileCard, ArchPosition } from "@/components/Section";
 import { useTx } from "@/components/T";
 import { ghTree } from "@/lib/sourceLinks";
+
+const ARCH_LAYERS = [
+  { name: "Bridge / SDK", desc: "headless + remote execution", color: "var(--pink)" },
+  { name: "Query / Engine", desc: "orchestrates the agent loop", color: "var(--green)" },
+  { name: "Components / CLI", desc: "terminal UI, Ink renderer", color: "var(--purple)" },
+  { name: "Tools", desc: "43+ built-in tools", color: "var(--orange)" },
+  { name: "Services", desc: "API, MCP, compaction, LSP", color: "var(--green)" },
+  { name: "Permissions", desc: "security layer", color: "var(--red)" },
+  { name: "Utils", desc: "shared foundation", color: "var(--accent)" },
+];
 
 export default function BridgeModulePage() {
   const tx = useTx();
 
   const keyFiles = [
-    ["entrypoints/sdk/", tx("Headless SDK entrypoint — exposes QueryEngine as a programmatic API without terminal UI", "无界面 SDK 入口点——将 QueryEngine 公开为无终端 UI 的编程 API", "ヘッドレス SDK エントリーポイント — ターミナル UI なしで QueryEngine をプログラマティック API として公開")],
-    ["bridge/", tx("Remote session bridge — polls for work, spawns sessions, manages remote capacity", "远程会话桥——轮询任务、生成会话、管理远程容量", "リモートセッションブリッジ — 作業をポーリング、セッション生成、リモートキャパシティ管理")],
-    ["remote/", tx("WebSocket adapters and remote session manager for distributed execution", "分布式执行的 WebSocket 适配器和远程会话管理器", "分散実行向け WebSocket アダプターとリモートセッションマネージャー")],
-    ["coordinator/", tx("Multi-worker orchestration — coordinates parallel subagent execution", "多工作者编排——协调并行子代理执行", "マルチワーカー編成 — 並行サブエージェント実行を調整")],
+    { name: "entrypoints/sdk/", size: "~400 lines", purpose: tx("Headless SDK entrypoint — exposes QueryEngine as a programmatic API without terminal UI", "无界面 SDK 入口点——将 QueryEngine 公开为无终端 UI 的编程 API", "ヘッドレス SDK エントリーポイント — ターミナル UI なしで QueryEngine をプログラマティック API として公開"), color: "var(--pink)" },
+    { name: "bridge/", size: "~20KB", purpose: tx("Remote session bridge — polls for work, spawns sessions, manages remote capacity", "远程会话桥——轮询任务、生成会话、管理远程容量", "リモートセッションブリッジ — 作業をポーリング、セッション生成、リモートキャパシティ管理"), color: "var(--accent)" },
+    { name: "remote/", size: "~30KB", purpose: tx("WebSocket adapters and remote session manager for distributed execution", "分布式执行的 WebSocket 适配器和远程会话管理器", "分散実行向け WebSocket アダプターとリモートセッションマネージャー"), color: "var(--green)" },
+    { name: "coordinator/", size: "~15KB", purpose: tx("Multi-worker orchestration — coordinates parallel subagent execution", "多工作者编排——协调并行子代理执行", "マルチワーカー編成 — 並行サブエージェント実行を調整"), color: "var(--orange)" },
   ];
 
   const patterns = [
@@ -60,6 +70,18 @@ export default function BridgeModulePage() {
           { label: "remote/", href: ghTree("remote") },
         ]}
       />
+
+      {/* Architecture Position */}
+      <Card title={tx("Position in Architecture", "在架构中的位置", "アーキテクチャ上の位置")} className="mb-6" accent="var(--pink)">
+        <p className="text-[11px] text-text-muted mb-4">
+          {tx(
+            "Bridge sits alongside Components at the top — it is an alternative frontend to the same QueryEngine. Where Components renders to a terminal, Bridge renders to an async iterator or remote worker.",
+            "桥接层与组件层并列，都位于架构顶部——两者都是同一 QueryEngine 的不同前端。组件层渲染到终端，桥接层渲染到异步迭代器或远程工作者。",
+            "Bridge はコンポーネントの隣、トップに位置します。同じ QueryEngine への代替フロントエンドです。コンポーネントがターミナルにレンダリングするのに対し、Bridge は async イテレーターまたはリモートワーカーにレンダリングします。"
+          )}
+        </p>
+        <ArchPosition position={0} label={tx("here", "当前", "ここ")} color="var(--pink)" layers={ARCH_LAYERS} />
+      </Card>
 
       {/* Dependency Diagram */}
       <Card title={tx("Module Dependencies", "模块依赖关系", "モジュール依存関係")} className="mb-6" accent="var(--pink)">
@@ -126,10 +148,11 @@ export default function BridgeModulePage() {
 
       {/* Key Files */}
       <Card title={tx("Key Files", "核心文件", "主要ファイル")} className="mb-6">
-        <Table
-          headers={[tx("File", "文件", "ファイル"), tx("Purpose", "用途", "目的")]}
-          rows={keyFiles}
-        />
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+          {keyFiles.map((f) => (
+            <FileCard key={f.name} name={f.name} size={f.size} purpose={f.purpose} color={f.color} />
+          ))}
+        </div>
       </Card>
 
       {/* Key Patterns */}

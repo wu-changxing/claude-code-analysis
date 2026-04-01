@@ -466,6 +466,49 @@ handleStopHooks(...)
         </div>
       </Card>
 
+      {/* Token Budget Math */}
+      <Card
+        title={tx("Token Budget Math", "Token 预算数学", "トークン予算の計算")}
+        className="mb-6"
+        accent="var(--purple)"
+        summary={tx("How the 200K context window is actually divided.", "200K 上下文窗口是如何实际分配的。", "200K コンテキストウィンドウの実際の分割方法。")}
+      >
+        <p className="text-[11px] text-text-muted mb-4">
+          {tx(
+            "Claude's 200K context window sounds vast — but compaction triggers well before you reach it. Here's the real math:",
+            "Claude 的 200K 上下文窗口听起来很大，但压缩在达到上限之前很早就会触发。以下是真实的数学计算：",
+            "200K のコンテキストウィンドウは広大に聞こえますが、到達するずっと前に圧縮がトリガーされます。実際の計算式："
+          )}
+        </p>
+        <div className="space-y-2 mb-4">
+          {[
+            { label: tx("Total context window", "总上下文窗口", "総コンテキストウィンドウ"), value: "200,000", color: "var(--accent)", op: "=" },
+            { label: tx("Reserved: max output tokens", "保留：最大输出 token", "予約：最大出力トークン"), value: "−16,000", color: "var(--orange)", op: "−" },
+            { label: tx("Reserved: summary buffer", "保留：摘要缓冲区", "予約：サマリーバッファ"), value: "−20,000", color: "var(--red)", op: "−" },
+            { label: tx("Effective context for conversation", "对话有效上下文", "会話に使える有効コンテキスト"), value: "≈ 164,000", color: "var(--green)", op: "=" },
+          ].map((row) => (
+            <div
+              key={row.label}
+              className="flex items-center justify-between rounded-lg px-3 py-2.5"
+              style={{
+                background: row.op === "=" ? `color-mix(in srgb, ${row.color} 10%, var(--bg-secondary))` : "var(--bg-tertiary)",
+                border: row.op === "=" ? `1px solid color-mix(in srgb, ${row.color} 30%, transparent)` : "1px solid var(--border)",
+              }}
+            >
+              <span className="text-[11px] text-text-secondary">{row.label}</span>
+              <code className="text-[12px] font-bold font-mono" style={{ color: row.color }}>{row.value}</code>
+            </div>
+          ))}
+        </div>
+        <p className="text-[11px] text-text-muted leading-relaxed">
+          {tx(
+            "Auto-compaction triggers at context_size > (model_limit - max_output - 13K buffer). With Claude 3.5 Sonnet (200K, 8K output), that fires around 179K tokens — leaving 87% utilization before compaction.",
+            "自动压缩在 context_size > (model_limit - max_output - 13K buffer) 时触发。对于 Claude 3.5 Sonnet（200K，8K 输出），约在 179K token 处触发——也就是压缩前达到 87% 利用率。",
+            "自動圧縮は context_size > (model_limit - max_output - 13K buffer) でトリガーされます。Claude 3.5 Sonnet（200K、8K 出力）なら約 179K トークンで発火 — 圧縮前の利用率は 87%。"
+          )}
+        </p>
+      </Card>
+
       {/* Message Example */}
       <Card title={tx("Message Flow Example", "消息流示例", "メッセージフロー例")}>
         <CodeBlock

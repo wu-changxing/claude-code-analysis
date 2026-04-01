@@ -126,6 +126,15 @@ pre .comment { color: #6b7280; font-style: italic; }
 }
 
 /* Collapse dense desktop dashboards into readable stacks on smaller screens. */
+/* Pulse dot animation for live indicator */
+@keyframes pulse-dot-anim {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.75); }
+}
+.pulse-dot {
+  animation: pulse-dot-anim 2s ease-in-out infinite;
+}
+
 @media (max-width: 639px) {
   .grid-cols-3,
   .grid-cols-4,
@@ -135,7 +144,7 @@ pre .comment { color: #6b7280; font-style: italic; }
 
   pre {
     padding: 1rem 0.875rem 0.875rem;
-    font-size: 12px;
+    font-size: 11px;
   }
 
   pre::before {
@@ -143,6 +152,50 @@ pre .comment { color: #6b7280; font-style: italic; }
     left: 12px;
     transform: scale(0.85);
     transform-origin: top left;
+  }
+
+  /* Mobile code block scroll hint */
+  .code-scroll-wrap {
+    position: relative;
+  }
+  .code-scroll-wrap::after {
+    content: 'scroll →';
+    position: absolute;
+    bottom: 6px;
+    right: 8px;
+    font-size: 9px;
+    color: rgba(148, 163, 184, 0.6);
+    font-family: var(--font-mono);
+    pointer-events: none;
+  }
+
+  /* Tables on mobile: stack as key-value cards */
+  .mobile-table-stack table,
+  .mobile-table-stack thead,
+  .mobile-table-stack tbody,
+  .mobile-table-stack th,
+  .mobile-table-stack td,
+  .mobile-table-stack tr {
+    display: block;
+  }
+  .mobile-table-stack thead {
+    display: none;
+  }
+  .mobile-table-stack tbody tr {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    background: var(--bg-tertiary);
+  }
+  .mobile-table-stack tbody td {
+    padding: 2px 0;
+    border: none;
+    font-size: 11px;
+  }
+  .mobile-table-stack tbody td:first-child {
+    font-weight: 600;
+    margin-bottom: 4px;
   }
 }
 

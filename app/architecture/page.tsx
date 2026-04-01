@@ -492,6 +492,9 @@ export default function ArchitecturePage() {
               <div className="mt-0.5 text-[10px] text-text-muted">
                 {m.files} {tx("files", "个文件", "ファイル")} · {m.lines}
               </div>
+              <div className="mt-1.5 text-[9px] text-accent opacity-0 group-hover:opacity-100 transition-opacity font-medium">
+                {tx("→ View details", "→ 查看详情", "→ 詳細を見る")}
+              </div>
             </Link>
           ))}
         </div>

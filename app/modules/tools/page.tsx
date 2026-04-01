@@ -1,21 +1,31 @@
 "use client";
 
-import { PageHeader, Card, Table } from "@/components/Section";
+import { PageHeader, Card, FileCard, ArchPosition } from "@/components/Section";
 import { useTx } from "@/components/T";
 import { ghBlob, ghTree } from "@/lib/sourceLinks";
+
+const ARCH_LAYERS = [
+  { name: "Components / CLI", desc: "terminal UI, Ink renderer", color: "var(--purple)" },
+  { name: "Query / Engine", desc: "orchestrates the agent loop", color: "var(--green)" },
+  { name: "Commands", desc: "slash command handlers", color: "var(--orange)" },
+  { name: "Tools", desc: "43+ built-in tools", color: "var(--orange)" },
+  { name: "Services", desc: "API, MCP, compaction, LSP", color: "var(--green)" },
+  { name: "Permissions", desc: "security layer", color: "var(--red)" },
+  { name: "Utils", desc: "shared foundation", color: "var(--accent)" },
+];
 
 export default function ToolsModulePage() {
   const tx = useTx();
 
   const keyFiles = [
-    ["tools/BashTool/", tx("300KB across 5 files — command execution, AST-based security, sandbox", "300KB，共5个文件——命令执行、AST安全检查、沙箱", "300KB・5ファイル — コマンド実行、AST安全解析、サンドボックス")],
-    ["tools/FileEditTool/", tx("String find/replace with unified diff rendering", "字符串查找替换，渲染 unified diff", "文字列検索・置換と unified diff レンダリング")],
-    ["tools/AgentTool/", tx("Spawns isolated subagents with forked QueryEngine instances", "生成隔离子代理，复用 forked QueryEngine 实例", "独立サブエージェントを生成し、fork した QueryEngine を使用")],
-    ["tools/MCPTool/", tx("Proxies external MCP server tools into the Claude tool namespace", "将外部 MCP 服务器工具代理至 Claude 工具命名空间", "外部 MCP サーバーツールを Claude ツール名前空間にプロキシ")],
-    ["tools/GrepTool/", tx("Ripgrep wrapper for fast content search across files", "封装 ripgrep，实现快速文件内容搜索", "ripgrep ラッパーによる高速ファイル内容検索")],
-    ["tools/GlobTool/", tx("File pattern matching for discovering paths", "用于发现路径的文件模式匹配", "パス探索のためのファイルパターンマッチング")],
-    ["Tool.ts", tx("buildTool() factory — the interface all tools implement", "buildTool() 工厂 — 所有工具都实现的接口", "buildTool() ファクトリー — 全ツールが実装するインターフェース")],
-    ["tools/shared/", tx("Git tracking helpers, multi-agent spawn coordination", "Git 追踪辅助、多代理生成协调", "Git 追跡ヘルパー、マルチエージェント生成の協調")],
+    { name: "tools/BashTool/", size: "300KB / 5 files", purpose: tx("Command execution, AST-based security analysis, sandbox isolation", "命令执行、AST安全检查、沙箱隔离", "コマンド実行、AST安全解析、サンドボックス分離"), color: "var(--orange)" },
+    { name: "tools/FileEditTool/", size: "~40KB", purpose: tx("String find/replace with unified diff rendering", "字符串查找替换，渲染 unified diff", "文字列検索・置換と unified diff レンダリング"), color: "var(--accent)" },
+    { name: "tools/AgentTool/", size: "~35KB", purpose: tx("Spawns isolated subagents with forked QueryEngine instances", "生成隔离子代理，复用 forked QueryEngine 实例", "独立サブエージェントを生成し、fork した QueryEngine を使用"), color: "var(--green)" },
+    { name: "tools/MCPTool/", size: "~15KB", purpose: tx("Proxies external MCP server tools into the Claude tool namespace", "将外部 MCP 服务器工具代理至 Claude 工具命名空间", "外部 MCP サーバーツールを Claude ツール名前空間にプロキシ"), color: "var(--purple)" },
+    { name: "tools/GrepTool/", size: "~12KB", purpose: tx("Ripgrep wrapper for fast content search across files", "封装 ripgrep，实现快速文件内容搜索", "ripgrep ラッパーによる高速ファイル内容検索"), color: "var(--green)" },
+    { name: "tools/GlobTool/", size: "~8KB", purpose: tx("File pattern matching for discovering paths", "用于发现路径的文件模式匹配", "パス探索のためのファイルパターンマッチング"), color: "var(--accent)" },
+    { name: "Tool.ts", size: "~6KB", purpose: tx("buildTool() factory — the interface all tools implement", "buildTool() 工厂 — 所有工具都实现的接口", "buildTool() ファクトリー — 全ツールが実装するインターフェース"), color: "var(--red)" },
+    { name: "tools/shared/", size: "~20KB", purpose: tx("Git tracking helpers, multi-agent spawn coordination", "Git 追踪辅助、多代理生成协调", "Git 追跡ヘルパー、マルチエージェント生成の協調"), color: "var(--text-muted)" },
   ];
 
   const patterns = [
@@ -65,10 +75,22 @@ export default function ToolsModulePage() {
         ]}
       />
 
+      {/* Architecture Position */}
+      <Card title={tx("Position in Architecture", "在架构中的位置", "アーキテクチャ上の位置")} className="mb-6" accent="var(--orange)">
+        <p className="text-[11px] text-text-muted mb-4">
+          {tx(
+            "Tools sit in the middle of the stack — between the query loop that calls them and the services/permissions layer that they depend on.",
+            "工具位于架构的中间层——在调用它们的查询循环与它们所依赖的服务/权限层之间。",
+            "ツールはスタックの中間に位置し、上からクエリループ、下からサービス/権限層に依存されています。"
+          )}
+        </p>
+        <ArchPosition position={3} label={tx("here", "当前", "ここ")} color="var(--orange)" layers={ARCH_LAYERS} />
+      </Card>
+
       {/* Dependency Diagram */}
       <Card title={tx("Module Dependencies", "模块依赖关系", "モジュール依存関係")} className="mb-6" accent="var(--orange)">
         <div className="flex flex-col items-center gap-4">
-          {/* Dependents row - modules that depend on Tools */}
+          {/* Dependents row */}
           <div className="w-full">
             <p className="text-[10px] font-semibold uppercase tracking-wider text-text-muted mb-2 text-center">
               {tx("Depended on by", "被依赖方", "依存元")}
@@ -90,13 +112,13 @@ export default function ToolsModulePage() {
             </div>
           </div>
 
-          {/* Arrow down to Tools */}
+          {/* Arrow */}
           <div className="flex flex-col items-center gap-1">
             <div className="h-6 w-px bg-border" />
             <span className="text-text-muted text-xs">↓</span>
           </div>
 
-          {/* Tools box (center) */}
+          {/* This module */}
           <div
             className="w-full max-w-xs rounded-xl border-2 p-4 text-center"
             style={{ borderColor: "var(--orange)", background: "color-mix(in srgb, var(--orange) 10%, transparent)" }}
@@ -105,13 +127,13 @@ export default function ToolsModulePage() {
             <div className="text-[10px] text-text-muted mt-0.5">140 files · ~65K</div>
           </div>
 
-          {/* Arrow down to dependencies */}
+          {/* Arrow */}
           <div className="flex flex-col items-center gap-1">
             <span className="text-text-muted text-xs">↓</span>
             <div className="h-6 w-px bg-border" />
           </div>
 
-          {/* Dependencies row - modules Tools depends on */}
+          {/* Dependencies row */}
           <div className="w-full">
             <p className="text-[10px] font-semibold uppercase tracking-wider text-text-muted mb-2 text-center">
               {tx("Depends on", "依赖方", "依存先")}
@@ -136,12 +158,13 @@ export default function ToolsModulePage() {
         </div>
       </Card>
 
-      {/* Key Files */}
+      {/* Key Files as cards */}
       <Card title={tx("Key Files", "核心文件", "主要ファイル")} className="mb-6">
-        <Table
-          headers={[tx("File", "文件", "ファイル"), tx("Purpose", "用途", "目的")]}
-          rows={keyFiles}
-        />
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+          {keyFiles.map((f) => (
+            <FileCard key={f.name} name={f.name} size={f.size} purpose={f.purpose} color={f.color} />
+          ))}
+        </div>
       </Card>
 
       {/* Key Patterns */}

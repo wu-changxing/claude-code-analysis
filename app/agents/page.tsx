@@ -504,6 +504,62 @@ getCoordinatorSystemPrompt()
         </div>
       </Card>
 
+      {/* Cost Comparison */}
+      <Card
+        title={tx("Cost Comparison: Forked vs Full Agent", "成本对比：分叉代理与完整代理", "コスト比較：フォーク型 vs フル型エージェント")}
+        className="mb-6"
+        accent="var(--green)"
+        summary={tx("Why forked background agents can run after every turn without breaking your budget.", "为什么分叉后台代理可以在每次回合后运行而不超出预算。", "なぜフォーク型バックグラウンドエージェントは毎ターン後でも予算を超えないか。")}
+      >
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 mb-4">
+          <div
+            className="rounded-xl border p-4"
+            style={{ borderColor: "color-mix(in srgb, var(--green) 30%, var(--border))", background: "color-mix(in srgb, var(--green) 5%, var(--bg-secondary))" }}
+          >
+            <div className="text-[10px] font-bold uppercase tracking-wider text-green mb-2">
+              {tx("Forked Agent (cheap)", "分叉代理（便宜）", "フォーク型（安い）")}
+            </div>
+            {[
+              { label: tx("Startup cost", "启动成本", "起動コスト"), value: tx("~0 tokens", "~0 token", "~0トークン"), good: true },
+              { label: tx("System prompt", "系统提示", "システムプロンプト"), value: tx("Cache HIT", "缓存命中", "キャッシュHIT"), good: true },
+              { label: tx("Memory", "内存", "メモリ"), value: tx("Shares parent AppState", "共享父 AppState", "親AppState共有"), good: true },
+              { label: tx("Isolation", "隔离性", "隔離"), value: tx("None", "无", "なし"), good: false },
+            ].map((row) => (
+              <div key={row.label} className="flex justify-between items-center py-1 border-b border-border/30 last:border-0">
+                <span className="text-[10px] text-text-muted">{row.label}</span>
+                <span className="text-[10px] font-semibold" style={{ color: row.good ? "var(--green)" : "var(--text-muted)" }}>{row.value}</span>
+              </div>
+            ))}
+          </div>
+          <div
+            className="rounded-xl border p-4"
+            style={{ borderColor: "color-mix(in srgb, var(--orange) 30%, var(--border))", background: "color-mix(in srgb, var(--orange) 5%, var(--bg-secondary))" }}
+          >
+            <div className="text-[10px] font-bold uppercase tracking-wider text-orange mb-2">
+              {tx("Full Agent (expensive)", "完整代理（昂贵）", "フル型（高い）")}
+            </div>
+            {[
+              { label: tx("Startup cost", "启动成本", "起動コスト"), value: tx("Full context re-send", "重新发送完整上下文", "完全コンテキスト再送信"), good: false },
+              { label: tx("System prompt", "系统提示", "システムプロンプト"), value: tx("May MISS cache", "可能未命中缓存", "キャッシュMISSの可能性"), good: false },
+              { label: tx("Memory", "内存", "メモリ"), value: tx("Own AppState instance", "独立 AppState 实例", "独自AppStateインスタンス"), good: true },
+              { label: tx("Isolation", "隔离性", "隔離"), value: tx("Git worktree / remote", "Git worktree / 远程", "Git worktree / リモート"), good: true },
+            ].map((row) => (
+              <div key={row.label} className="flex justify-between items-center py-1 border-b border-border/30 last:border-0">
+                <span className="text-[10px] text-text-muted">{row.label}</span>
+                <span className="text-[10px] font-semibold" style={{ color: row.good ? "var(--green)" : "var(--orange)" }}>{row.value}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+        <p className="text-[11px] text-text-muted leading-relaxed">
+          {tx(
+            "Forked agents like extractMemories and promptSuggestion fire after every turn. They get cache hits because their system prompt bytes are identical to the parent — making 6 background agents nearly free per turn. Full agents (worktree, remote) pay the full cold-start cost but get proper isolation.",
+            "extractMemories 和 promptSuggestion 等分叉代理在每次回合后触发。由于它们的系统提示字节与父代理完全相同，因此能命中缓存——使每次回合的 6 个后台代理几乎免费。完整代理（worktree、remote）需要支付完整的冷启动成本，但可以获得适当的隔离。",
+            "extractMemories や promptSuggestion などのフォーク型エージェントは毎ターン後に発火します。システムプロンプトのバイト列が親と完全に同一なためキャッシュヒットし、6つのバックグラウンドエージェントがほぼ無料になります。フル型（worktree、remote）はフルのコールドスタートコストを払いますが、適切な隔離が得られます。"
+          )}
+        </p>
+      </Card>
+
       {/* Coordinator Quote */}
       <Card
         title={tx("Coordinator's Golden Rule", "协调器黄金法则", "コーディネーターの黄金律")}

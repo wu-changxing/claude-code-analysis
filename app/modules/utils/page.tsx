@@ -1,20 +1,30 @@
 "use client";
 
-import { PageHeader, Card, Table } from "@/components/Section";
+import { PageHeader, Card, FileCard, ArchPosition } from "@/components/Section";
 import { useTx } from "@/components/T";
 import { ghBlob, ghTree } from "@/lib/sourceLinks";
+
+const ARCH_LAYERS = [
+  { name: "Components / CLI", desc: "terminal UI, Ink renderer", color: "var(--purple)" },
+  { name: "Query / Engine", desc: "orchestrates the agent loop", color: "var(--green)" },
+  { name: "Commands", desc: "slash command handlers", color: "var(--orange)" },
+  { name: "Tools", desc: "43+ built-in tools", color: "var(--orange)" },
+  { name: "Services", desc: "API, MCP, compaction, LSP", color: "var(--green)" },
+  { name: "Permissions", desc: "security layer", color: "var(--red)" },
+  { name: "Utils", desc: "shared foundation", color: "var(--accent)" },
+];
 
 export default function UtilsModulePage() {
   const tx = useTx();
 
   const keyFiles = [
-    ["utils/messages.ts", tx("5512 lines — message creation, formatting, Claude API message manipulation", "5512 行 — 消息创建、格式化、Claude API 消息操作", "5512行 — メッセージ生成・整形・Claude API メッセージ操作")],
-    ["utils/sessionStorage.ts", tx("5105 lines — session persistence, YAML serialization, replay support", "5105 行 — 会话持久化、YAML 序列化、重放支持", "5105行 — セッション永続化、YAMLシリアライズ、リプレイ対応")],
-    ["utils/hooks.ts", tx("5022 lines — React hooks for state, terminal input, streaming", "5022 行 — 状态、终端输入和流式处理的 React hooks", "5022行 — 状態・ターミナル入力・ストリーミング向け React hooks")],
-    ["utils/bash/bashParser.ts", tx("4436 lines — Tree-sitter Bash AST parser for security analysis", "4436 行 — 用于安全分析的 Tree-sitter Bash AST 解析器", "4436行 — セキュリティ解析向け Tree-sitter Bash AST パーサー")],
-    ["utils/attachments.ts", tx("3997 lines — attachment prefetch, image resize, PDF/notebook handling", "3997 行 — 附件预取、图像缩放、PDF/notebook 处理", "3997行 — 添付の事前取得、画像リサイズ、PDF/ノートブック処理")],
-    ["utils/git.ts", tx("Git helpers: branch detection, diff, staging, repo root resolution", "Git 辅助：分支检测、diff、暂存、仓库根目录解析", "Git ヘルパー: ブランチ検出、diff、ステージング、リポジトリルート解決")],
-    ["utils/permissions/", tx("Permission rule parsing, filesystem path checks, yoloClassifier", "权限规则解析、文件系统路径检查、yoloClassifier", "権限ルール解析、ファイルシステムパスチェック、yoloClassifier")],
+    { name: "utils/messages.ts", size: "5512 lines", purpose: tx("Message creation, formatting, Claude API message manipulation", "消息创建、格式化、Claude API 消息操作", "メッセージ生成・整形・Claude API メッセージ操作"), color: "var(--accent)" },
+    { name: "utils/sessionStorage.ts", size: "5105 lines", purpose: tx("Session persistence, YAML serialization, replay support", "会话持久化、YAML 序列化、重放支持", "セッション永続化、YAMLシリアライズ、リプレイ対応"), color: "var(--green)" },
+    { name: "utils/hooks.ts", size: "5022 lines", purpose: tx("React hooks for state, terminal input, streaming", "状态、终端输入和流式处理的 React hooks", "状態・ターミナル入力・ストリーミング向け React hooks"), color: "var(--purple)" },
+    { name: "utils/bash/bashParser.ts", size: "4436 lines", purpose: tx("Tree-sitter Bash AST parser for security analysis", "用于安全分析的 Tree-sitter Bash AST 解析器", "セキュリティ解析向け Tree-sitter Bash AST パーサー"), color: "var(--red)" },
+    { name: "utils/attachments.ts", size: "3997 lines", purpose: tx("Attachment prefetch, image resize, PDF/notebook handling", "附件预取、图像缩放、PDF/notebook 处理", "添付の事前取得、画像リサイズ、PDF/ノートブック処理"), color: "var(--orange)" },
+    { name: "utils/git.ts", size: "~800 lines", purpose: tx("Git helpers: branch detection, diff, staging, repo root resolution", "Git 辅助：分支检测、diff、暂存、仓库根目录解析", "Git ヘルパー: ブランチ検出、diff、ステージング、リポジトリルート解決"), color: "var(--pink)" },
+    { name: "utils/permissions/", size: "~25KB", purpose: tx("Permission rule parsing, filesystem path checks, yoloClassifier", "权限规则解析、文件系统路径检查、yoloClassifier", "権限ルール解析、ファイルシステムパスチェック、yoloClassifier"), color: "var(--text-muted)" },
   ];
 
   const patterns = [
@@ -63,6 +73,18 @@ export default function UtilsModulePage() {
           { label: "utils/bash/", href: ghTree("utils/bash") },
         ]}
       />
+
+      {/* Architecture Position */}
+      <Card title={tx("Position in Architecture", "在架构中的位置", "アーキテクチャ上の位置")} className="mb-6" accent="var(--accent)">
+        <p className="text-[11px] text-text-muted mb-4">
+          {tx(
+            "Utils is the foundation — the bottom of the stack. Every other module imports from it, but Utils imports from nothing. This is what makes circular dependencies impossible.",
+            "工具库是基础——处于架构的最底层。所有其他模块都从它导入，但它本身不依赖任何模块。这就是为什么循环依赖不可能发生。",
+            "Utils は基盤 — スタックの最下層。他のすべてのモジュールがここからインポートしますが、Utils は何もインポートしません。これが循環依存を不可能にしています。"
+          )}
+        </p>
+        <ArchPosition position={6} label={tx("here", "当前", "ここ")} color="var(--accent)" layers={ARCH_LAYERS} />
+      </Card>
 
       {/* Dependency Diagram */}
       <Card title={tx("Module Dependencies", "模块依赖关系", "モジュール依存関係")} className="mb-6" accent="var(--accent)">
@@ -118,10 +140,11 @@ export default function UtilsModulePage() {
 
       {/* Key Files */}
       <Card title={tx("Key Files", "核心文件", "主要ファイル")} className="mb-6">
-        <Table
-          headers={[tx("File", "文件", "ファイル"), tx("Purpose", "用途", "目的")]}
-          rows={keyFiles}
-        />
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+          {keyFiles.map((f) => (
+            <FileCard key={f.name} name={f.name} size={f.size} purpose={f.purpose} color={f.color} />
+          ))}
+        </div>
       </Card>
 
       {/* Key Patterns */}

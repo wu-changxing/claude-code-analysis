@@ -1,20 +1,41 @@
 "use client";
 
-import { PageHeader, Card, Table } from "@/components/Section";
+import { PageHeader, Card, FileCard, ArchPosition } from "@/components/Section";
 import { useTx } from "@/components/T";
 import { ghBlob, ghTree } from "@/lib/sourceLinks";
+
+const ARCH_LAYERS = [
+  { name: "Components / CLI", desc: "terminal UI, Ink renderer", color: "var(--purple)" },
+  { name: "Query / Engine", desc: "orchestrates the agent loop", color: "var(--green)" },
+  { name: "Commands", desc: "slash command handlers", color: "var(--orange)" },
+  { name: "Tools", desc: "43+ built-in tools", color: "var(--orange)" },
+  { name: "Services", desc: "API, MCP, compaction, LSP", color: "var(--green)" },
+  { name: "Permissions", desc: "security layer", color: "var(--red)" },
+  { name: "Utils", desc: "shared foundation", color: "var(--accent)" },
+];
+
+// API call lifecycle steps
+const LIFECYCLE_STEPS = [
+  { label: "QueryEngine calls query()", color: "var(--green)", step: "1" },
+  { label: "services/api/claude.ts — buildRequest()", color: "var(--accent)", step: "2" },
+  { label: "Anthropic API — streams tokens", color: "var(--orange)", step: "3" },
+  { label: "StreamingToolExecutor — queues tool_use blocks", color: "var(--purple)", step: "4" },
+  { label: "services/tools/ — executes tools", color: "var(--pink)", step: "5" },
+  { label: "services/analytics/ — async drain", color: "var(--text-muted)", step: "6" },
+  { label: "services/extractMemories/ — post-turn", color: "var(--green)", step: "7" },
+];
 
 export default function ServicesModulePage() {
   const tx = useTx();
 
   const keyFiles = [
-    ["services/api/claude.ts", tx("3500+ lines — API client, streaming, token management", "3500+ 行 — API 客户端、流式处理、token 管理", "3500行以上 — APIクライアント、ストリーミング、トークン管理")],
-    ["services/mcp/client.ts", tx("119KB MCP protocol client — 4 transport types (stdio, SSE, HTTP, WS)", "119KB MCP 协议客户端 — 支持 4 种传输类型", "119KB MCP プロトコルクライアント — 4 つのトランスポート")],
-    ["services/compact/", tx("13 files — context window compression pipeline", "13 个文件 — 上下文窗口压缩管道", "13ファイル — コンテキストウィンドウ圧縮パイプライン")],
-    ["services/lsp/", tx("6 files — Language Server Protocol diagnostics integration", "6 个文件 — 语言服务器协议诊断集成", "6ファイル — Language Server Protocol 診断統合")],
-    ["services/extractMemories/", tx("Background agent that mines conversation for persistent memories", "后台代理，从对话中挖掘并持久化记忆", "会話から記憶を抽出するバックグラウンドエージェント")],
-    ["services/analytics/", tx("Event pipeline: Datadog + first-party analytics, async drain", "事件管道：Datadog + 自有分析，异步排队", "イベントパイプライン: Datadog + 自社分析、非同期ドレイン")],
-    ["services/tools/", tx("Tool orchestration, StreamingToolExecutor, concurrency guard", "工具编排、StreamingToolExecutor、并发守卫", "ツール編成、StreamingToolExecutor、並行ガード")],
+    { name: "services/api/claude.ts", size: "3500+ lines", purpose: tx("API client, streaming, token management", "API 客户端、流式处理、token 管理", "APIクライアント、ストリーミング、トークン管理"), color: "var(--accent)" },
+    { name: "services/mcp/client.ts", size: "119KB", purpose: tx("MCP protocol client — 4 transport types (stdio, SSE, HTTP, WS)", "MCP 协议客户端 — 支持 4 种传输类型", "MCP プロトコルクライアント — 4 つのトランスポート"), color: "var(--orange)" },
+    { name: "services/compact/", size: "13 files", purpose: tx("Context window compression pipeline", "上下文窗口压缩管道", "コンテキストウィンドウ圧縮パイプライン"), color: "var(--green)" },
+    { name: "services/lsp/", size: "6 files", purpose: tx("Language Server Protocol diagnostics integration", "语言服务器协议诊断集成", "Language Server Protocol 診断統合"), color: "var(--purple)" },
+    { name: "services/extractMemories/", size: "~15KB", purpose: tx("Background agent that mines conversation for persistent memories", "后台代理，从对话中挖掘并持久化记忆", "会話から記憶を抽出するバックグラウンドエージェント"), color: "var(--pink)" },
+    { name: "services/analytics/", size: "~10KB", purpose: tx("Event pipeline: Datadog + first-party analytics, async drain", "事件管道：Datadog + 自有分析，异步排队", "イベントパイプライン: Datadog + 自社分析、非同期ドレイン"), color: "var(--text-muted)" },
+    { name: "services/tools/", size: "~20KB", purpose: tx("Tool orchestration, StreamingToolExecutor, concurrency guard", "工具编排、StreamingToolExecutor、并发守卫", "ツール編成、StreamingToolExecutor、並行ガード"), color: "var(--red)" },
   ];
 
   const patterns = [
@@ -64,6 +85,18 @@ export default function ServicesModulePage() {
           { label: "services/compact/", href: ghTree("services/compact") },
         ]}
       />
+
+      {/* Architecture Position */}
+      <Card title={tx("Position in Architecture", "在架构中的位置", "アーキテクチャ上の位置")} className="mb-6" accent="var(--green)">
+        <p className="text-[11px] text-text-muted mb-4">
+          {tx(
+            "Services sit below Tools and Commands — providing external I/O and infrastructure. The Query/Engine layer talks directly to the API through Services.",
+            "服务层位于工具和命令层之下，提供外部 I/O 和基础设施。查询/引擎层通过服务直接与 API 通信。",
+            "サービスはツールとコマンドの下に位置し、外部 I/O とインフラを提供します。"
+          )}
+        </p>
+        <ArchPosition position={4} label={tx("here", "当前", "ここ")} color="var(--green)" layers={ARCH_LAYERS} />
+      </Card>
 
       {/* Dependency Diagram */}
       <Card title={tx("Module Dependencies", "模块依赖关系", "モジュール依存関係")} className="mb-6" accent="var(--green)">
@@ -130,12 +163,42 @@ export default function ServicesModulePage() {
         </div>
       </Card>
 
+      {/* API Call Lifecycle */}
+      <Card
+        title={tx("API Call Lifecycle", "API 调用生命周期", "API 呼び出しライフサイクル")}
+        className="mb-6"
+        accent="var(--accent)"
+        summary={tx("A single API call touches multiple services in sequence.", "一次 API 调用会依次经过多个服务。", "1回のAPI呼び出しが複数のサービスを順に経由します。")}
+      >
+        <div className="space-y-1.5">
+          {LIFECYCLE_STEPS.map((s) => (
+            <div
+              key={s.step}
+              className="flex items-center gap-3 rounded-lg px-3 py-2.5"
+              style={{
+                background: `color-mix(in srgb, ${s.color} 7%, var(--bg-tertiary))`,
+                borderLeft: `3px solid ${s.color}`,
+              }}
+            >
+              <span
+                className="w-5 h-5 rounded text-[9px] font-bold flex items-center justify-center shrink-0"
+                style={{ background: `color-mix(in srgb, ${s.color} 20%, transparent)`, color: s.color }}
+              >
+                {s.step}
+              </span>
+              <code className="text-[11px] text-text-secondary">{s.label}</code>
+            </div>
+          ))}
+        </div>
+      </Card>
+
       {/* Key Files */}
       <Card title={tx("Key Files", "核心文件", "主要ファイル")} className="mb-6">
-        <Table
-          headers={[tx("File", "文件", "ファイル"), tx("Purpose", "用途", "目的")]}
-          rows={keyFiles}
-        />
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+          {keyFiles.map((f) => (
+            <FileCard key={f.name} name={f.name} size={f.size} purpose={f.purpose} color={f.color} />
+          ))}
+        </div>
       </Card>
 
       {/* Key Patterns */}

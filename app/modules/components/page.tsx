@@ -1,19 +1,29 @@
 "use client";
 
-import { PageHeader, Card, Table } from "@/components/Section";
+import { PageHeader, Card, FileCard, ArchPosition } from "@/components/Section";
 import { useTx } from "@/components/T";
 import { ghBlob, ghTree } from "@/lib/sourceLinks";
+
+const ARCH_LAYERS = [
+  { name: "Components / CLI", desc: "terminal UI, Ink renderer", color: "var(--purple)" },
+  { name: "Query / Engine", desc: "orchestrates the agent loop", color: "var(--green)" },
+  { name: "Commands", desc: "slash command handlers", color: "var(--orange)" },
+  { name: "Tools", desc: "43+ built-in tools", color: "var(--orange)" },
+  { name: "Services", desc: "API, MCP, compaction, LSP", color: "var(--green)" },
+  { name: "Permissions", desc: "security layer", color: "var(--red)" },
+  { name: "Utils", desc: "shared foundation", color: "var(--accent)" },
+];
 
 export default function ComponentsModulePage() {
   const tx = useTx();
 
   const keyFiles = [
-    ["screens/REPL.tsx", tx("5005 lines — main REPL screen, orchestrates all terminal UI state", "5005 行 — 主 REPL 界面，协调所有终端 UI 状态", "5005行 — メイン REPL 画面、全ターミナル UI 状態を調整")],
-    ["components/", tx("Ink-based terminal components: prompts, tool results, messages, spinners", "基于 Ink 的终端组件：提示、工具结果、消息、旋转加载器", "Ink ベースのターミナルコンポーネント: プロンプト、ツール結果、メッセージ、スピナー")],
-    ["main.tsx", tx("4683 lines — CLI initialization, renders REPL into terminal via Ink", "4683 行 — CLI 初始化，通过 Ink 将 REPL 渲染到终端", "4683行 — CLI 初期化、Ink を通じて REPL をターミナルにレンダリング")],
-    ["ink/", tx("Custom Ink fork — yoga-layout flexbox engine for terminal rendering", "自定义 Ink fork — 用于终端渲染的 yoga-layout flexbox 引擎", "カスタム Ink fork — ターミナルレンダリング向け yoga-layout flexbox エンジン")],
-    ["cli/print.ts", tx("5594 lines — formatted terminal output, ANSI styling, diff rendering", "5594 行 — 格式化终端输出、ANSI 样式、diff 渲染", "5594行 — 整形済みターミナル出力、ANSIスタイリング、diff レンダリング")],
-    ["hooks/", tx("Permission hooks, tool approval UI hooks, state bindings", "权限 hooks、工具审批 UI hooks、状态绑定", "権限 hooks、ツール承認 UI hooks、状態バインディング")],
+    { name: "screens/REPL.tsx", size: "5005 lines", purpose: tx("Main REPL screen, orchestrates all terminal UI state", "主 REPL 界面，协调所有终端 UI 状态", "メイン REPL 画面、全ターミナル UI 状態を調整"), color: "var(--purple)" },
+    { name: "components/", size: "150+ files", purpose: tx("Ink-based terminal components: prompts, tool results, messages, spinners", "基于 Ink 的终端组件：提示、工具结果、消息、旋转加载器", "Ink ベースのターミナルコンポーネント: プロンプト、ツール結果、メッセージ、スピナー"), color: "var(--accent)" },
+    { name: "main.tsx", size: "4683 lines", purpose: tx("CLI initialization, renders REPL into terminal via Ink", "CLI 初始化，通过 Ink 将 REPL 渲染到终端", "CLI 初期化、Ink を通じて REPL をターミナルにレンダリング"), color: "var(--green)" },
+    { name: "ink/", size: "~80KB", purpose: tx("Custom Ink fork — yoga-layout flexbox engine for terminal rendering", "自定义 Ink fork — 用于终端渲染的 yoga-layout flexbox 引擎", "カスタム Ink fork — ターミナルレンダリング向け yoga-layout flexbox エンジン"), color: "var(--orange)" },
+    { name: "cli/print.ts", size: "5594 lines", purpose: tx("Formatted terminal output, ANSI styling, diff rendering", "格式化终端输出、ANSI 样式、diff 渲染", "整形済みターミナル出力、ANSIスタイリング、diff レンダリング"), color: "var(--pink)" },
+    { name: "hooks/", size: "~30KB", purpose: tx("Permission hooks, tool approval UI hooks, state bindings", "权限 hooks、工具审批 UI hooks、状态绑定", "権限 hooks、ツール承認 UI hooks、状態バインディング"), color: "var(--red)" },
   ];
 
   const patterns = [
@@ -62,6 +72,18 @@ export default function ComponentsModulePage() {
           { label: "ink/", href: ghTree("ink") },
         ]}
       />
+
+      {/* Architecture Position */}
+      <Card title={tx("Position in Architecture", "在架构中的位置", "アーキテクチャ上の位置")} className="mb-6" accent="var(--purple)">
+        <p className="text-[11px] text-text-muted mb-4">
+          {tx(
+            "Components is the top layer — the visible face of Claude Code. It renders what the user sees in the terminal, subscribing to the QueryEngine stream for live updates.",
+            "组件层是最顶层——Claude Code 的可见界面。它渲染用户在终端中看到的内容，订阅 QueryEngine 流以获取实时更新。",
+            "コンポーネントはトップレイヤー — Claude Code の見える顔。ターミナルに表示されるものをレンダリングし、QueryEngine ストリームを購読してリアルタイム更新を受け取ります。"
+          )}
+        </p>
+        <ArchPosition position={0} label={tx("here", "当前", "ここ")} color="var(--purple)" layers={ARCH_LAYERS} />
+      </Card>
 
       {/* Dependency Diagram */}
       <Card title={tx("Module Dependencies", "模块依赖关系", "モジュール依存関係")} className="mb-6" accent="var(--purple)">
@@ -122,10 +144,11 @@ export default function ComponentsModulePage() {
 
       {/* Key Files */}
       <Card title={tx("Key Files", "核心文件", "主要ファイル")} className="mb-6">
-        <Table
-          headers={[tx("File", "文件", "ファイル"), tx("Purpose", "用途", "目的")]}
-          rows={keyFiles}
-        />
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+          {keyFiles.map((f) => (
+            <FileCard key={f.name} name={f.name} size={f.size} purpose={f.purpose} color={f.color} />
+          ))}
+        </div>
       </Card>
 
       {/* Key Patterns */}
