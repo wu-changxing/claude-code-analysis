@@ -388,42 +388,49 @@ export default function HomePage() {
         transition={{ delay: 0.6 }}
         className="mt-10 p-5 rounded-xl bg-bg-secondary border border-border"
       >
-        <div className="flex items-center justify-between">
+        <div className="flex items-start justify-between gap-4">
           <div>
             <p className="text-sm font-semibold text-text-primary mb-1">
               {lang === "zh" ? "Claude Code 源码解析与重写" : "Claude Code Pattern Study & Rewrite"}
             </p>
-            <p className="text-[11px] text-text-muted">
+            <p className="text-[11px] text-text-muted mb-2">
               {lang === "zh"
                 ? "由 @ConnectOnionAI 出品 — 开源 AI 代理框架"
                 : "By @ConnectOnionAI — Open-source AI Agent Framework"}
             </p>
+            <p className="text-[11px] text-text-secondary leading-relaxed">
+              {lang === "zh"
+                ? "你的编程助手里藏了一只鸭子 — 从反 ptrace 防御到 AI 做梦机制，50 个你不知道的设计决策。"
+                : "Your coding assistant has a duck hiding inside — from anti-ptrace defense to AI dreaming, 50 design decisions you didn't know about."}
+            </p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-col items-end gap-2 shrink-0">
             <a
               href="https://x.com/ConnectOnionAI"
               target="_blank"
               rel="noopener noreferrer"
-              className="px-3 py-1.5 rounded-lg text-[11px] font-medium bg-text-primary text-bg-primary hover:opacity-90 transition-opacity"
+              className="px-3 py-1.5 rounded-lg text-[11px] font-medium bg-text-primary text-bg-primary hover:opacity-90 transition-opacity w-full text-center"
             >
-              𝕏 Follow
+              𝕏 @ConnectOnionAI
             </a>
-            <a
-              href="https://openonion.ai"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-3 py-1.5 rounded-lg text-[11px] font-medium border border-border text-text-secondary hover:text-text-primary hover:bg-bg-tertiary transition-colors"
-            >
-              OpenOnion.ai
-            </a>
-            <a
-              href="https://docs.connectonion.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-3 py-1.5 rounded-lg text-[11px] font-medium border border-border text-text-secondary hover:text-text-primary hover:bg-bg-tertiary transition-colors"
-            >
-              Docs
-            </a>
+            <div className="flex gap-2">
+              <a
+                href="https://openonion.ai"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-3 py-1.5 rounded-lg text-[11px] font-medium border border-border text-text-secondary hover:text-text-primary hover:bg-bg-tertiary transition-colors"
+              >
+                OpenOnion.ai
+              </a>
+              <a
+                href="https://docs.connectonion.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-3 py-1.5 rounded-lg text-[11px] font-medium border border-border text-text-secondary hover:text-text-primary hover:bg-bg-tertiary transition-colors"
+              >
+                Docs
+              </a>
+            </div>
           </div>
         </div>
       </motion.div>
