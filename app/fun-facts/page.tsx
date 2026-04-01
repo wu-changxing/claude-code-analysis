@@ -313,6 +313,88 @@ export default function FunFactsPage() {
         </div>
       </Card>
 
+      {/* Excluded Strings - The Build Police */}
+      <Card title={lang === "zh" ? "构建警察：excluded-strings.txt" : lang === "ja" ? "ビルドポリス：excluded-strings.txt" : "The Build Police: excluded-strings.txt"} className="mb-6" accent="var(--red)">
+        <p className="text-sm text-text-secondary mb-4">
+          {lang === "zh"
+            ? "Claude Code 有一个 CI/CD 构建步骤，会扫描编译后的包，防止内部字符串泄露到公开的 npm 包中。这导致了一些令人捧腹的代码："
+            : lang === "ja"
+            ? "Claude Codeにはビルドステップがあり、コンパイル後のバンドルをスキャンして内部文字列の漏洩を防ぎます。これにより面白いコードが："
+            : "Claude Code has a CI/CD build step that scans the compiled bundle to prevent internal strings from leaking to the public npm package. This leads to hilarious workarounds:"}
+        </p>
+        <div className="space-y-3">
+          <div className="p-3 rounded-xl bg-bg-tertiary/20 border border-border/50">
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-sm">🐛</span>
+              <span className="text-xs font-semibold text-text-primary">
+                {lang === "zh" ? "宠物名字用十六进制编码" : "Pet names encoded in hex"}
+              </span>
+            </div>
+            <p className="text-[11px] text-text-muted">
+              <code className="text-accent">String.fromCharCode(0x64,0x75,0x63,0x6b)</code> {lang === "zh" ? "代替直接写" : "instead of"} <code className="text-accent">&quot;duck&quot;</code>.
+              {lang === "zh" ? " 因为某个宠物名和内部模型代号冲突了。" : " Because one pet name collides with a model codename."}
+            </p>
+          </div>
+          <div className="p-3 rounded-xl bg-bg-tertiary/20 border border-border/50">
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-sm">🔑</span>
+              <span className="text-xs font-semibold text-text-primary">
+                {lang === "zh" ? "API 密钥前缀在运行时拼接" : "API key prefix assembled at runtime"}
+              </span>
+            </div>
+            <p className="text-[11px] text-text-muted">
+              <code className="text-accent">[&apos;sk&apos;, &apos;ant&apos;, &apos;api&apos;].join(&apos;-&apos;)</code> {lang === "zh" ? "— 因为直接写 'sk-ant-api' 会触发构建检查器！" : "— because writing 'sk-ant-api' directly trips the build checker!"}
+            </p>
+          </div>
+          <div className="p-3 rounded-xl bg-bg-tertiary/20 border border-border/50">
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-sm">📦</span>
+              <span className="text-xs font-semibold text-text-primary">
+                {lang === "zh" ? "动态导入绕过检查" : "Dynamic imports to dodge the checker"}
+              </span>
+            </div>
+            <p className="text-[11px] text-text-muted">
+              {lang === "zh"
+                ? "至少 6 个文件使用动态 import() 而非静态导入，专门为了让包含敏感字符串的模块可以被 tree-shaking 移除。"
+                : "At least 6 files use dynamic import() instead of static imports specifically so modules with excluded strings can be tree-shaken out."}
+            </p>
+          </div>
+        </div>
+      </Card>
+
+      {/* Telemetry - What Gets Uploaded */}
+      <Card title={lang === "zh" ? "遥测：到底上传了什么？" : lang === "ja" ? "テレメトリ：何がアップロードされる？" : "Telemetry: What Actually Gets Uploaded?"} className="mb-6" accent="var(--green)">
+        <p className="text-sm text-text-secondary mb-4">
+          {lang === "zh"
+            ? "好消息：没有代码内容或文件路径。类型名 AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS 说明了一切。"
+            : "Good news: no code content or file paths. The type name says it all: AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS."}
+        </p>
+        <div className="grid grid-cols-3 gap-3 mb-4">
+          <div className="p-3 rounded-xl bg-bg-tertiary/20 border border-border/50 text-center">
+            <div className="text-lg mb-1">📊</div>
+            <div className="text-xs font-semibold text-text-primary mb-1">Analytics</div>
+            <p className="text-[10px] text-text-muted">Datadog + 1P events. Boolean/number metadata only.</p>
+          </div>
+          <div className="p-3 rounded-xl bg-bg-tertiary/20 border border-border/50 text-center">
+            <div className="text-lg mb-1">📈</div>
+            <div className="text-xs font-semibold text-text-primary mb-1">Metrics</div>
+            <p className="text-[10px] text-text-muted">OpenTelemetry → BigQuery. OS type, version, arch. No code.</p>
+          </div>
+          <div className="p-3 rounded-xl bg-bg-tertiary/20 border border-border/50 text-center">
+            <div className="text-lg mb-1">🔒</div>
+            <div className="text-xs font-semibold text-text-primary mb-1">Secret Scanner</div>
+            <p className="text-[10px] text-text-muted">Scans BEFORE upload. Secrets never leave your machine.</p>
+          </div>
+        </div>
+        <div className="p-3 rounded-lg bg-bg-tertiary/20 border border-border/50">
+          <p className="text-[11px] text-text-muted">
+            <strong className="text-text-primary">{lang === "zh" ? "隐私控制：" : "Privacy controls: "}</strong>
+            <code className="text-accent">DISABLE_TELEMETRY</code> {lang === "zh" ? "禁用分析" : "disables analytics"},
+            <code className="text-accent"> CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC</code> {lang === "zh" ? "禁用所有非必要网络流量。" : "disables ALL non-essential network traffic."}
+          </p>
+        </div>
+      </Card>
+
       {/* Session Slugs */}
       <Card title={t("fun.slugs", lang)} className="mb-6">
         <p className="text-sm text-text-secondary mb-3">
