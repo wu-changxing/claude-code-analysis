@@ -1,6 +1,15 @@
 "use client";
 
 import { PageHeader, Card, CodeBlock, Table } from "@/components/Section";
+import {
+  VscGitMerge,
+  VscServerProcess,
+  VscGitCompare,
+  VscCloud,
+  VscLightbulb,
+  VscSymbolEvent,
+} from "react-icons/vsc";
+import { HiOutlineBolt, HiOutlineGlobeAlt, HiOutlineCpuChip } from "react-icons/hi2";
 
 export default function AgentsPage() {
   return (
@@ -32,43 +41,34 @@ export default function AgentsPage() {
 
       {/* Execution Modes */}
       <Card title="Execution Modes" className="mb-6">
-        <div className="grid grid-cols-3 gap-4">
-          <div className="p-4 rounded bg-bg-tertiary/30 border border-border">
-            <div className="flex items-center gap-2 mb-2">
-              <span className="w-2 h-2 rounded-full bg-accent" />
-              <h4 className="text-sm font-medium">Local (in-process)</h4>
+        <div className="grid grid-cols-3 gap-3">
+          {[
+            {
+              icon: HiOutlineBolt, color: "var(--accent)", title: "Local (in-process)",
+              items: ["Runs in LocalAgentTask", "Shares parent AppState", "Read/write parent filesystem", "Token budget tracked separately"],
+            },
+            {
+              icon: VscGitCompare, color: "var(--green)", title: "Worktree Isolation",
+              items: ["Creates git worktree", "Isolated git workspace", "Temporary branch", "Prevents code conflicts"],
+            },
+            {
+              icon: HiOutlineGlobeAlt, color: "var(--purple)", title: "Remote (CCR)",
+              items: ["Runs on remote servers", "Full isolation from local", "Always runs in background", "Requires isolation: 'remote'"],
+            },
+          ].map(({ icon: Icon, color, title, items }) => (
+            <div key={title} className="p-4 rounded-xl bg-bg-tertiary/20 border border-border/50">
+              <Icon className="w-5 h-5 mb-2" style={{ color }} />
+              <h4 className="text-xs font-semibold text-text-primary mb-2">{title}</h4>
+              <ul className="text-[11px] text-text-muted space-y-1">
+                {items.map((item) => (
+                  <li key={item} className="flex items-start gap-1.5">
+                    <span className="w-1 h-1 rounded-full mt-1.5 shrink-0" style={{ background: color }} />
+                    {item}
+                  </li>
+                ))}
+              </ul>
             </div>
-            <ul className="text-xs text-text-secondary space-y-1">
-              <li>Runs in LocalAgentTask</li>
-              <li>Shares parent AppState</li>
-              <li>Can read/write parent filesystem</li>
-              <li>Token budget tracked separately</li>
-            </ul>
-          </div>
-          <div className="p-4 rounded bg-bg-tertiary/30 border border-border">
-            <div className="flex items-center gap-2 mb-2">
-              <span className="w-2 h-2 rounded-full bg-green" />
-              <h4 className="text-sm font-medium">Worktree Isolation</h4>
-            </div>
-            <ul className="text-xs text-text-secondary space-y-1">
-              <li>Creates git worktree</li>
-              <li>Isolated git workspace</li>
-              <li>Temporary branch</li>
-              <li>Prevents code conflicts</li>
-            </ul>
-          </div>
-          <div className="p-4 rounded bg-bg-tertiary/30 border border-border">
-            <div className="flex items-center gap-2 mb-2">
-              <span className="w-2 h-2 rounded-full bg-purple" />
-              <h4 className="text-sm font-medium">Remote (CCR)</h4>
-            </div>
-            <ul className="text-xs text-text-secondary space-y-1">
-              <li>Runs on remote servers</li>
-              <li>Full isolation from local</li>
-              <li>Always runs in background</li>
-              <li>Requires isolation: &apos;remote&apos;</li>
-            </ul>
-          </div>
+          ))}
         </div>
       </Card>
 
@@ -140,26 +140,43 @@ export default function AgentsPage() {
       </Card>
 
       {/* Forked Agents */}
-      <Card title="Forked Agents (Lightweight)">
+      <Card title="Forked Agents (Lightweight)" className="mb-6">
         <p className="text-sm text-text-secondary mb-4">
-          Pattern for creating lightweight background queries without full AgentTool overhead:
+          Lightweight background queries that share the parent&apos;s cache. Used for tasks you never see:
         </p>
-        <CodeBlock
-          code={`// forkedAgent.ts — createSubagentContext()
+        <div className="grid grid-cols-3 gap-2">
+          {[
+            { name: "extractMemories", desc: "Auto-memory after each query", icon: VscSymbolEvent, color: "var(--purple)" },
+            { name: "sessionMemory", desc: "Periodic conversation notes", icon: VscServerProcess, color: "var(--accent)" },
+            { name: "promptSuggestion", desc: "Next prompt suggestions", icon: VscLightbulb, color: "var(--orange)" },
+            { name: "compaction", desc: "Conversation summary", icon: VscGitMerge, color: "var(--green)" },
+            { name: "autoDream", desc: "Background memory consolidation", icon: HiOutlineCpuChip, color: "var(--pink)" },
+            { name: "speculation", desc: "Fast hypothetical execution", icon: HiOutlineBolt, color: "var(--red)" },
+          ].map(({ name, desc, icon: Icon, color }) => (
+            <div key={name} className="p-3 rounded-xl bg-bg-tertiary/20 border border-border/50">
+              <Icon className="w-3.5 h-3.5 mb-1.5" style={{ color }} />
+              <code className="text-[10px] text-accent block mb-0.5">{name}</code>
+              <span className="text-[10px] text-text-muted">{desc}</span>
+            </div>
+          ))}
+        </div>
+      </Card>
 
-function createSubagentContext(
-  parentContext: ToolUseContext,
-  options?: SubagentContextOverrides
-): ToolUseContext
-
-// Used for background tasks:
-- extractMemories  → Auto-memory extraction after each query
-- sessionMemory    → Periodic conversation notes
-- promptSuggestion → Next prompt suggestions
-- postTurnSummary  → /btw follow-up tasks
-- compaction       → Full conversation summary
-- speculation      → Fast hypothetical execution`}
-        />
+      {/* Coordinator Quote */}
+      <Card title="Coordinator&apos;s Golden Rule" accent="var(--orange)">
+        <div className="p-4 rounded-xl bg-bg-tertiary/20 border-l-2" style={{ borderLeftColor: "var(--orange)" }}>
+          <p className="text-sm text-text-secondary italic leading-relaxed">
+            &quot;When workers report research findings, <strong className="text-text-primary">you must understand them before
+            directing follow-up work</strong>. Read the findings. Identify the approach. Then write a prompt
+            that proves you understood by including specific file paths, line numbers, and exactly what to change.&quot;
+          </p>
+          <p className="text-[10px] text-text-muted mt-2">— coordinator system prompt, line ~180</p>
+        </div>
+        <p className="text-[11px] text-text-muted mt-3 italic">
+          The coordinator can&apos;t just throw tasks at workers blindly — the system prompt
+          explicitly requires it to prove comprehension before delegating. Even AI managers
+          have to actually read the reports.
+        </p>
       </Card>
     </div>
   );
