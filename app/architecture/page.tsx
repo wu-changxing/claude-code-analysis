@@ -3,6 +3,7 @@
 import { PageHeader, Card, CodeBlock, Table, SectionNav } from "@/components/Section";
 import { useTx } from "@/components/T";
 import { CLAUDE_CODE_REPO, ghBlob, ghTree } from "@/lib/sourceLinks";
+import Link from "next/link";
 import {
   VscCode,
   VscExtensions,
@@ -466,18 +467,19 @@ export default function ArchitecturePage() {
       <Card title={tx("Module Size Breakdown", "模块规模拆解", "モジュール別規模")} className="mb-6">
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-4">
           {[
-            { icon: VscExtensions, name: tx("Tools", "工具", "ツール"), files: 140, lines: "~65K", color: "var(--orange)" },
-            { icon: VscDatabase, name: tx("Services", "服务", "サービス"), files: 110, lines: "~80K", color: "var(--green)" },
-            { icon: VscCode, name: tx("Utils", "工具库", "ユーティリティ"), files: 220, lines: "~60K", color: "var(--accent)" },
-            { icon: VscSymbolStructure, name: tx("Components", "组件", "コンポーネント"), files: 346, lines: "~40K", color: "var(--purple)" },
-            { icon: VscTerminalBash, name: tx("Commands", "命令", "コマンド"), files: 110, lines: "~8K", color: "var(--orange)" },
-            { icon: VscServerProcess, name: tx("Query/Engine", "查询/引擎", "Query/Engine"), files: 15, lines: "~15K", color: "var(--green)" },
-            { icon: VscShield, name: tx("Permissions", "权限", "権限"), files: 30, lines: "~20K", color: "var(--red)" },
-            { icon: VscDatabase, name: tx("Bridge", "桥接层", "ブリッジ"), files: 12, lines: "~13K", color: "var(--pink)" },
+            { icon: VscExtensions, name: tx("Tools", "工具", "ツール"), files: 140, lines: "~65K", color: "var(--orange)", href: "/modules/tools" },
+            { icon: VscDatabase, name: tx("Services", "服务", "サービス"), files: 110, lines: "~80K", color: "var(--green)", href: "/modules/services" },
+            { icon: VscCode, name: tx("Utils", "工具库", "ユーティリティ"), files: 220, lines: "~60K", color: "var(--accent)", href: "/modules/utils" },
+            { icon: VscSymbolStructure, name: tx("Components", "组件", "コンポーネント"), files: 346, lines: "~40K", color: "var(--purple)", href: "/modules/components" },
+            { icon: VscTerminalBash, name: tx("Commands", "命令", "コマンド"), files: 110, lines: "~8K", color: "var(--orange)", href: "/modules/commands" },
+            { icon: VscServerProcess, name: tx("Query/Engine", "查询/引擎", "Query/Engine"), files: 15, lines: "~15K", color: "var(--green)", href: "/modules/query-engine" },
+            { icon: VscShield, name: tx("Permissions", "权限", "権限"), files: 30, lines: "~20K", color: "var(--red)", href: "/modules/permissions" },
+            { icon: VscDatabase, name: tx("Bridge", "桥接层", "ブリッジ"), files: 12, lines: "~13K", color: "var(--pink)", href: "/modules/bridge" },
           ].map((m) => (
-            <div
+            <Link
               key={m.name}
-              className="rounded-xl border border-border/50 p-3"
+              href={m.href}
+              className="rounded-xl border border-border/50 p-3 block hover:border-border transition-colors group"
               style={{ borderTop: `2px solid ${m.color}` }}
             >
               <div
@@ -486,11 +488,11 @@ export default function ArchitecturePage() {
               >
                 <m.icon className="h-4 w-4" style={{ color: m.color }} />
               </div>
-              <div className="text-xs font-semibold text-text-primary">{m.name}</div>
+              <div className="text-xs font-semibold text-text-primary group-hover:text-accent transition-colors">{m.name}</div>
               <div className="mt-0.5 text-[10px] text-text-muted">
                 {m.files} {tx("files", "个文件", "ファイル")} · {m.lines}
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </Card>

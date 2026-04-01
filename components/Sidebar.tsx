@@ -17,6 +17,9 @@ import {
   VscTerminal,
   VscHeart,
   VscGithubInverted,
+  VscCode,
+  VscTerminalBash,
+  VscShield,
 } from "react-icons/vsc";
 import { useLang } from "@/lib/LangContext";
 import { t, LANG_LABELS, Lang } from "@/lib/i18n";
@@ -41,6 +44,19 @@ const NAV_SECTIONS = (lang: Lang) => [
       { href: "/agents", label: t("nav.agents", lang), icon: VscGitMerge },
       { href: "/services", label: t("nav.services", lang), icon: VscDatabase },
       { href: "/context", label: t("nav.context", lang), icon: VscFolderOpened },
+    ],
+  },
+  {
+    title: "Modules",
+    items: [
+      { href: "/modules/tools", label: "Tools", icon: VscExtensions },
+      { href: "/modules/services", label: "Services", icon: VscDatabase },
+      { href: "/modules/utils", label: "Utils", icon: VscCode },
+      { href: "/modules/components", label: "Components", icon: VscSymbolStructure },
+      { href: "/modules/commands", label: "Commands", icon: VscTerminalBash },
+      { href: "/modules/query-engine", label: "Query/Engine", icon: VscServerProcess },
+      { href: "/modules/permissions", label: "Permissions", icon: VscShield },
+      { href: "/modules/bridge", label: "Bridge", icon: VscGitMerge },
     ],
   },
   {
