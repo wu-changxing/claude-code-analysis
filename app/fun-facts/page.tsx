@@ -535,6 +535,54 @@ Stats: DEBUGGING, PATIENCE, CHAOS, WISDOM, SNARK
         </p>
       </Card>
 
+      {/* Context-Aware Tips */}
+      <Card title={lang === "zh" ? "有情商的提示系统" : "The Emotionally Intelligent Tip System"} className="mb-6" accent="var(--accent)">
+        <p className="text-sm text-text-secondary mb-3">
+          {lang === "zh"
+            ? "Claude Code 的提示不是随机弹出的——每条都有精确的触发条件："
+            : "Claude Code tips aren't random — each has precise trigger conditions:"}
+        </p>
+        <div className="space-y-2">
+          {[
+            {
+              tip: { en: "Start with small features or bug fixes", zh: "从小功能或 bug 修复开始" },
+              when: { en: "numStartups < 10 (newbie detected)", zh: "numStartups < 10（检测到新手）" },
+              emoji: "🐣",
+            },
+            {
+              tip: { en: "Use /color and /rename to tell sessions apart", zh: "使用 /color 和 /rename 区分会话" },
+              when: { en: "countConcurrentSessions() >= 2", zh: "同时运行 2+ 个会话时" },
+              emoji: "🎨",
+            },
+            {
+              tip: { en: "Use git worktrees for parallel Claude sessions", zh: "使用 git worktrees 并行运行 Claude" },
+              when: { en: "worktreeCount <= 1 && numStartups > 50 (power user)", zh: "只有 1 个 worktree 且启动 50+ 次（高级用户）" },
+              emoji: "🌳",
+            },
+            {
+              tip: { en: "Share Claude Code and earn $X of extra usage", zh: "分享 Claude Code 并赚取额外使用额度" },
+              when: { en: "User hasn't visited /passes yet", zh: "用户还没访问过 /passes" },
+              emoji: "🎟️",
+            },
+          ].map(({ tip, when, emoji }) => (
+            <div key={tip.en} className="flex items-start gap-3 p-2.5 rounded-lg bg-bg-tertiary/20 border border-border/40">
+              <span className="text-base mt-0.5">{emoji}</span>
+              <div className="flex-1">
+                <p className="text-[11px] text-text-primary font-medium">{tip[lang as "en" | "zh"] || tip.en}</p>
+                <p className="text-[10px] text-text-muted mt-0.5">
+                  <code className="text-accent">{when[lang as "en" | "zh"] || when.en}</code>
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+        <p className="text-[11px] text-text-muted mt-3 italic">
+          {lang === "zh"
+            ? "提示甚至有 A/B 测试文案（变体 copy_a vs copy_b）和冷却期（cooldownSessions）防止反复出现。这不是一个 CLI，这是一个 growth hacking 平台。"
+            : "Tips even have A/B tested copy (variant copy_a vs copy_b) and cooldown periods to prevent spam. This isn't a CLI, it's a growth hacking platform."}
+        </p>
+      </Card>
+
       {/* Unicode Symbols */}
       <Card title={lang === "zh" ? "特殊符号图书馆" : "The Unicode Symbol Library"} className="mb-6" accent="var(--purple)">
         <p className="text-sm text-text-secondary mb-3">
