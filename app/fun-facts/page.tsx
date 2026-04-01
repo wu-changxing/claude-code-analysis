@@ -1,238 +1,171 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { PageHeader, Card, CodeBlock } from "@/components/Section";
+import { Card, CodeBlock } from "@/components/Section";
+import { useLang } from "@/lib/LangContext";
+import { t } from "@/lib/i18n";
+import {
+  VscHeart,
+  VscTerminalBash,
+  VscWand,
+  VscSymbolMisc,
+  VscCommentDiscussion,
+  VscFlame,
+  VscBeaker,
+  VscSmiley,
+} from "react-icons/vsc";
+import { HiOutlineSparkles, HiOutlineFire, HiOutlineBugAnt } from "react-icons/hi2";
 
 const BUDDY_ART = {
-  duck: `    __
-   (o>>
-    ||
-  _(__)_
-   ^^^^`,
-  cat: `  /\\_/\\
- ( ·   ·)
- (  ω  )
- (")_(")`,
-  dragon: ` /^\\  /^\\
-<  ·  ·  >
-(   ~~   )
- \`-vvvv-\``,
-  ghost: `  .---.
- / ·  · \\
-|       |
- \\_/\\_/\\_/`,
-  capybara: `  .----.
- (  ·  · )
- (      )
-  '----'`,
+  duck: `    __\n   (o>>\n    ||\n  _(__)_\n   ^^^^`,
+  cat: `  /\\_/\\\n ( ·   ·)\n (  ω  )\n (")_(")`,
+  dragon: ` /^\\  /^\\\n<  ·  ·  >\n(   ~~   )\n \`-vvvv-\``,
+  ghost: `  .---.\n / ·  · \\\n|       |\n \\_/\\_/\\_/`,
+  capybara: `  .----.\n (  ·  · )\n (      )\n  '----'`,
 };
 
-const SPECIES = [
-  "duck", "goose", "blob", "cat", "dragon", "octopus", "owl", "penguin",
-  "turtle", "snail", "ghost", "axolotl", "capybara", "cactus", "robot",
-  "rabbit", "mushroom", "chonk",
-];
-
-const HATS = ["none", "crown", "tophat", "propeller", "halo", "wizard", "beanie", "tinyduck"];
-const EYES = ["·", "✦", "×", "◉", "@", "°"];
-const RARITIES = ["common", "uncommon", "rare", "epic", "legendary"];
-
 export default function FunFactsPage() {
+  const { lang } = useLang();
+
   return (
     <div className="p-8 max-w-5xl">
-      <PageHeader
-        title="Fun Facts & Easter Eggs"
-        description="The serious engineering is covered elsewhere. This page is for the delightful, surprising, and slightly unhinged things hiding in 512,664 lines of TypeScript."
-        badge="entertainment"
-      />
+      {/* Header */}
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="mb-8 pb-6 border-b border-border"
+      >
+        <div className="flex items-center gap-3 mb-2">
+          <VscHeart className="w-6 h-6 text-pink" />
+          <h1 className="text-2xl font-bold text-text-primary">{t("fun.title", lang)}</h1>
+          <span className="px-2.5 py-0.5 text-[11px] rounded-full bg-bg-tertiary text-text-secondary border border-border font-mono">
+            entertainment
+          </span>
+        </div>
+        <p className="text-text-secondary text-sm leading-relaxed max-w-2xl">
+          {t("fun.desc", lang)}
+        </p>
+      </motion.div>
 
-      {/* By the Numbers */}
-      <Card title="By the Numbers (The Scary Ones)" className="mb-6">
-        <div className="grid grid-cols-3 gap-4">
+      {/* Scary Numbers - Visual Grid */}
+      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
+        <div className="flex items-center gap-2 mb-4">
+          <HiOutlineFire className="w-5 h-5 text-red" />
+          <h2 className="text-sm font-semibold">{t("fun.numbers", lang)}</h2>
+        </div>
+        <div className="grid grid-cols-3 gap-3 mb-8">
           {[
-            { value: "512,664", label: "Lines of TypeScript", note: "That's roughly 10 novels" },
-            { value: "1,884", label: "Source files", note: "Good luck with that IDE" },
-            { value: "101", label: "Slash commands", note: "More than most CLIs have features" },
-            { value: "43", label: "Tool directories", note: "Each one a small universe" },
-            { value: "5,594", label: "Lines in print.ts", note: "The single largest file" },
-            { value: "300KB+", label: "BashTool total", note: "Bigger than most apps" },
-            { value: "470KB", label: "MCP service", note: "A framework within a framework" },
-            { value: "100,000", label: "maxResultSizeChars", note: "The magic number everywhere" },
-            { value: "13,000", label: "Autocompact buffer", note: "Tokens of breathing room" },
+            { value: "512,664", label: "Lines of TypeScript", note: { en: "That's roughly 10 novels worth of code", zh: "大约相当于10本小说的篇幅", ja: "小説約10冊分のコード量" }, icon: VscTerminalBash, color: "var(--accent)" },
+            { value: "1,884", label: "Source files", note: { en: "Your IDE just fainted", zh: "你的 IDE 已经晕倒了", ja: "あなたのIDEは気絶しました" }, icon: VscSymbolMisc, color: "var(--green)" },
+            { value: "101", label: "Slash commands", note: { en: "More commands than a military base", zh: "命令比军事基地还多", ja: "軍事基地より多いコマンド" }, icon: VscWand, color: "var(--orange)" },
+            { value: "5,594", label: "Lines in print.ts", note: { en: "The single largest file. It just prints things.", zh: "最大的单个文件。它只是打印东西。", ja: "最大のファイル。表示するだけなのに。" }, icon: VscFlame, color: "var(--red)" },
+            { value: "300KB+", label: "BashTool security", note: { en: "More security than most banks", zh: "安全性比大多数银行还高", ja: "ほとんどの銀行より高いセキュリティ" }, icon: VscBeaker, color: "var(--purple)" },
+            { value: "160+", label: "Loading spinner verbs", note: { en: "'Clauding...' is now a verb", zh: "'Clauding...' 现在是一个动词了", ja: "「Clauding...」は動詞になった" }, icon: VscSmiley, color: "var(--pink)" },
           ].map((s, i) => (
             <motion.div
               key={s.label}
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.05 }}
-              className="bg-bg-secondary border border-border rounded-lg p-4"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.1 + i * 0.05 }}
+              className="bg-bg-secondary border border-border rounded-xl p-5 hover:shadow-sm transition-shadow"
             >
-              <div className="text-xl font-bold font-mono text-text-primary">{s.value}</div>
-              <div className="text-xs text-text-secondary mt-1">{s.label}</div>
-              <div className="text-[11px] text-text-muted mt-0.5 italic">{s.note}</div>
+              <s.icon className="w-5 h-5 mb-3" style={{ color: s.color }} />
+              <div className="text-2xl font-bold font-mono text-text-primary">{s.value}</div>
+              <div className="text-xs text-text-secondary mt-1 font-medium">{s.label}</div>
+              <div className="text-[11px] text-text-muted mt-1 italic">{s.note[lang] || s.note.en}</div>
             </motion.div>
           ))}
         </div>
-      </Card>
+      </motion.div>
 
-      {/* Buddy System */}
-      <Card title="The Buddy System (Yes, Claude Has Pets)" className="mb-6" accent="var(--pink)">
-        <p className="text-sm text-text-secondary mb-4">
-          Hidden in <code className="text-accent">src/buddy/</code> is a full companion pet system
-          with ASCII art sprites, idle animations, hats, eye styles, and <em>rarity tiers</em>.
-          Claude Code literally has collectible creatures. Gotta catch &apos;em all?
-        </p>
+      {/* Buddy System - Enhanced */}
+      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>
+        <Card title={`${t("fun.buddy", lang)} — ${t("fun.buddyDesc", lang)}`} className="mb-6" accent="var(--pink)">
+          <div className="grid grid-cols-5 gap-3 mb-5">
+            {Object.entries(BUDDY_ART).map(([name, art]) => (
+              <div key={name} className="rounded-xl p-4 text-center bg-bg-tertiary border border-border/50">
+                <div className="font-mono text-xs leading-tight whitespace-pre mb-2 text-text-primary">{art}</div>
+                <span className="text-[11px] text-text-muted capitalize font-medium">{name}</span>
+              </div>
+            ))}
+          </div>
 
-        <div className="grid grid-cols-5 gap-3 mb-4">
-          {Object.entries(BUDDY_ART).map(([name, art]) => (
-            <div key={name} className="bg-bg-tertiary/50 rounded-lg p-3 text-center">
-              <pre className="text-xs font-mono leading-tight text-text-primary whitespace-pre mb-2">{art}</pre>
-              <span className="text-[11px] text-text-muted capitalize">{name}</span>
+          <div className="grid grid-cols-2 gap-3 mb-4">
+            <div className="p-3 rounded-lg bg-bg-tertiary/30 border border-border/50">
+              <div className="text-[10px] text-text-muted uppercase tracking-wider mb-1.5 font-semibold">18 Species</div>
+              <div className="flex flex-wrap gap-1">
+                {["duck", "goose", "blob", "cat", "dragon", "octopus", "owl", "penguin", "turtle", "snail", "ghost", "axolotl", "capybara", "cactus", "robot", "rabbit", "mushroom", "chonk"].map((s) => (
+                  <span key={s} className="px-1.5 py-0.5 bg-bg-secondary rounded text-[10px] font-mono text-text-secondary">{s}</span>
+                ))}
+              </div>
             </div>
-          ))}
-        </div>
-
-        <div className="space-y-3 text-sm">
-          <div>
-            <span className="text-text-muted text-xs">Species ({SPECIES.length}): </span>
-            <span className="text-xs text-text-secondary">{SPECIES.join(", ")}</span>
-          </div>
-          <div>
-            <span className="text-text-muted text-xs">Hats: </span>
-            <span className="text-xs text-text-secondary">{HATS.join(", ")}</span>
-          </div>
-          <div>
-            <span className="text-text-muted text-xs">Eyes: </span>
-            <span className="text-xs font-mono text-text-secondary">{EYES.join("  ")}</span>
-          </div>
-          <div>
-            <span className="text-text-muted text-xs">Rarities: </span>
-            <span className="text-xs text-text-secondary">{RARITIES.join(", ")}</span>
-          </div>
-        </div>
-
-        <div className="mt-4 p-3 bg-bg-tertiary/30 rounded text-xs text-text-muted italic">
-          The species names are encoded as <code className="text-accent">String.fromCharCode(0x64,0x75,0x63,0x6b)</code> instead
-          of plain strings because one name collides with an internal model codename in their excluded-strings.txt checker.
-          The comment literally says: &quot;the check greps build output (not source), so runtime-constructing the value
-          keeps the literal out of the bundle.&quot; Peak engineering.
-        </div>
-      </Card>
-
-      {/* Codename Tengu */}
-      <Card title="Codename: Tengu" className="mb-6" accent="var(--purple)">
-        <p className="text-sm text-text-secondary mb-4">
-          Internally, Claude Code is codenamed <strong className="text-text-primary">Tengu</strong> (a Japanese
-          mythological creature). Every feature flag, analytics event, and GrowthBook gate starts
-          with <code className="text-accent">tengu_</code>. Here are some of the best ones:
-        </p>
-        <div className="grid grid-cols-2 gap-2">
-          {[
-            { name: "tengu_scratch", desc: "Coordinator mode" },
-            { name: "tengu_thinkback", desc: "Your Year in Review" },
-            { name: "tengu_kairos", desc: "Multi-agent swarms" },
-            { name: "tengu_amber_stoat", desc: "Built-in agents" },
-            { name: "tengu_hive_evidence", desc: "Task evidence tracking" },
-            { name: "tengu_quartz_lantern", desc: "File write features" },
-            { name: "tengu_glacier_2xr", desc: "Tool search features" },
-            { name: "tengu_surreal_dali", desc: "Remote triggers" },
-            { name: "tengu_birch_trellis", desc: "Bash permissions" },
-            { name: "tengu_ccr_bridge", desc: "Remote bridge" },
-            { name: "tengu_passport_quail", desc: "Session memory" },
-            { name: "tengu_slim_subagent_claudemd", desc: "Slim agent context" },
-          ].map(({ name, desc }) => (
-            <div key={name} className="flex items-center gap-2 p-2 rounded bg-bg-tertiary/30">
-              <code className="text-[11px] text-accent font-mono">{name}</code>
-              <span className="text-[11px] text-text-muted">{desc}</span>
+            <div className="space-y-2">
+              <div className="p-3 rounded-lg bg-bg-tertiary/30 border border-border/50">
+                <div className="text-[10px] text-text-muted uppercase tracking-wider mb-1 font-semibold">8 Hats</div>
+                <div className="flex flex-wrap gap-1">
+                  {["crown", "tophat", "propeller", "halo", "wizard", "beanie", "tinyduck"].map((h) => (
+                    <span key={h} className="px-1.5 py-0.5 bg-bg-secondary rounded text-[10px] font-mono text-text-secondary">{h}</span>
+                  ))}
+                </div>
+              </div>
+              <div className="flex gap-3">
+                <div className="flex-1 p-3 rounded-lg bg-bg-tertiary/30 border border-border/50">
+                  <div className="text-[10px] text-text-muted uppercase tracking-wider mb-1 font-semibold">Eyes</div>
+                  <div className="text-lg font-mono tracking-widest text-text-primary">· ✦ × ◉ @ °</div>
+                </div>
+                <div className="flex-1 p-3 rounded-lg bg-bg-tertiary/30 border border-border/50">
+                  <div className="text-[10px] text-text-muted uppercase tracking-wider mb-1 font-semibold">Rarities</div>
+                  <div className="flex gap-1 flex-wrap">
+                    {[
+                      { r: "common", c: "#8b949e" }, { r: "uncommon", c: "#1a7f37" },
+                      { r: "rare", c: "#0969da" }, { r: "epic", c: "#6639ba" }, { r: "legendary", c: "#bf5700" },
+                    ].map(({ r, c }) => (
+                      <span key={r} className="px-1.5 py-0.5 rounded text-[10px] font-medium" style={{ color: c, background: `color-mix(in srgb, ${c} 10%, transparent)` }}>{r}</span>
+                    ))}
+                  </div>
+                </div>
+              </div>
             </div>
-          ))}
-        </div>
-        <p className="text-xs text-text-muted mt-3 italic">
-          The naming convention is &quot;tengu_&quot; + two random English words. Somewhere at Anthropic,
-          there&apos;s a person who had to pick &quot;surreal_dali&quot; and &quot;passport_quail&quot; with a straight face.
-        </p>
-      </Card>
+          </div>
 
-      {/* Interesting Commands */}
-      <Card title="Commands You Didn't Know Existed" className="mb-6" accent="var(--orange)">
-        <div className="space-y-4">
-          <div className="p-3 rounded bg-bg-tertiary/30">
-            <code className="text-accent text-sm">/btw</code>
-            <p className="text-xs text-text-secondary mt-1">
-              &quot;Ask a quick side question without interrupting the main conversation.&quot;
-              It literally spawns a forked agent for your shower thought while the main
-              conversation keeps going. The name is perfect.
-            </p>
+          <div className="p-3 rounded-lg border border-border/50 bg-bg-tertiary/20 text-xs text-text-muted italic">
+            <HiOutlineBugAnt className="w-4 h-4 inline mr-1 text-orange" />
+            Species names are encoded as <code className="text-accent">String.fromCharCode(0x64,0x75,0x63,0x6b)</code> because
+            one name collides with a model codename in the build checker. The engineers literally obfuscated pet names
+            to avoid tripping their own security scanner. Peak engineering.
           </div>
-          <div className="p-3 rounded bg-bg-tertiary/30">
-            <code className="text-accent text-sm">/think-back</code>
-            <p className="text-xs text-text-secondary mt-1">
-              &quot;Your 2025 Claude Code Year in Review.&quot; Like Spotify Wrapped,
-              but for your coding sessions. Gated behind <code className="text-accent text-xs">tengu_thinkback</code>.
-            </p>
-          </div>
-          <div className="p-3 rounded bg-bg-tertiary/30">
-            <code className="text-accent text-sm">/stickers</code>
-            <p className="text-xs text-text-secondary mt-1">
-              Order physical Claude Code stickers. Yes, a CLI tool has merch. This is
-              peak developer culture.
-            </p>
-          </div>
-          <div className="p-3 rounded bg-bg-tertiary/30">
-            <code className="text-accent text-sm">/good-claude</code>
-            <p className="text-xs text-text-secondary mt-1">
-              The name alone is worth the price of admission. When AI needs positive
-              reinforcement too.
-            </p>
-          </div>
-          <div className="p-3 rounded bg-bg-tertiary/30">
-            <code className="text-accent text-sm">/teleport</code>
-            <p className="text-xs text-text-secondary mt-1">
-              Change working directory mid-session. Named after a video game ability rather
-              than the boring <code className="text-xs">cd</code>. Respect.
-            </p>
-          </div>
-          <div className="p-3 rounded bg-bg-tertiary/30">
-            <code className="text-accent text-sm">/bughunter</code>
-            <p className="text-xs text-text-secondary mt-1">
-              Exactly what it sounds like. Unleash Claude as a dedicated bug hunter on your codebase.
-            </p>
-          </div>
-        </div>
-      </Card>
+        </Card>
+      </motion.div>
 
       {/* Wizard Comment */}
-      <Card title="The Wizard Comment (query.ts:151)" className="mb-6" accent="var(--accent)">
-        <p className="text-sm text-text-secondary mb-3">
-          Deep in the query loop, the thinking rules are documented in full medieval fantasy style:
-        </p>
-        <CodeBlock code={`/**
- * The rules of thinking are lengthy and fortuitous. They require plenty
- * of thinking of most long duration and deep meditation for a wizard to
- * wrap one's noggin around.
- *
- * The rules follow:
- * 1. A message that contains a thinking or redacted_thinking block must
- *    be part of a query whose max_thinking_length > 0
- * 2. A thinking block may not be the last message in a block
- * 3. Thinking blocks must be preserved for the duration of an assistant
- *    trajectory...
+      <Card title={`${t("fun.wizard", lang)} (query.ts:151)`} className="mb-6" accent="var(--accent)">
+        <CodeBlock filename="query.ts" code={`/**
+ * The rules of thinking are lengthy and fortuitous. They require
+ * plenty of thinking of most long duration and deep meditation
+ * for a wizard to wrap one's noggin around.
  *
  * Heed these rules well, young wizard. For they are the rules of
  * thinking, and the rules of thinking are the rules of the universe.
- * If ye does not heed these rules, ye will be punished with an entire
- * day of debugging and hair pulling.
+ * If ye does not heed these rules, ye will be punished with an
+ * entire day of debugging and hair pulling.
  */`} />
         <p className="text-xs text-text-muted mt-3 italic">
-          This is real production code at Anthropic. Someone got paid to write &quot;wrap one&apos;s noggin around.&quot;
+          {lang === "zh"
+            ? "这是 Anthropic 的真实生产代码。有人拿着工资写了'wrap one's noggin around'（绞尽脑汁）这样的话。"
+            : lang === "ja"
+            ? "これはAnthropicの本番コードです。「wrap one's noggin around」と書いて給料をもらった人がいます。"
+            : "This is real production code at Anthropic. Someone got paid to write 'wrap one's noggin around.'"}
         </p>
       </Card>
 
       {/* Spinner Verbs */}
-      <Card title="Loading Spinner Verbs (160+ of them)" className="mb-6" accent="var(--orange)">
-        <p className="text-sm text-text-secondary mb-3">
-          Instead of boring &quot;Loading...&quot;, Claude Code cycles through 160+ absurd verbs
-          from <code className="text-accent">constants/spinnerVerbs.ts</code>. Here are the highlights:
+      <Card title={`${t("fun.spinner", lang)} (160+)`} className="mb-6" accent="var(--orange)">
+        <p className="text-sm text-text-secondary mb-4">
+          {lang === "zh"
+            ? "不用无聊的 'Loading...'，Claude Code 用 160+ 个荒诞的动词作为加载动画："
+            : lang === "ja"
+            ? "退屈な「Loading...」の代わりに、160以上の荒唐無稽な動詞を使用："
+            : "Instead of boring 'Loading...', Claude Code cycles through 160+ absurd verbs:"}
         </p>
         <div className="flex flex-wrap gap-1.5">
           {[
@@ -242,162 +175,174 @@ export default function FunFactsPage() {
             "Whatchamacalliting", "Zesting", "Discombobulating", "Skedaddling",
             "Bamboozling", "Moseying", "Dillydallying", "Gallivanting",
           ].map((v) => (
-            <span key={v} className="px-2 py-1 bg-bg-tertiary/50 rounded-lg text-xs text-text-secondary font-mono">
+            <motion.span
+              key={v}
+              whileHover={{ scale: 1.05 }}
+              className="px-2.5 py-1 rounded-lg text-xs font-mono cursor-default transition-colors hover:bg-accent hover:text-white"
+              style={{ background: "var(--bg-tertiary)" }}
+            >
               {v}...
-            </span>
+            </motion.span>
           ))}
         </div>
         <p className="text-xs text-text-muted mt-3 italic">
-          &quot;Clauding...&quot; is a verb now. Also, &quot;Prestidigitating&quot; means performing magic tricks.
-          Someone at Anthropic has a thesaurus and they&apos;re not afraid to use it.
+          <HiOutlineSparkles className="w-3 h-3 inline mr-1" />
+          {lang === "zh"
+            ? "'Prestidigitating' 意思是表演魔术。Anthropic 有人手握同义词词典，而且毫不手软。"
+            : "'Prestidigitating' means performing magic tricks. Someone at Anthropic has a thesaurus and they're not afraid to use it."}
         </p>
       </Card>
 
-      {/* Code Comments */}
-      <Card title="Best Comments Found in the Code" className="mb-6" accent="var(--green)">
-        <div className="space-y-3">
-          <CodeBlock code={`// Breaks the yoloClassifier → claudemd → filesystem → permissions cycle.
-// bootstrap/state.ts:122`} />
-          <p className="text-xs text-text-muted italic px-1">
-            Yes, the ML-based auto-approve classifier is internally called the &quot;yoloClassifier.&quot;
-            That name tells you everything about the confidence level.
-          </p>
-
-          <CodeBlock code={`// The slug fallback (e.g. "remote-control-graceful-unicorn") makes...
-// bridge/initReplBridge.ts:255`} />
-          <p className="text-xs text-text-muted italic px-1">
-            Session slugs are randomly generated phrases like &quot;remote-control-graceful-unicorn.&quot;
-            The word list includes &quot;magical,&quot; &quot;dragon,&quot; &quot;dragonfly,&quot; and &quot;unicorn.&quot;
-          </p>
-
-          <CodeBlock code={`// TODO: Clean up this hack
-// utils/processUserInput/processBashCommand.tsx:48`} />
-          <p className="text-xs text-text-muted italic px-1">
-            A tale as old as time. That TODO is shipping in production.
-          </p>
-
-          <CodeBlock code={`// SECURITY: file -C compiles a magic database and WRITES to disk.
-// Only allow introspection flags; reject -C / --compile / -m / --magic-file.
-// tools/PowerShellTool/readOnlyValidation.ts:809`} />
-          <p className="text-xs text-text-muted italic px-1">
-            When your security code has to worry about &quot;magic databases,&quot; you know
-            you&apos;re in the deep end.
-          </p>
-
-          <CodeBlock code={`// hasUnvalidatablePathArg → ask. This ends the KNOWN_SWITCH_PARAMS whack-a-mole
-// tools/PowerShellTool/pathValidation.ts:74`} />
-          <p className="text-xs text-text-muted italic px-1">
-            The engineers at Anthropic play whack-a-mole with PowerShell switch parameters.
-            They mentioned it twice. They are not having a good time.
-          </p>
+      {/* Codename Tengu */}
+      <Card title={t("fun.tengu", lang)} className="mb-6" accent="var(--purple)">
+        <p className="text-sm text-text-secondary mb-4">
+          {lang === "zh"
+            ? "Claude Code 内部代号是天狗（Tengu），日本神话中的生物。所有 feature flag 都以 tengu_ 开头："
+            : lang === "ja"
+            ? "Claude Codeの内部コードネームは天狗。全てのfeature flagは tengu_ で始まります："
+            : "Internally, Claude Code is codenamed Tengu (a Japanese mythological creature). Every feature flag starts with tengu_:"}
+        </p>
+        <div className="grid grid-cols-3 gap-2">
+          {[
+            { name: "tengu_scratch", desc: "Coordinator", emoji: "🎯" },
+            { name: "tengu_thinkback", desc: "Year in Review", emoji: "📅" },
+            { name: "tengu_kairos", desc: "Agent swarms", emoji: "🐝" },
+            { name: "tengu_amber_stoat", desc: "Built-in agents", emoji: "🦦" },
+            { name: "tengu_surreal_dali", desc: "Remote triggers", emoji: "🎨" },
+            { name: "tengu_passport_quail", desc: "Session memory", emoji: "🐦" },
+            { name: "tengu_glacier_2xr", desc: "Tool search", emoji: "🏔️" },
+            { name: "tengu_birch_trellis", desc: "Bash perms", emoji: "🌳" },
+            { name: "tengu_miraculo_the_bard", desc: "BG refresh", emoji: "🎭" },
+            { name: "tengu_cobalt_raccoon", desc: "Auto-compact", emoji: "🦝" },
+            { name: "tengu_quartz_lantern", desc: "File writes", emoji: "🏮" },
+            { name: "tengu_collage_kaleidoscope", desc: "Image paste", emoji: "🔮" },
+          ].map(({ name, desc, emoji }) => (
+            <div key={name} className="flex items-center gap-2 p-2 rounded-lg bg-bg-tertiary/30 border border-border/40">
+              <span className="text-sm">{emoji}</span>
+              <div className="min-w-0">
+                <code className="text-[10px] text-accent font-mono block truncate">{name}</code>
+                <span className="text-[10px] text-text-muted">{desc}</span>
+              </div>
+            </div>
+          ))}
         </div>
       </Card>
 
-      {/* Architecture Roasts */}
-      <Card title="Architecture Hot Takes" className="mb-6" accent="var(--red)">
-        <div className="space-y-4 text-sm text-text-secondary">
-          <div className="p-3 rounded bg-bg-tertiary/30">
-            <p className="font-medium text-text-primary mb-1">The BashTool is a small operating system</p>
-            <p className="text-xs">
-              At 300KB+ across 5 files, the BashTool&apos;s security system includes AST parsing, an ML classifier,
-              regex pattern matching, semantic analysis, AND a separate PowerShell validator.
-              It&apos;s more security than most banks have. The <code className="text-accent">bashSecurity.ts</code> alone
-              is 102KB — larger than many complete applications.
-            </p>
-          </div>
-          <div className="p-3 rounded bg-bg-tertiary/30">
-            <p className="font-medium text-text-primary mb-1">There are more feature flags than features</p>
-            <p className="text-xs">
-              The GrowthBook integration uses a caching function called
-              <code className="text-accent"> checkStatsigFeatureGate_CACHED_MAY_BE_STALE()</code>.
-              That function name is 48 characters long. It includes an apology in its own name.
-              Even the type for analytics metadata is called
-              <code className="text-accent"> AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS</code>.
-              When your type names are full sentences, you&apos;ve seen things.
-            </p>
-          </div>
-          <div className="p-3 rounded bg-bg-tertiary/30">
-            <p className="font-medium text-text-primary mb-1">The MCP service is a framework inside a framework</p>
-            <p className="text-xs">
-              At 470KB and 25 files, <code className="text-accent">services/mcp/</code> implements
-              4 transport protocols (stdio, SSE, HTTP, WebSocket), OAuth, progress tracking,
-              image downsampling, and elicitation handling. It&apos;s basically an entire SDK
-              bundled as a &quot;service.&quot;
-            </p>
-          </div>
-          <div className="p-3 rounded bg-bg-tertiary/30">
-            <p className="font-medium text-text-primary mb-1">512K lines for a CLI tool</p>
-            <p className="text-xs">
-              To put this in perspective: the Linux kernel 1.0 was ~176K lines. Claude Code is
-              roughly 3x the original Linux kernel. For a tool that runs in your terminal.
-              The Ink rendering engine alone (custom React fork for terminals) would be a
-              significant open-source project by itself.
-            </p>
-          </div>
+      {/* Hidden Commands */}
+      <Card title={t("fun.commands", lang)} className="mb-6" accent="var(--orange)">
+        <div className="grid grid-cols-2 gap-3">
+          {[
+            { cmd: "/btw", desc: { en: "Spawn a forked agent for your shower thought while the main conversation continues. The name is perfect.", zh: "在主对话继续的同时，为你的灵光一现生成一个分支代理。名字取得太好了。", ja: "メインの会話を中断せずに、思いつきの質問を投げる。名前が完璧。" }, icon: VscCommentDiscussion, color: "var(--accent)" },
+            { cmd: "/think-back", desc: { en: "Your Year in Review. Like Spotify Wrapped, but for your coding sessions.", zh: "你的年度回顾。就像 Spotify 年度总结，但是是给你的编程会话的。", ja: "年間レビュー。Spotify Wrappedのコーディング版。" }, icon: HiOutlineSparkles, color: "var(--purple)" },
+            { cmd: "/stickers", desc: { en: "Order physical Claude Code stickers. Yes, a CLI tool has merch.", zh: "购买 Claude Code 实体贴纸。是的，一个命令行工具有周边商品。", ja: "Claude Codeステッカーを注文。CLIツールにグッズがある。" }, icon: VscHeart, color: "var(--pink)" },
+            { cmd: "/good-claude", desc: { en: "When AI needs positive reinforcement too. Currently disabled but the name lives on.", zh: "当 AI 也需要正面反馈的时候。目前已禁用，但名字永存。", ja: "AIにもポジティブな強化が必要な時。現在は無効だが名前は残る。" }, icon: VscSmiley, color: "var(--green)" },
+            { cmd: "/teleport", desc: { en: "Change directory mid-session. Named after a video game ability, not boring 'cd'.", zh: "在会话中切换目录。用游戏技能命名，而不是无聊的 'cd'。", ja: "セッション中にディレクトリ変更。退屈な 'cd' ではなくゲームの技名。" }, icon: VscWand, color: "var(--orange)" },
+            { cmd: "/bughunter", desc: { en: "Unleash Claude as a dedicated bug hunter on your codebase.", zh: "让 Claude 化身专业猎虫人，在你的代码库中找 bug。", ja: "コードベースでバグハンターとしてClaudeを解き放つ。" }, icon: HiOutlineBugAnt, color: "var(--red)" },
+          ].map(({ cmd, desc, icon: Icon, color }) => (
+            <div key={cmd} className="p-4 rounded-xl bg-bg-tertiary/20 border border-border/50 hover:border-accent/30 transition-colors">
+              <div className="flex items-center gap-2 mb-2">
+                <Icon className="w-4 h-4" style={{ color }} />
+                <code className="text-accent text-sm font-semibold">{cmd}</code>
+              </div>
+              <p className="text-[11px] text-text-muted leading-relaxed">{desc[lang] || desc.en}</p>
+            </div>
+          ))}
         </div>
       </Card>
 
-      {/* More Surprises */}
-      <Card title="Things That Shouldn't Exist But Do" className="mb-6" accent="var(--purple)">
-        <div className="space-y-4 text-sm">
-          <div className="p-3 rounded bg-bg-tertiary/30">
-            <p className="font-medium text-text-primary mb-1">Magic Docs — files that update themselves</p>
-            <p className="text-xs text-text-secondary">
-              Mark any file with <code className="text-accent"># MAGIC DOC: [title]</code> and Claude Code will
-              periodically update it in the background using a dedicated agent. There&apos;s an entire
-              service at <code className="text-accent">services/MagicDocs/</code> for this. The pattern matching
-              is <code className="text-accent">/^#\s*MAGIC\s+DOC:\s*(.+)$/im</code>. It&apos;s literally magic.
-            </p>
-          </div>
-          <div className="p-3 rounded bg-bg-tertiary/30">
-            <p className="font-medium text-text-primary mb-1">HackerOne bug bounty references in comments</p>
-            <p className="text-xs text-text-secondary">
-              The BashTool&apos;s permission code contains references like{" "}
-              <code className="text-accent">// (HackerOne #3543050)</code> — real security bug reports
-              that led to code changes. The security engineering is battle-tested by actual attackers.
-            </p>
-          </div>
-          <div className="p-3 rounded bg-bg-tertiary/30">
-            <p className="font-medium text-text-primary mb-1">MAX_VIM_COUNT = 10,000</p>
-            <p className="text-xs text-text-secondary">
-              Yes, Claude Code has a full Vim mode implementation. And someone specifically decided
-              that typing &quot;10000dd&quot; is the maximum reasonable Vim count. Someone tested this.
-              Someone had to.
-            </p>
-          </div>
-          <div className="p-3 rounded bg-bg-tertiary/30">
-            <p className="font-medium text-text-primary mb-1">284 feature flag checks across 109 files</p>
-            <p className="text-xs text-text-secondary">
-              The GrowthBook integration has 284 calls to{" "}
-              <code className="text-accent">getFeatureValue_CACHED_MAY_BE_STALE()</code>. That function name
-              is refreshingly honest about its caching guarantees. 40+ named feature flags control
-              everything from compaction strategies to whether you get a buddy pet.
-            </p>
-          </div>
+      {/* Best Comments */}
+      <Card title={t("fun.comments", lang)} className="mb-6" accent="var(--green)">
+        <div className="space-y-4">
+          {[
+            {
+              code: `// Breaks the yoloClassifier → claudemd → filesystem → permissions cycle.\n// bootstrap/state.ts:122`,
+              note: { en: "The ML auto-approve classifier is called 'yoloClassifier'. That name tells you everything.", zh: "ML 自动审批分类器叫 'yoloClassifier'（YOLO分类器）。名字说明了一切。", ja: "ML自動承認分類器は「yoloClassifier」と呼ばれている。名前が全てを物語る。" },
+            },
+            {
+              code: `// TODO: Clean up this hack\n// utils/processUserInput/processBashCommand.tsx:48`,
+              note: { en: "A tale as old as time. That TODO is shipping in production right now.", zh: "一个亘古不变的故事。这个 TODO 此刻正在生产环境中运行。", ja: "永遠の物語。このTODOは今まさに本番で動いている。" },
+            },
+            {
+              code: `// hasUnvalidatablePathArg → ask.\n// This ends the KNOWN_SWITCH_PARAMS whack-a-mole\n// tools/PowerShellTool/pathValidation.ts:74`,
+              note: { en: "The engineers play whack-a-mole with PowerShell params. They mentioned it twice. They're not having fun.", zh: "工程师们在和 PowerShell 参数玩打地鼠游戏。他们提了两次。他们玩得不开心。", ja: "エンジニアはPowerShellパラメータとモグラ叩きをしている。2回言及。楽しくなさそう。" },
+            },
+          ].map(({ code, note }, i) => (
+            <div key={i}>
+              <CodeBlock code={code} />
+              <p className="text-[11px] text-text-muted italic px-1 mt-2">
+                {note[lang] || note.en}
+              </p>
+            </div>
+          ))}
+        </div>
+      </Card>
+
+      {/* Architecture Hot Takes */}
+      <Card title={t("fun.hotTakes", lang)} className="mb-6" accent="var(--red)">
+        <div className="grid grid-cols-2 gap-3">
+          {[
+            {
+              title: { en: "BashTool = small OS", zh: "BashTool = 小型操作系统", ja: "BashTool = 小さなOS" },
+              body: { en: "300KB+ of security code including AST parsing, ML classifier, regex, AND PowerShell validator. More security than most banks.", zh: "300KB+ 的安全代码，包括 AST 解析、ML 分类器、正则表达式，还有 PowerShell 验证器。安全性比大多数银行还高。", ja: "AST解析、ML分類器、正規表現、PowerShellバリデーターを含む300KB+のセキュリティコード。" },
+              icon: VscTerminalBash, color: "var(--orange)",
+            },
+            {
+              title: { en: "512K lines for a CLI", zh: "一个命令行工具 51万行代码", ja: "CLIツールに51万行" },
+              body: { en: "Linux 1.0 kernel was ~176K lines. Claude Code is 3x that. For a tool that runs in your terminal.", zh: "Linux 1.0 内核约 17.6 万行。Claude Code 是它的 3 倍。而这只是一个终端工具。", ja: "Linux 1.0カーネルは約17.6万行。Claude Codeはその3倍。ターミナルツールなのに。" },
+              icon: VscFlame, color: "var(--red)",
+            },
+            {
+              title: { en: "48-char function names", zh: "48个字符的函数名", ja: "48文字の関数名" },
+              body: { en: "checkStatsigFeatureGate_CACHED_MAY_BE_STALE() — includes an apology in its own name. The analytics type is a full sentence.", zh: "checkStatsigFeatureGate_CACHED_MAY_BE_STALE() — 函数名里自带道歉。分析类型名更是一个完整的句子。", ja: "関数名に謝罪が含まれている。分析型は完全な文章。" },
+              icon: VscCommentDiscussion, color: "var(--purple)",
+            },
+            {
+              title: { en: "MCP = framework in a framework", zh: "MCP = 框架中的框架", ja: "MCP = フレームワーク内フレームワーク" },
+              body: { en: "470KB, 25 files, 4 transport protocols, OAuth, progress tracking. It's an entire SDK bundled as a 'service'.", zh: "470KB，25 个文件，4 种传输协议，OAuth，进度追踪。这是一个打包成'服务'的完整 SDK。", ja: "470KB、25ファイル、4つのトランスポート、OAuth。「サービス」として同梱されたSDK。" },
+              icon: VscBeaker, color: "var(--green)",
+            },
+          ].map(({ title, body, icon: Icon, color }) => (
+            <div key={title.en} className="p-4 rounded-xl bg-bg-tertiary/20 border border-border/50">
+              <div className="flex items-center gap-2 mb-2">
+                <Icon className="w-4 h-4" style={{ color }} />
+                <span className="text-xs font-semibold text-text-primary">{title[lang] || title.en}</span>
+              </div>
+              <p className="text-[11px] text-text-muted leading-relaxed">{body[lang] || body.en}</p>
+            </div>
+          ))}
         </div>
       </Card>
 
       {/* Session Slugs */}
-      <Card title="Random Session Slug Generator">
+      <Card title={t("fun.slugs", lang)} className="mb-6">
         <p className="text-sm text-text-secondary mb-3">
-          Every Claude Code session gets a random slug like{" "}
-          <code className="text-accent">calm-purring-clover</code>. The word lists in{" "}
-          <code className="text-accent">utils/words.ts</code> include gems like:
+          {lang === "zh"
+            ? "每个 Claude Code 会话都会获得一个随机名称，比如"
+            : "Every session gets a random slug like"}{" "}
+          <code className="text-accent">calm-purring-clover</code>
         </p>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-1.5">
           {[
             "magical", "whimsical", "cosmic", "dancing", "glowing",
             "quantum", "fuzzy", "sparkling", "gentle", "mighty",
             "dragon", "unicorn", "phoenix", "octopus", "capybara",
             "nebula", "aurora", "meadow", "crystal", "starlight",
           ].map((w) => (
-            <span key={w} className="px-2 py-1 bg-bg-tertiary/50 rounded text-xs text-text-secondary font-mono">
+            <motion.span
+              key={w}
+              whileHover={{ scale: 1.08, rotate: Math.random() * 6 - 3 }}
+              className="px-2 py-1 bg-bg-tertiary/50 rounded-lg text-xs text-text-secondary font-mono cursor-default"
+            >
               {w}
-            </span>
+            </motion.span>
           ))}
         </div>
         <p className="text-xs text-text-muted mt-3 italic">
-          Somewhere right now, a production debug session is named &quot;fuzzy-dancing-capybara.&quot;
+          {lang === "zh"
+            ? "此刻某个生产调试会话的名字叫 'fuzzy-dancing-capybara'。"
+            : lang === "ja"
+            ? "今まさに「fuzzy-dancing-capybara」という名前の本番デバッグセッションがある。"
+            : "Somewhere right now, a production debug session is named 'fuzzy-dancing-capybara.'"}
         </p>
       </Card>
     </div>

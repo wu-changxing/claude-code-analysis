@@ -15,40 +15,44 @@ import {
   VscHeart,
   VscGithubInverted,
 } from "react-icons/vsc";
+import { useLang } from "@/lib/LangContext";
+import { t, LANG_LABELS, Lang } from "@/lib/i18n";
 
-const NAV_SECTIONS = [
+const NAV_SECTIONS = (lang: Lang) => [
   {
-    title: "Overview",
-    items: [{ href: "/", label: "Home", icon: VscHome }],
+    title: t("nav.section.overview", lang),
+    items: [{ href: "/", label: t("nav.home", lang), icon: VscHome }],
   },
   {
-    title: "Architecture",
+    title: t("nav.section.architecture", lang),
     items: [
-      { href: "/architecture", label: "System Design", icon: VscSymbolStructure },
-      { href: "/query-loop", label: "Query Loop", icon: VscServerProcess },
-      { href: "/tools", label: "Tools", icon: VscExtensions },
-      { href: "/permissions", label: "Permissions", icon: VscLock },
+      { href: "/architecture", label: t("nav.architecture", lang), icon: VscSymbolStructure },
+      { href: "/query-loop", label: t("nav.queryLoop", lang), icon: VscServerProcess },
+      { href: "/tools", label: t("nav.tools", lang), icon: VscExtensions },
+      { href: "/permissions", label: t("nav.permissions", lang), icon: VscLock },
     ],
   },
   {
-    title: "Deep Dives",
+    title: t("nav.section.deepDives", lang),
     items: [
-      { href: "/agents", label: "Agents", icon: VscGitMerge },
-      { href: "/services", label: "Services", icon: VscDatabase },
-      { href: "/context", label: "Context & Memory", icon: VscFolderOpened },
+      { href: "/agents", label: t("nav.agents", lang), icon: VscGitMerge },
+      { href: "/services", label: t("nav.services", lang), icon: VscDatabase },
+      { href: "/context", label: t("nav.context", lang), icon: VscFolderOpened },
     ],
   },
   {
-    title: "Reference",
+    title: t("nav.section.reference", lang),
     items: [
-      { href: "/file-map", label: "File Map", icon: VscTerminal },
-      { href: "/fun-facts", label: "Fun Facts", icon: VscHeart },
+      { href: "/file-map", label: t("nav.fileMap", lang), icon: VscTerminal },
+      { href: "/fun-facts", label: t("nav.funFacts", lang), icon: VscHeart },
     ],
   },
 ];
 
 export function Sidebar() {
   const pathname = usePathname();
+  const { lang, setLang } = useLang();
+  const sections = NAV_SECTIONS(lang);
 
   return (
     <aside className="fixed left-0 top-0 h-full w-64 bg-bg-secondary border-r border-border flex flex-col z-50">
@@ -69,7 +73,7 @@ export function Sidebar() {
       </div>
 
       <nav className="flex-1 px-3 py-4 overflow-y-auto">
-        {NAV_SECTIONS.map((section) => (
+        {sections.map((section) => (
           <div key={section.title} className="mb-4">
             <div className="px-3 mb-1.5 text-[10px] font-semibold text-text-muted uppercase tracking-widest">
               {section.title}
@@ -98,6 +102,22 @@ export function Sidebar() {
       </nav>
 
       <div className="p-4 border-t border-border space-y-3">
+        {/* Language Switcher */}
+        <div className="flex items-center gap-1 px-1">
+          {(Object.keys(LANG_LABELS) as Lang[]).map((l) => (
+            <button
+              key={l}
+              onClick={() => setLang(l)}
+              className={`px-2 py-1 rounded text-[11px] font-medium transition-all ${
+                lang === l
+                  ? "bg-text-primary text-bg-primary"
+                  : "text-text-muted hover:text-text-primary hover:bg-bg-tertiary/60"
+              }`}
+            >
+              {LANG_LABELS[l]}
+            </button>
+          ))}
+        </div>
         <a
           href="https://github.com/chatgptprojects/claude-code/tree/642c7f944bbe5f7e57c05d756ab7fa7c9c5035cc"
           target="_blank"
@@ -105,12 +125,10 @@ export function Sidebar() {
           className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-[12px] text-text-muted hover:text-text-primary hover:bg-bg-tertiary/60 transition-all"
         >
           <VscGithubInverted className="w-3.5 h-3.5" />
-          View Source
+          {t("footer.source", lang)}
         </a>
         <p className="px-3 text-[10px] text-text-muted leading-relaxed">
-          Extracted from{" "}
-          <code className="text-[10px]">cli.js.map</code>.
-          Educational use only.
+          {t("footer.edu", lang)}
         </p>
       </div>
     </aside>
