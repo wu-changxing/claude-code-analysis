@@ -267,8 +267,63 @@ export default function HomePage() {
         </div>
       </motion.div>
 
+      {/* Fun Facts Highlights */}
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.18 }}
+        className="mb-10"
+      >
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xs font-semibold text-text-muted uppercase tracking-wider">
+            {lang === "zh" ? "趣闻精选" : lang === "ja" ? "おもしろ事実" : "Fun Facts Highlights"}
+          </h2>
+          <Link href="/fun-facts" className="text-[11px] text-accent hover:underline">
+            {lang === "zh" ? "查看全部 20+ →" : "See all 20+ →"}
+          </Link>
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          {[
+            {
+              emoji: "🐧",
+              title: { en: "Fast Mode = Penguin Mode", zh: "快速模式 = 企鹅模式", ja: "高速モード = ペンギンモード" },
+              desc: { en: "Internal codename. Variables: penguinModeOrgEnabled, tengu_penguins_off", zh: "内部代号。变量名: penguinModeOrgEnabled", ja: "内部コードネーム。変数: penguinModeOrgEnabled" },
+            },
+            {
+              emoji: "😤",
+              title: { en: "Frustration Detector", zh: "挫败感检测器", ja: "フラストレーション検知" },
+              desc: { en: "Regex detects 'wtf', 'ffs', 'this sucks' → triggers feedback survey", zh: "正则表达式检测骂人关键词 → 触发反馈调查", ja: "正規表現で怒りを検知 → フィードバック調査をトリガー" },
+            },
+            {
+              emoji: "🐉",
+              title: { en: "18 Collectible Buddy Pets", zh: "18 种可收集的宠物伙伴", ja: "18種のバディペット" },
+              desc: { en: "Rarity tiers (1% legendary), hats, 5 stats including CHAOS and SNARK", zh: "稀有度（1%传奇）、帽子、5个属性包括混乱和嘲讽", ja: "レアリティ（1%レジェンド）、帽子、ステータス" },
+            },
+            {
+              emoji: "💤",
+              title: { en: "Auto-Dream: Claude Sleeps", zh: "Auto-Dream: Claude 会做梦", ja: "Auto-Dream: Claudeは夢を見る" },
+              desc: { en: "Background memory consolidation fires after 24h + 5 sessions. It runs /dream.", zh: "24h + 5个会话后触发后台记忆整合，运行 /dream 命令", ja: "24時間+5セッション後にメモリ統合。/dreamを実行" },
+            },
+          ].map(({ emoji, title, desc }) => (
+            <Link key={title.en} href="/fun-facts" className="block group">
+              <div className="p-4 rounded-xl bg-bg-secondary border border-border hover:border-accent/30 hover:shadow-sm transition-all">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-lg">{emoji}</span>
+                  <span className="text-xs font-semibold group-hover:text-accent transition-colors">
+                    {title[lang] || title.en}
+                  </span>
+                </div>
+                <p className="text-[10px] text-text-muted leading-relaxed pl-7">
+                  {desc[lang] || desc.en}
+                </p>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </motion.div>
+
       {/* Section Grid */}
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.25 }}>
         <h2 className="text-xs font-semibold text-text-muted uppercase tracking-wider mb-4">
           {t("home.explore", lang)}
         </h2>
