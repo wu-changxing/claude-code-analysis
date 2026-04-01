@@ -1,44 +1,57 @@
 "use client";
 
-import Link from "next/link";
-import { PageHeader, Card, FileCard, FlowStep } from "@/components/Section";
+import { PageHeader, Card, FileCard, FlowStep, InsightCallout, RelatedPages } from "@/components/Section";
 import { useTx } from "@/components/T";
 import { ghTree } from "@/lib/sourceLinks";
+import {
+  VscSymbolMethod,
+  VscSettings,
+  VscServer,
+  VscQuestion,
+  VscHeart,
+  VscDebugStop,
+} from "react-icons/vsc";
 
 const COMMAND_CATEGORIES = [
   {
     name: "Context Management",
     color: "var(--green)",
+    icon: VscSymbolMethod,
     commands: ["/compact", "/clear", "/context"],
     desc: "Control what's in the context window. /compact triggers summarization, /clear resets entirely.",
   },
   {
     name: "Configuration",
     color: "var(--accent)",
+    icon: VscSettings,
     commands: ["/model", "/temperature", "/config"],
     desc: "Change model, tune parameters, adjust session settings mid-conversation.",
   },
   {
     name: "MCP Servers",
     color: "var(--orange)",
+    icon: VscServer,
     commands: ["/mcp", "/mcp-restart", "/mcp-logs"],
     desc: "List connected MCP servers, view their tools, restart failed connections, tail logs.",
   },
   {
     name: "Help & Diagnostics",
     color: "var(--purple)",
+    icon: VscQuestion,
     commands: ["/help", "/doctor", "/status", "/debug"],
     desc: "Dynamic help from registered commands, environment diagnostics, connection status.",
   },
   {
     name: "Cosmetic & Fun",
     color: "var(--pink)",
+    icon: VscHeart,
     commands: ["/stickers", "/color", "/voice", "/dream"],
     desc: "Collectible companion stickers, terminal color themes, voice input, /dream for free-form generation.",
   },
   {
     name: "Session Control",
     color: "var(--red)",
+    icon: VscDebugStop,
     commands: ["/exit", "/quit", "/reset"],
     desc: "Terminate or reset the current session. /exit with a summary, /quit immediate.",
   },
@@ -101,22 +114,32 @@ export default function CommandsModulePage() {
         ]}
       />
 
-      {/* Command categories */}
+      <InsightCallout emoji="⌨️" title={tx("Commands are Human, Tools are Claude", "命令属于人类，工具属于 Claude")}>
+        {tx(
+          "When you type /compact, you're calling a command. When Claude runs BashTool, it's using a tool. Commands bypass the LLM entirely and call services directly — no permission check required.",
+          "当你输入 /compact，你在调用命令。当 Claude 运行 BashTool，它在使用工具。命令完全绕过 LLM，直接调用服务——无需权限检查。"
+        )}
+      </InsightCallout>
+
+      {/* Command categories — visual cards with icons */}
       <Card
         id="categories"
         title={tx("Command Categories", "命令类别")}
         className="mb-6"
         summary={tx("101 commands grouped by what they do.", "101 个命令按功能分组。")}
       >
-        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           {COMMAND_CATEGORIES.map((cat) => (
             <div
               key={cat.name}
-              className="rounded-xl p-3 border border-border/60"
+              className="rounded-xl p-4 border border-border/60"
               style={{ borderTop: `3px solid ${cat.color}`, background: `color-mix(in srgb, ${cat.color} 5%, var(--bg-tertiary))` }}
             >
-              <div className="text-[10px] font-bold uppercase tracking-wider mb-2" style={{ color: cat.color }}>{cat.name}</div>
-              <div className="flex flex-wrap gap-1 mb-2">
+              <div className="flex items-center gap-2 mb-2">
+                <cat.icon className="w-4 h-4 shrink-0" style={{ color: cat.color }} />
+                <div className="text-[11px] font-bold uppercase tracking-wider" style={{ color: cat.color }}>{cat.name}</div>
+              </div>
+              <div className="flex flex-wrap gap-1 mb-2.5">
                 {cat.commands.map((cmd) => (
                   <code key={cmd} className="text-[10px] px-1.5 py-0.5 rounded border border-border/60 bg-bg-primary text-text-secondary">{cmd}</code>
                 ))}
@@ -216,33 +239,18 @@ export default function CommandsModulePage() {
 
       {/* Key Files */}
       <Card title={tx("Key Files", "核心文件")} className="mb-6">
-        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+        <div className="grid grid-cols-2 gap-2 lg:grid-cols-3">
           {keyFiles.map((f) => (
             <FileCard key={f.name} name={f.name} size={f.size} purpose={f.purpose} color={f.color} />
           ))}
         </div>
       </Card>
 
-      {/* Related pages */}
-      <Card title={tx("Related Pages", "相关页面")} className="mb-6" accent="var(--accent)">
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {[
-            { href: "/modules/services", label: "Services Module", color: "var(--green)", desc: "/compact calls services/compact directly. /mcp interfaces with services/mcp for server management." },
-            { href: "/modules/query-engine", label: "Query/Engine Module", color: "var(--green)", desc: "QueryEngine intercepts slash commands before they reach the LLM — the routing logic lives there." },
-            { href: "/modules/tools", label: "Tools Module", color: "var(--orange)", desc: "Commands vs Tools: understand why /compact is a command but BashTool is a tool." },
-          ].map((rel) => (
-            <Link
-              key={rel.href}
-              href={rel.href}
-              className="rounded-xl border border-border/60 p-3 hover:border-border hover:bg-bg-tertiary/30 transition-all group"
-              style={{ borderLeft: `3px solid ${rel.color}` }}
-            >
-              <div className="text-xs font-semibold text-text-primary mb-1 group-hover:underline">{rel.label}</div>
-              <p className="text-[10px] text-text-muted leading-relaxed">{rel.desc}</p>
-            </Link>
-          ))}
-        </div>
-      </Card>
+      <RelatedPages pages={[
+        { href: "/modules/services", title: "Services Module", color: "var(--green)", desc: "/compact calls services/compact directly. /mcp interfaces with services/mcp for server management." },
+        { href: "/modules/query-engine", title: "Query/Engine Module", color: "var(--green)", desc: "QueryEngine intercepts slash commands before they reach the LLM — the routing logic lives there." },
+        { href: "/modules/tools", title: "Tools Module", color: "var(--orange)", desc: "Commands vs Tools: understand why /compact is a command but BashTool is a tool." },
+      ]} />
     </div>
   );
 }

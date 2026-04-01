@@ -1,7 +1,6 @@
 "use client";
 
-import Link from "next/link";
-import { PageHeader, Card, FileCard } from "@/components/Section";
+import { PageHeader, Card, FileCard, InsightCallout, RelatedPages } from "@/components/Section";
 import { useTx } from "@/components/T";
 import { ghBlob, ghTree } from "@/lib/sourceLinks";
 
@@ -14,14 +13,24 @@ const REPL_RESPONSIBILITIES = [
   { name: "Session state", color: "var(--text-muted)", desc: "Maintains UI state: scroll position, collapsed/expanded tool results, model name display" },
 ];
 
+// Component tree with depth for visual nesting
 const COMPONENT_TREE = [
-  { name: "main.tsx", color: "var(--green)", depth: 0, desc: "CLI entry — initializes Ink, renders REPL into terminal stdout" },
-  { name: "screens/REPL.tsx", color: "var(--purple)", depth: 1, desc: "5005-line main screen, owns all REPL state" },
-  { name: "components/Input", color: "var(--accent)", depth: 2, desc: "Multi-line text input with history" },
-  { name: "components/Messages", color: "var(--orange)", depth: 2, desc: "Scrollable message list" },
-  { name: "components/ToolResult", color: "var(--orange)", depth: 3, desc: "Per-tool result renderers" },
-  { name: "components/PermissionDialog", color: "var(--red)", depth: 3, desc: "Allow/deny terminal dialog" },
-  { name: "components/StatusBar", color: "var(--text-muted)", depth: 2, desc: "Token usage, model, MCP status" },
+  { name: "main.tsx", color: "var(--green)", depth: 0, desc: "CLI entry — initializes Ink, renders REPL into terminal stdout", badge: "entry" },
+  { name: "screens/REPL.tsx", color: "var(--purple)", depth: 1, desc: "5005-line main screen, owns all REPL state", badge: "5K lines" },
+  { name: "components/Input", color: "var(--accent)", depth: 2, desc: "Multi-line text input with history", badge: null },
+  { name: "components/Messages", color: "var(--orange)", depth: 2, desc: "Scrollable message list", badge: null },
+  { name: "components/ToolResult", color: "var(--orange)", depth: 3, desc: "Per-tool result renderers", badge: null },
+  { name: "components/PermissionDialog", color: "var(--red)", depth: 3, desc: "Allow/deny terminal dialog", badge: null },
+  { name: "components/StatusBar", color: "var(--text-muted)", depth: 2, desc: "Token usage, model, MCP status", badge: null },
+];
+
+// The rendering stack from JSX to terminal
+const RENDERING_STACK = [
+  { layer: "Your JSX", detail: "Box, Text, flexbox props", color: "var(--accent)", pos: 0 },
+  { layer: "Ink runtime", detail: "React reconciler, useState/useEffect", color: "var(--green)", pos: 1 },
+  { layer: "Yoga Layout", detail: "Flexbox engine (same as React Native)", color: "var(--orange)", pos: 2 },
+  { layer: "ANSI output", detail: "Escape codes → terminal rows/columns", color: "var(--purple)", pos: 3 },
+  { layer: "stdout", detail: "Your terminal window", color: "var(--text-muted)", pos: 4 },
 ];
 
 export default function ComponentsModulePage() {
@@ -52,6 +61,52 @@ export default function ComponentsModulePage() {
         ]}
       />
 
+      <InsightCallout emoji="⚡" title={tx("Ink = React Native for the Terminal", "Ink = 终端版 React Native")}>
+        {tx(
+          "The exact same Yoga flexbox engine used in React Native runs inside Claude Code's terminal. useState, useEffect, flex, gap, padding — all work identically. Output is ANSI escape codes instead of pixels.",
+          "React Native 中使用的完全相同的 Yoga flexbox 引擎在 Claude Code 的终端内运行。useState、useEffect、flex、gap、padding——全部工作方式相同。输出是 ANSI 转义码而不是像素。"
+        )}
+      </InsightCallout>
+
+      {/* Ink rendering stack diagram */}
+      <Card
+        id="rendering-stack"
+        title={tx("The Rendering Stack — JSX to Terminal", "渲染栈 — 从 JSX 到终端")}
+        className="mb-6"
+        accent="var(--orange)"
+        summary={tx("How your React component becomes terminal text — the 5-layer transformation.", "React 组件如何变成终端文本 — 5层转换过程。")}
+      >
+        <div className="space-y-0">
+          {RENDERING_STACK.map((layer, idx) => (
+            <div key={layer.layer} className="flex flex-col">
+              <div
+                className="rounded-xl px-4 py-3 flex items-center justify-between gap-3"
+                style={{
+                  background: `color-mix(in srgb, ${layer.color} 8%, var(--bg-secondary))`,
+                  border: `1.5px solid color-mix(in srgb, ${layer.color} 22%, var(--border))`,
+                }}
+              >
+                <div className="flex items-center gap-3">
+                  <div
+                    className="w-6 h-6 rounded-md flex items-center justify-center text-[9px] font-bold text-white shrink-0"
+                    style={{ background: layer.color }}
+                  >
+                    {idx + 1}
+                  </div>
+                  <span className="text-xs font-bold" style={{ color: layer.color }}>{layer.layer}</span>
+                </div>
+                <code className="text-[10px] text-text-muted text-right">{layer.detail}</code>
+              </div>
+              {idx < RENDERING_STACK.length - 1 && (
+                <div className="flex justify-center py-0.5">
+                  <div className="w-px h-3 bg-border" />
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </Card>
+
       {/* REPL breakdown */}
       <Card
         id="repl"
@@ -75,58 +130,6 @@ export default function ComponentsModulePage() {
         </div>
       </Card>
 
-      {/* Ink + Yoga */}
-      <Card
-        id="ink"
-        title={tx("Ink + Yoga — React Native for the Terminal", "Ink + Yoga — 终端版 React Native")}
-        className="mb-6"
-        accent="var(--orange)"
-        summary={tx(
-          "The exact same flexbox engine used in React Native — but rendering to terminal rows and columns, not pixels.",
-          "与 React Native 使用的完全相同的 flexbox 引擎 — 但渲染到终端行列而不是像素。"
-        )}
-        links={[{ label: "ink/", href: ghTree("ink") }]}
-      >
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          {[
-            {
-              title: tx("The Analogy", "类比"),
-              color: "var(--purple)",
-              items: [
-                { label: "Web (DOM)", value: "div, span, flexbox via CSS" },
-                { label: "React Native", value: "View, Text, Yoga layout engine" },
-                { label: "Ink (Claude Code)", value: "Box, Text, same Yoga engine → terminal chars" },
-              ],
-            },
-            {
-              title: tx("The Result", "效果"),
-              color: "var(--green)",
-              items: [
-                { label: "JSX patterns", value: "useState, useEffect, useRef — identical" },
-                { label: "Layout props", value: "flex, gap, padding, alignItems work" },
-                { label: "Output", value: "ANSI escape codes to stdout" },
-              ],
-            },
-          ].map((panel) => (
-            <div
-              key={panel.title}
-              className="rounded-xl p-3 border border-border/60"
-              style={{ borderTop: `3px solid ${panel.color}` }}
-            >
-              <div className="text-[10px] font-bold uppercase tracking-wider mb-2" style={{ color: panel.color }}>{panel.title}</div>
-              <div className="space-y-1.5">
-                {panel.items.map((item) => (
-                  <div key={item.label} className="flex gap-2">
-                    <span className="text-[10px] text-text-muted shrink-0 min-w-[90px]">{item.label}</span>
-                    <code className="text-[10px] text-accent">{item.value}</code>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      </Card>
-
       {/* Component tree */}
       <Card
         id="tree"
@@ -138,15 +141,90 @@ export default function ComponentsModulePage() {
           {COMPONENT_TREE.map((node) => (
             <div
               key={node.name}
-              className="flex items-center gap-2 rounded-lg px-3 py-2"
+              className="flex items-center gap-3 rounded-lg px-3 py-2.5"
               style={{
-                marginLeft: node.depth * 16,
+                marginLeft: node.depth * 20,
                 background: `color-mix(in srgb, ${node.color} 6%, var(--bg-tertiary))`,
                 borderLeft: `2px solid ${node.color}`,
               }}
             >
-              <code className="text-[10px] font-semibold shrink-0" style={{ color: node.color }}>{node.name}</code>
-              <p className="text-[10px] text-text-muted leading-relaxed">{node.desc}</p>
+              <div className="flex items-center gap-2 flex-1 min-w-0">
+                <code className="text-[10px] font-semibold shrink-0" style={{ color: node.color }}>{node.name}</code>
+                {node.badge && (
+                  <span
+                    className="text-[9px] font-bold px-1.5 py-0.5 rounded shrink-0"
+                    style={{ background: `color-mix(in srgb, ${node.color} 15%, transparent)`, color: node.color }}
+                  >
+                    {node.badge}
+                  </span>
+                )}
+              </div>
+              <p className="text-[10px] text-text-muted leading-relaxed hidden sm:block">{node.desc}</p>
+            </div>
+          ))}
+        </div>
+        {/* Show descriptions on mobile */}
+        <div className="mt-3 space-y-1 sm:hidden">
+          {COMPONENT_TREE.map((node) => (
+            <p key={node.name} className="text-[10px] text-text-muted leading-relaxed px-1">{node.desc}</p>
+          ))}
+        </div>
+      </Card>
+
+      {/* Ink + Yoga comparison */}
+      <Card
+        id="ink"
+        title={tx("Ink + Yoga — The Web/Native/Terminal Analogy", "Ink + Yoga — Web/Native/终端类比")}
+        className="mb-6"
+        accent="var(--orange)"
+        summary={tx(
+          "The exact same flexbox engine used in React Native — but rendering to terminal rows and columns, not pixels.",
+          "与 React Native 使用的完全相同的 flexbox 引擎 — 但渲染到终端行列而不是像素。"
+        )}
+        links={[{ label: "ink/", href: ghTree("ink") }]}
+      >
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+          {[
+            {
+              platform: "Web (DOM)",
+              color: "var(--accent)",
+              primitives: "div, span",
+              layout: "CSS flexbox",
+              output: "Pixels on screen",
+            },
+            {
+              platform: "React Native",
+              color: "var(--green)",
+              primitives: "View, Text",
+              layout: "Yoga engine",
+              output: "Native UI widgets",
+            },
+            {
+              platform: "Ink (Claude Code)",
+              color: "var(--orange)",
+              primitives: "Box, Text",
+              layout: "Same Yoga engine",
+              output: "ANSI → terminal",
+            },
+          ].map((p) => (
+            <div
+              key={p.platform}
+              className="rounded-xl p-3 border border-border/60"
+              style={{ borderTop: `3px solid ${p.color}`, background: `color-mix(in srgb, ${p.color} 5%, var(--bg-tertiary))` }}
+            >
+              <div className="text-[10px] font-bold uppercase tracking-wider mb-2.5" style={{ color: p.color }}>{p.platform}</div>
+              <div className="space-y-1.5">
+                {[
+                  { label: "Primitives", value: p.primitives },
+                  { label: "Layout", value: p.layout },
+                  { label: "Output", value: p.output },
+                ].map((row) => (
+                  <div key={row.label} className="flex gap-2">
+                    <span className="text-[9px] text-text-muted shrink-0 min-w-[60px] mt-0.5 uppercase tracking-wider">{row.label}</span>
+                    <code className="text-[10px] text-text-secondary">{row.value}</code>
+                  </div>
+                ))}
+              </div>
             </div>
           ))}
         </div>
@@ -154,33 +232,18 @@ export default function ComponentsModulePage() {
 
       {/* Key Files */}
       <Card title={tx("Key Files", "核心文件")} className="mb-6">
-        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+        <div className="grid grid-cols-2 gap-2 lg:grid-cols-3">
           {keyFiles.map((f) => (
             <FileCard key={f.name} name={f.name} size={f.size} purpose={f.purpose} color={f.color} />
           ))}
         </div>
       </Card>
 
-      {/* Related pages */}
-      <Card title={tx("Related Pages", "相关页面")} className="mb-6" accent="var(--accent)">
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {[
-            { href: "/modules/utils", label: "Utils Module", color: "var(--accent)", desc: "utils/hooks.ts (5022 lines) provides the React hooks that Components binds to — state, streaming, input." },
-            { href: "/modules/query-engine", label: "Query/Engine Module", color: "var(--green)", desc: "REPL subscribes to the QueryEngine async generator stream for live streaming token display." },
-            { href: "/modules/services", label: "Services Module", color: "var(--green)", desc: "Components use services/analytics to track user interactions like command usage." },
-          ].map((rel) => (
-            <Link
-              key={rel.href}
-              href={rel.href}
-              className="rounded-xl border border-border/60 p-3 hover:border-border hover:bg-bg-tertiary/30 transition-all group"
-              style={{ borderLeft: `3px solid ${rel.color}` }}
-            >
-              <div className="text-xs font-semibold text-text-primary mb-1 group-hover:underline">{rel.label}</div>
-              <p className="text-[10px] text-text-muted leading-relaxed">{rel.desc}</p>
-            </Link>
-          ))}
-        </div>
-      </Card>
+      <RelatedPages pages={[
+        { href: "/modules/utils", title: "Utils Module", color: "var(--accent)", desc: "utils/hooks.ts (5022 lines) provides the React hooks that Components binds to — state, streaming, input." },
+        { href: "/modules/query-engine", title: "Query/Engine Module", color: "var(--green)", desc: "REPL subscribes to the QueryEngine async generator stream for live streaming token display." },
+        { href: "/modules/services", title: "Services Module", color: "var(--purple)", desc: "Components use services/analytics to track user interactions like command usage." },
+      ]} />
     </div>
   );
 }

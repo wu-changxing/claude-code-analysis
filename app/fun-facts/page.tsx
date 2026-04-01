@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Card, CodeBlock, SourceLinks } from "@/components/Section";
+import { Card, CodeBlock, SourceLinks, RelatedPages } from "@/components/Section";
 import { useTx } from "@/components/T";
 import { useLang } from "@/lib/LangContext";
 import { t } from "@/lib/i18n";
@@ -1201,6 +1201,27 @@ if (model.startsWith('fennec-latest[1m]')) {
             : "Used hundreds of times across the codebase. Each is an explicit declaration: 'I checked — this is not user code.'"}
         </p>
       </Card>
+
+      <RelatedPages pages={[
+        {
+          href: "/modules/commands",
+          title: lang === "zh" ? "命令模块" : lang === "ja" ? "コマンドモジュール" : "Commands Module",
+          color: "var(--pink)",
+          desc: lang === "zh" ? "/stickers、/dream、/btw — 所有奇怪命令的技术实现。" : lang === "ja" ? "/stickers、/dream、/btw など奇妙なコマンドの技術的実装。" : "/stickers, /dream, /btw — the technical implementation behind all the weird commands.",
+        },
+        {
+          href: "/context",
+          title: lang === "zh" ? "上下文与记忆" : lang === "ja" ? "コンテキストとメモリ" : "Context & Memory",
+          color: "var(--purple)",
+          desc: lang === "zh" ? "Auto-Dream 记忆整合系统——Claude 真的会做梦来整理记忆。" : lang === "ja" ? "Auto-Dreamのメモリ統合システム、CLAUDE.mdの読み込み方法。" : "How the Auto-Dream memory consolidation system works — Claude literally dreams.",
+        },
+        {
+          href: "/file-map",
+          title: lang === "zh" ? "文件地图" : lang === "ja" ? "ファイルマップ" : "File Map",
+          color: "var(--orange)",
+          desc: lang === "zh" ? "找到所有这些奇怪功能在源码中的位置。" : lang === "ja" ? "これらの奇妙な機能がソースコード上のどこにあるかを探す。" : "Find where all these weird features live in the actual source code.",
+        },
+      ]} />
     </div>
   );
 }

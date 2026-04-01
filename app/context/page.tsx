@@ -1,6 +1,6 @@
 "use client";
 
-import { PageHeader, Card, CodeBlock, SectionNav } from "@/components/Section";
+import { PageHeader, Card, CodeBlock, SectionNav, InsightCallout, RelatedPages } from "@/components/Section";
 import { useTx } from "@/components/T";
 import { ghBlob, ghTree } from "@/lib/sourceLinks";
 import { motion } from "framer-motion";
@@ -506,7 +506,7 @@ saveCacheSafeParams(createCacheSafeParams(stopHookContext))
       </Card>
 
       {/* Message Types */}
-      <Card title={tx("Message Types", "消息类型", "メッセージ種別")}>
+      <Card title={tx("Message Types", "消息类型", "メッセージ種別")} className="mb-6">
         <CodeBlock
           code={`// API-compatible types:
 UserMessage      → user input, tool results, text content
@@ -524,6 +524,43 @@ ToolUseSummaryMessage     → generated summary of tool batch
 // Records every turn for crash recovery via /resume`}
         />
       </Card>
+
+      {/* Memory types as comparison cards */}
+      <Card title={tx("Memory Types", "记忆类型", "メモリ種別")} className="mb-6" accent="var(--purple)">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          {[
+            { type: "user", color: "var(--accent)", title: tx("User Memory", "用户记忆", "ユーザーメモリ"), path: "memory/user/", desc: tx("Role, preferences, working style. Persists across all projects.", "角色、偏好、工作风格。跨所有项目持久化。", "役割・好み・作業スタイル。全プロジェクトで共有。") },
+            { type: "feedback", color: "var(--orange)", title: tx("Feedback Memory", "反馈记忆", "フィードバックメモリ"), path: "memory/feedback/", desc: tx("Corrections and validations. 'Always test before writing code' patterns.", "纠正和验证。如『写代码前先测试』之类的规则。", "修正・検証。「コード書く前にテスト」パターン。") },
+            { type: "project", color: "var(--green)", title: tx("Project Memory", "项目记忆", "プロジェクトメモリ"), path: "memory/project/", desc: tx("Ongoing sprint context, architecture decisions, current task state.", "当前冲刺上下文、架构决策、当前任务状态。", "進行中のスプリント、アーキテクチャ決定、タスク状態。") },
+            { type: "reference", color: "var(--purple)", title: tx("Reference Memory", "参考记忆", "リファレンスメモリ"), path: "memory/reference/", desc: tx("External pointers: Slack channels, API endpoints, team contacts.", "外部指针：Slack 频道、API 端点、团队联系人。", "外部ポインタ：Slackチャンネル、APIエンドポイントなど。") },
+          ].map((m) => (
+            <div
+              key={m.type}
+              className="rounded-xl p-3 border border-border/60"
+              style={{ borderLeft: `3px solid ${m.color}`, background: `color-mix(in srgb, ${m.color} 5%, var(--bg-tertiary))` }}
+            >
+              <div className="flex items-start justify-between gap-2 mb-2">
+                <span className="text-[11px] font-bold" style={{ color: m.color }}>{m.title}</span>
+                <code className="text-[9px] text-text-muted bg-bg-secondary px-1.5 py-0.5 rounded border border-border/60 shrink-0">{m.path}</code>
+              </div>
+              <p className="text-[10px] text-text-muted leading-relaxed">{m.desc}</p>
+            </div>
+          ))}
+        </div>
+        <InsightCallout emoji="📋" title={tx("MEMORY.md Index", "MEMORY.md 索引", "MEMORY.md インデックス")} className="mt-4">
+          {tx(
+            "MEMORY.md is the index — max 200 lines, 25KB. Each entry is one line under 150 chars. Claude reads this at every session start, so keep it lean.",
+            "MEMORY.md 是索引——最多 200 行，25KB。每条记录不超过 150 字符。Claude 在每次会话开始时读取它，保持精简很重要。",
+            "MEMORY.md はインデックス — 最大200行・25KB。各エントリは150文字以内の1行。Claudeはセッション開始時に必ず読むので、コンパクトに保つことが重要。"
+          )}
+        </InsightCallout>
+      </Card>
+
+      <RelatedPages pages={[
+        { href: "/modules/query-engine", title: tx("Query/Engine Module", "查询/引擎模块", "クエリ/エンジンモジュール"), color: "var(--green)", desc: tx("QueryEngine assembles the system prompt on every turn — this page explains what it builds.", "QueryEngine 每轮构建系统提示——此页解释其构建内容。", "QueryEngineが各ターンでシステムプロンプトを組み立てる。") },
+        { href: "/modules/services", title: tx("Services Module", "服务模块", "サービスモジュール"), color: "var(--orange)", desc: tx("extractMemories.ts lives in services/ and runs as a stop-hook after each query.", "extractMemories.ts 位于 services/ 中，作为停止钩子在每次查询后运行。", "extractMemories.tsはservices/にあり、各クエリ後にstop-hookとして動く。") },
+        { href: "/fun-facts", title: tx("Fun Facts", "趣味事实", "豆知識"), color: "var(--pink)", desc: tx("Auto-Dream and the memory consolidation system — Claude literally dreams during downtime.", "Auto-Dream 和记忆整合系统——Claude 真的在空闲时做梦。", "Auto-Dreamとメモリ統合システム——Claudeは本当にダウンタイム中に夢を見る。") },
+      ]} />
     </div>
   );
 }

@@ -6,6 +6,81 @@ import { HiOutlineChevronRight } from "react-icons/hi2";
 import { VscLinkExternal } from "react-icons/vsc";
 import Link from "next/link";
 
+export function InsightCallout({
+  emoji,
+  title,
+  children,
+  className = "",
+}: {
+  emoji: string;
+  title: string;
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <div className={`mb-4 rounded-xl border border-border bg-bg-secondary p-4 border-l-4 ${className}`}
+      style={{ borderLeftColor: "var(--orange)" }}
+    >
+      <div className="flex items-start gap-2">
+        <span className="text-lg shrink-0">{emoji}</span>
+        <div>
+          <p className="text-xs font-semibold text-text-primary mb-1">{title}</p>
+          <div className="text-xs text-text-secondary leading-relaxed">{children}</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function RelatedPages({
+  pages,
+}: {
+  pages: { href: string; title: string; desc: string; color?: string }[];
+}) {
+  return (
+    <div className="mb-6">
+      <div className="text-[10px] font-semibold uppercase tracking-wider text-text-muted mb-3">Related Pages</div>
+      <div className="flex gap-3 overflow-x-auto pb-1 sm:grid sm:grid-cols-2 sm:overflow-visible lg:grid-cols-3">
+        {pages.map((page) => (
+          <Link
+            key={page.href}
+            href={page.href}
+            className="shrink-0 w-56 sm:w-auto rounded-xl border border-border/60 p-3 hover:border-border hover:bg-bg-tertiary/30 transition-all group"
+            style={{ borderLeft: `3px solid ${page.color ?? "var(--accent)"}` }}
+          >
+            <div className="text-xs font-semibold text-text-primary mb-1 group-hover:underline">{page.title}</div>
+            <p className="text-[10px] text-text-muted leading-relaxed">{page.desc}</p>
+          </Link>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export function StatBadge({
+  value,
+  label,
+  color,
+}: {
+  value: string;
+  label?: string;
+  color?: string;
+}) {
+  return (
+    <span
+      className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-mono font-semibold border"
+      style={{
+        color: color ?? "var(--accent)",
+        background: `color-mix(in srgb, ${color ?? "var(--accent)"} 10%, var(--bg-tertiary))`,
+        borderColor: `color-mix(in srgb, ${color ?? "var(--accent)"} 25%, var(--border))`,
+      }}
+    >
+      {value}
+      {label && <span className="text-text-muted font-normal">{label}</span>}
+    </span>
+  );
+}
+
 type SourceLink = {
   label: string;
   href: string;

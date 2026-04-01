@@ -36,6 +36,7 @@ const NAV_SECTIONS = (lang: Lang) => [
       { href: "/query-loop", label: t("nav.queryLoop", lang), icon: VscServerProcess },
       { href: "/tools", label: t("nav.tools", lang), icon: VscExtensions },
       { href: "/permissions", label: t("nav.permissions", lang), icon: VscLock },
+      { href: "/modules", label: "Module Map", icon: VscCode },
     ],
   },
   {
@@ -44,12 +45,6 @@ const NAV_SECTIONS = (lang: Lang) => [
       { href: "/agents", label: t("nav.agents", lang), icon: VscGitMerge },
       { href: "/services", label: t("nav.services", lang), icon: VscDatabase },
       { href: "/context", label: t("nav.context", lang), icon: VscFolderOpened },
-    ],
-  },
-  {
-    title: "Modules",
-    items: [
-      { href: "/modules", label: "Module Map", icon: VscSymbolStructure },
     ],
   },
   {

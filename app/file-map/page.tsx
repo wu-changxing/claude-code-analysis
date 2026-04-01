@@ -1,6 +1,6 @@
 "use client";
 
-import { PageHeader, Card, Table } from "@/components/Section";
+import { PageHeader, Card, Table, RelatedPages } from "@/components/Section";
 import { useTx } from "@/components/T";
 import { CLAUDE_CODE_REPO, ghTree } from "@/lib/sourceLinks";
 import { motion } from "framer-motion";
@@ -240,6 +240,35 @@ export default function FileMapPage() {
           )}
         </p>
       </Card>
+
+      {/* Start Here Guide */}
+      <Card title={tx("Start Here — Looking for X?", "从这里开始 — 寻找 X？", "ここから — Xを探すなら？")} className="mb-6" accent="var(--accent)">
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+          {[
+            { goal: tx("Understand how Claude answers", "理解 Claude 如何回答", "Claudeがどう答えるかを理解する"), file: "src/query.ts + src/QueryEngine.ts", color: "var(--green)" },
+            { goal: tx("See how tools work", "了解工具如何工作", "ツールの仕組みを見る"), file: "tools/BashTool/BashTool.tsx", color: "var(--orange)" },
+            { goal: tx("Trace permission checks", "追踪权限检查", "権限チェックを追跡する"), file: "utils/permissions/ + bashPermissions.ts", color: "var(--red)" },
+            { goal: tx("Find how memory works", "了解记忆如何工作", "メモリの仕組みを見つける"), file: "memdir/ + services/extractMemories/", color: "var(--purple)" },
+            { goal: tx("Explore slash commands", "探索斜杠命令", "スラッシュコマンドを探索する"), file: "commands/<name>/", color: "var(--accent)" },
+            { goal: tx("See MCP integration", "查看 MCP 集成", "MCPの統合を見る"), file: "services/mcp/client.ts + config.ts", color: "var(--pink)" },
+          ].map((item) => (
+            <div
+              key={item.goal}
+              className="rounded-xl p-3 border border-border/60"
+              style={{ borderLeft: `3px solid ${item.color}` }}
+            >
+              <div className="text-[11px] font-semibold text-text-primary mb-1">{item.goal}</div>
+              <code className="text-[10px] text-text-muted">{item.file}</code>
+            </div>
+          ))}
+        </div>
+      </Card>
+
+      <RelatedPages pages={[
+        { href: "/modules", title: tx("Module Map", "模块地图", "モジュールマップ"), color: "var(--accent)", desc: tx("Visual module dependency graph — see how all directories relate to each other.", "可视化模块依赖图——查看所有目录如何相互关联。", "視覚的なモジュール依存グラフ。") },
+        { href: "/query-loop", title: tx("Query Loop", "查询循环", "クエリループ"), color: "var(--green)", desc: tx("Deep dive into the 7-phase agentic loop that drives Claude's responses.", "深入探讨驱动 Claude 响应的 7 阶段代理循环。", "7フェーズのエージェントループの詳細解説。") },
+        { href: "/fun-facts", title: tx("Fun Facts", "趣味事实", "豆知識"), color: "var(--pink)", desc: tx("Easter eggs and hidden gems found in the source files listed here.", "在这里列出的源文件中发现的彩蛋和隐藏亮点。", "ここに記載されたソースファイルに隠れたイースターエッグ。") },
+      ]} />
     </div>
   );
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { PageHeader, Card, FileCard } from "@/components/Section";
+import { PageHeader, Card, FileCard, InsightCallout, RelatedPages, StatBadge } from "@/components/Section";
 import { useTx } from "@/components/T";
 import { ghBlob, ghTree } from "@/lib/sourceLinks";
 
@@ -29,6 +29,17 @@ const GIANT_FILES = [
   { name: "utils/hooks.ts", lines: 5022, color: "var(--purple)", purpose: "React hooks for terminal state, streaming, and input handling" },
   { name: "utils/bash/bashParser.ts", lines: 4436, color: "var(--red)", purpose: "Tree-sitter Bash AST parser for security analysis" },
   { name: "utils/attachments.ts", lines: 3997, color: "var(--orange)", purpose: "Attachment prefetch, image resize, PDF/notebook handling" },
+];
+
+// Which modules depend on utils — everyone
+const DEPENDENTS = [
+  { name: "Query/Engine", color: "var(--green)", desc: "messages.ts is the foundation for every API call" },
+  { name: "Tools", color: "var(--orange)", desc: "BashTool calls bashParser.ts for every command" },
+  { name: "Permissions", color: "var(--red)", desc: "Permission rules live in utils/permissions/" },
+  { name: "Components", color: "var(--purple)", desc: "hooks.ts provides all UI state binding" },
+  { name: "Services", color: "var(--accent)", desc: "sessionStorage.ts powers persistence layer" },
+  { name: "Commands", color: "var(--pink)", desc: "Shared formatters and session utilities" },
+  { name: "Bridge", color: "var(--green)", desc: "forkedAgent.ts and cache params live here" },
 ];
 
 export default function UtilsModulePage() {
@@ -60,6 +71,76 @@ export default function UtilsModulePage() {
           { label: "utils/bash/", href: ghTree("utils/bash") },
         ]}
       />
+
+      <InsightCallout emoji="🏗️" title={tx("The Dependency Paradox", "依赖悖论")}>
+        {tx(
+          "Utils has zero dependencies on other modules — but every other module depends on it. It's the foundation that never looks up.",
+          "Utils 对其他模块零依赖——但其他所有模块都依赖它。这是一个从不向上看的基石。"
+        )}
+      </InsightCallout>
+
+      {/* Dependency diagram — who depends on utils */}
+      <Card
+        id="dependents"
+        title={tx("Who Depends on Utils? Everyone.", "谁依赖 Utils？所有人。")}
+        className="mb-6"
+        accent="var(--accent)"
+        summary={tx(
+          "Every other module in Claude Code imports from utils/. This diagram shows the dependency flow.",
+          "Claude Code 中每个其他模块都从 utils/ 导入。此图展示依赖流。"
+        )}
+      >
+        {/* Visual dependency diagram */}
+        <div className="flex flex-col items-center gap-3">
+          {/* Dependents row */}
+          <div className="flex flex-wrap justify-center gap-2 w-full">
+            {DEPENDENTS.map((dep) => (
+              <div
+                key={dep.name}
+                className="rounded-lg px-3 py-2 text-center border border-border/60 min-w-[90px]"
+                style={{ background: `color-mix(in srgb, ${dep.color} 8%, var(--bg-tertiary))`, borderColor: `color-mix(in srgb, ${dep.color} 25%, var(--border))` }}
+              >
+                <div className="text-[10px] font-semibold" style={{ color: dep.color }}>{dep.name}</div>
+              </div>
+            ))}
+          </div>
+          {/* Arrows pointing down */}
+          <div className="flex items-center gap-1 text-text-muted text-[10px]">
+            <div className="flex gap-4">
+              {DEPENDENTS.map((dep) => (
+                <div key={dep.name} className="w-[2px] h-5 rounded" style={{ background: `color-mix(in srgb, ${dep.color} 40%, var(--border))` }} />
+              ))}
+            </div>
+          </div>
+          <div className="text-[9px] text-text-muted uppercase tracking-widest">imports from</div>
+          {/* Utils box */}
+          <div
+            className="rounded-xl border-2 px-8 py-4 text-center w-full max-w-xs"
+            style={{ borderColor: "var(--accent)", background: "color-mix(in srgb, var(--accent) 10%, var(--bg-secondary))" }}
+          >
+            <div className="text-sm font-bold text-accent mb-1">utils/</div>
+            <div className="flex flex-wrap gap-1.5 justify-center">
+              <StatBadge value="220" label=" files" color="var(--accent)" />
+              <StatBadge value="~60K" label=" lines" color="var(--green)" />
+              <StatBadge value="0" label=" inbound deps" color="var(--text-muted)" />
+            </div>
+          </div>
+          {/* No outbound */}
+          <div className="text-[10px] text-text-muted italic mt-1">
+            {tx("↑ Zero dependencies on other modules", "↑ 对其他模块零依赖")}
+          </div>
+        </div>
+        {/* Detail rows */}
+        <div className="mt-4 space-y-1">
+          {DEPENDENTS.map((dep) => (
+            <div key={dep.name} className="flex items-center gap-3 rounded-lg px-3 py-1.5 bg-bg-tertiary/20">
+              <div className="w-2 h-2 rounded-full shrink-0" style={{ background: dep.color }} />
+              <span className="text-[10px] font-medium text-text-primary w-24 shrink-0">{dep.name}</span>
+              <span className="text-[10px] text-text-muted">{dep.desc}</span>
+            </div>
+          ))}
+        </div>
+      </Card>
 
       {/* Why giant files */}
       <Card
@@ -150,33 +231,18 @@ export default function UtilsModulePage() {
 
       {/* Key Files */}
       <Card title={tx("Key Files", "核心文件")} className="mb-6">
-        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+        <div className="grid grid-cols-2 gap-2 lg:grid-cols-3">
           {keyFiles.map((f) => (
             <FileCard key={f.name} name={f.name} size={f.size} purpose={f.purpose} color={f.color} />
           ))}
         </div>
       </Card>
 
-      {/* Related pages */}
-      <Card title={tx("Related Pages", "相关页面")} className="mb-6" accent="var(--accent)">
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {[
-            { href: "/modules/tools", label: "Tools Module", color: "var(--orange)", desc: "BashTool calls bashParser.ts (which lives in Utils) for every command it runs." },
-            { href: "/modules/permissions", label: "Permissions Module", color: "var(--red)", desc: "The entire permissions system (yoloClassifier, rule matching, path checks) lives in utils/permissions/." },
-            { href: "/modules/query-engine", label: "Query/Engine Module", color: "var(--green)", desc: "utils/messages.ts is the foundation for every message the query loop sends and receives." },
-          ].map((rel) => (
-            <Link
-              key={rel.href}
-              href={rel.href}
-              className="rounded-xl border border-border/60 p-3 hover:border-border hover:bg-bg-tertiary/30 transition-all group"
-              style={{ borderLeft: `3px solid ${rel.color}` }}
-            >
-              <div className="text-xs font-semibold text-text-primary mb-1 group-hover:underline">{rel.label}</div>
-              <p className="text-[10px] text-text-muted leading-relaxed">{rel.desc}</p>
-            </Link>
-          ))}
-        </div>
-      </Card>
+      <RelatedPages pages={[
+        { href: "/modules/tools", title: "Tools Module", color: "var(--orange)", desc: "BashTool calls bashParser.ts (which lives in Utils) for every command it runs." },
+        { href: "/modules/permissions", title: "Permissions Module", color: "var(--red)", desc: "The entire permissions system (yoloClassifier, rule matching, path checks) lives in utils/permissions/." },
+        { href: "/modules/query-engine", title: "Query/Engine Module", color: "var(--green)", desc: "utils/messages.ts is the foundation for every message the query loop sends and receives." },
+      ]} />
     </div>
   );
 }
