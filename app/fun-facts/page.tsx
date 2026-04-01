@@ -589,6 +589,59 @@ Stats: DEBUGGING, PATIENCE, CHAOS, WISDOM, SNARK
         </p>
       </Card>
 
+      {/* Teaching Mode */}
+      <Card title={lang === "zh" ? "学习模式：Claude 让你自己写代码" : lang === "ja" ? "学習モード：Claudeがコードを書かせる" : "Learning Mode: Claude Makes YOU Write Code"} className="mb-6" accent="var(--green)">
+        <p className="text-sm text-text-secondary mb-3">
+          {lang === "zh"
+            ? "Claude Code 有一个内置学习模式，它会故意停下来让你写代码——在你的文件里插入 TODO(human) 标记："
+            : "Claude Code has a built-in Learning mode that deliberately stops and makes you write code — inserting TODO(human) markers in your files:"}
+        </p>
+        <CodeBlock filename="outputStyles.ts" code={`// Learning Style Active
+// Ask the human to contribute 2-10 line code pieces
+// when generating 20+ lines involving:
+// - Design decisions (error handling, data structures)
+// - Business logic with multiple valid approaches
+// - Key algorithms or interface definitions
+
+// After user writes code:
+"Share one insight connecting their code to broader
+ patterns or system effects. Avoid praise or repetition."`} />
+        <p className="text-[11px] text-text-muted mt-3 italic">
+          {lang === "zh"
+            ? "一个 AI 编程助手……故意不帮你写代码。这是最高级的教学设计。还有 Explanatory 模式，会在每段代码前后加上 '★ Insight' 教育板块。"
+            : "An AI coding assistant that... deliberately refuses to write code for you. Peak pedagogical design. There's also an Explanatory mode that adds '★ Insight' blocks before and after every code change."}
+        </p>
+      </Card>
+
+      {/* Good Claude / Bad Claude */}
+      <Card title={lang === "zh" ? "/good-claude 和 /issue：胡萝卜加大棒" : "/good-claude & /issue: Carrot and Stick"} className="mb-6" accent="var(--pink)">
+        <div className="grid grid-cols-2 gap-3">
+          <div className="p-4 rounded-xl border border-green/30 bg-green/5">
+            <div className="text-lg mb-1">😊</div>
+            <code className="text-sm font-semibold text-green">/good-claude</code>
+            <p className="text-[11px] text-text-muted mt-2">
+              {lang === "zh"
+                ? "当员工给好评时自动运行。捕捉什么做得好。仅内部使用。"
+                : "Auto-runs when employees give good feedback. Captures what went well. Ant-only."}
+            </p>
+          </div>
+          <div className="p-4 rounded-xl border border-red/30 bg-red/5">
+            <div className="text-lg mb-1">😤</div>
+            <code className="text-sm font-semibold text-red">/issue</code>
+            <p className="text-[11px] text-text-muted mt-2">
+              {lang === "zh"
+                ? "当员工给差评或说脏话时自动运行。捕捉什么出了问题。"
+                : "Auto-runs on bad feedback or swearing detected. Captures what went wrong."}
+            </p>
+          </div>
+        </div>
+        <p className="text-[11px] text-text-muted mt-3 italic">
+          {lang === "zh"
+            ? "Anthropic 建了一个完整的正/负反馈循环系统。Claude 既能接受表扬，也能接受批评。这是科学。"
+            : "Anthropic built a full positive/negative feedback loop. Claude accepts both praise and criticism. This is science."}
+        </p>
+      </Card>
+
       {/* Frustration Detection - THE FIND */}
       <Card title={lang === "zh" ? "挫败感检测器：Claude 知道你在骂它" : lang === "ja" ? "フラストレーション検知：Claudeはあなたが怒っているのを知っている" : "Frustration Detector: Claude Knows You're Swearing"} className="mb-6" accent="var(--red)">
         <p className="text-sm text-text-secondary mb-4">
