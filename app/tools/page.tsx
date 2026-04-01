@@ -59,7 +59,7 @@ export default function ToolsPage() {
           "Claude Code 有 43 个内置工具，每个都实现统一的 Tool<Input, Output, Progress> 接口。通过 buildTool() 工厂构建，运行时用 Zod schema 验证。",
           "Claude Code には43個の組み込みツールがあり、すべてが統一された Tool<Input, Output, Progress> インターフェースを実装しています。buildTool() で構築され、実行時に Zod で検証されます。"
         )}
-        badge="43 tools"
+        badge={tx("43 tools", "43 个工具", "43ツール")}
       />
 
       {/* Tool Interface */}
