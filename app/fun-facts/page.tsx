@@ -1,10 +1,11 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Card, CodeBlock } from "@/components/Section";
+import { Card, CodeBlock, SourceLinks } from "@/components/Section";
 import { useTx } from "@/components/T";
 import { useLang } from "@/lib/LangContext";
 import { t } from "@/lib/i18n";
+import { CLAUDE_CODE_REPO, ghBlob, ghTree } from "@/lib/sourceLinks";
 import {
   VscHeart,
   VscTerminalBash,
@@ -47,6 +48,15 @@ export default function FunFactsPage() {
         <p className="text-text-secondary text-sm leading-relaxed max-w-2xl">
           {t("fun.desc", lang)}
         </p>
+        <SourceLinks
+          links={[
+            { label: lang === "zh" ? "仓库" : lang === "ja" ? "リポジトリ" : "Repo", href: CLAUDE_CODE_REPO },
+            { label: "buddy/companion.ts", href: ghBlob("buddy/companion.ts") },
+            { label: "constants/spinnerVerbs.ts", href: ghBlob("constants/spinnerVerbs.ts") },
+            { label: "commands/", href: ghTree("commands") },
+          ]}
+          className="mt-4"
+        />
       </motion.div>
 
       {/* Scary Numbers - Visual Grid */}
@@ -82,7 +92,15 @@ export default function FunFactsPage() {
 
       {/* Buddy System - Enhanced */}
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>
-        <Card title={`${t("fun.buddy", lang)} — ${t("fun.buddyDesc", lang)}`} className="mb-6" accent="var(--pink)">
+        <Card
+          title={`${t("fun.buddy", lang)} — ${t("fun.buddyDesc", lang)}`}
+          className="mb-6"
+          accent="var(--pink)"
+          links={[
+            { label: "buddy/companion.ts", href: ghBlob("buddy/companion.ts") },
+            { label: "buddy/types.ts", href: ghBlob("buddy/types.ts") },
+          ]}
+        >
           <div className="mb-5 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
             {Object.entries(BUDDY_ART).map(([name, art]) => (
               <div key={name} className="rounded-xl p-4 text-center bg-bg-tertiary border border-border/50">
@@ -146,7 +164,12 @@ export default function FunFactsPage() {
       </motion.div>
 
       {/* Wizard Comment */}
-      <Card title={`${t("fun.wizard", lang)} (query.ts:151)`} className="mb-6" accent="var(--accent)">
+      <Card
+        title={`${t("fun.wizard", lang)} (query.ts:151)`}
+        className="mb-6"
+        accent="var(--accent)"
+        links={[{ label: "query.ts", href: ghBlob("query.ts") }]}
+      >
         <CodeBlock filename="query.ts" code={`/**
  * The rules of thinking are lengthy and fortuitous. They require
  * plenty of thinking of most long duration and deep meditation
@@ -167,7 +190,12 @@ export default function FunFactsPage() {
       </Card>
 
       {/* Spinner Verbs */}
-      <Card title={`${t("fun.spinner", lang)} (160+)`} className="mb-6" accent="var(--orange)">
+      <Card
+        title={`${t("fun.spinner", lang)} (160+)`}
+        className="mb-6"
+        accent="var(--orange)"
+        links={[{ label: "spinnerVerbs.ts", href: ghBlob("constants/spinnerVerbs.ts") }]}
+      >
         <p className="text-sm text-text-secondary mb-4">
           {lang === "zh"
             ? "不用无聊的 'Loading...'，Claude Code 用 160+ 个荒诞的动词作为加载动画："
@@ -204,7 +232,15 @@ export default function FunFactsPage() {
       </Card>
 
       {/* Codename Tengu */}
-      <Card title={t("fun.tengu", lang)} className="mb-6" accent="var(--purple)">
+      <Card
+        title={t("fun.tengu", lang)}
+        className="mb-6"
+        accent="var(--purple)"
+        links={[
+          { label: "feature flags", href: ghTree("utils") },
+          { label: "commands/", href: ghTree("commands") },
+        ]}
+      >
         <p className="text-sm text-text-secondary mb-4">
           {lang === "zh"
             ? "Claude Code 内部代号是天狗（Tengu），日本神话中的生物。所有 feature flag 都以 tengu_ 开头："
@@ -239,7 +275,12 @@ export default function FunFactsPage() {
       </Card>
 
       {/* Hidden Commands */}
-      <Card title={t("fun.commands", lang)} className="mb-6" accent="var(--orange)">
+      <Card
+        title={t("fun.commands", lang)}
+        className="mb-6"
+        accent="var(--orange)"
+        links={[{ label: "commands/", href: ghTree("commands") }]}
+      >
         <div className="grid grid-cols-1 gap-3 xl:grid-cols-2">
           {[
             { cmd: "/btw", desc: { en: "Spawn a forked agent for your shower thought while the main conversation continues. The name is perfect.", zh: "在主对话继续的同时，为你的灵光一现生成一个分支代理。名字取得太好了。", ja: "メインの会話を中断せずに、思いつきの質問を投げる。名前が完璧。" }, icon: VscCommentDiscussion, color: "var(--accent)" },

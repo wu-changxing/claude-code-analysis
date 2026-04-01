@@ -2,6 +2,7 @@
 
 import { PageHeader, Card, CodeBlock, Table } from "@/components/Section";
 import { useTx } from "@/components/T";
+import { ghBlob, ghTree } from "@/lib/sourceLinks";
 import {
   VscGitMerge,
   VscServerProcess,
@@ -76,10 +77,23 @@ export default function AgentsPage() {
           "Claude Code は、独立したトークン予算、カスタムプロンプト、任意の隔離（worktree または remote）を持つサブエージェントを起動できます。エージェント機構は並列作業とマルチエージェント協調を支えます。"
         )}
         badge="AgentTool"
+        links={[
+          { label: "AgentTool.tsx", href: ghBlob("tools/AgentTool/AgentTool.tsx") },
+          { label: "runAgent.ts", href: ghBlob("tools/AgentTool/runAgent.ts") },
+          { label: "coordinator/", href: ghTree("coordinator") },
+          { label: "remote/", href: ghTree("remote") },
+        ]}
       />
 
       {/* Agent Input */}
-      <Card title={tx("Agent Input Schema", "代理输入模式", "エージェント入力スキーマ")} className="mb-6">
+      <Card
+        title={tx("Agent Input Schema", "代理输入模式", "エージェント入力スキーマ")}
+        className="mb-6"
+        links={[
+          { label: "AgentTool.tsx", href: ghBlob("tools/AgentTool/AgentTool.tsx") },
+          { label: "loadAgentsDir.ts", href: ghBlob("tools/AgentTool/loadAgentsDir.ts") },
+        ]}
+      >
         <CodeBlock
           code={`// AgentTool.tsx input schema
 {
@@ -98,7 +112,16 @@ export default function AgentsPage() {
       </Card>
 
       {/* Execution Modes */}
-      <Card title={tx("Execution Modes", "执行模式", "実行モード")} className="mb-6">
+      <Card
+        title={tx("Execution Modes", "执行模式", "実行モード")}
+        className="mb-6"
+        links={[
+          { label: "runAgent.ts", href: ghBlob("tools/AgentTool/runAgent.ts") },
+          { label: "EnterWorktreeTool.ts", href: ghBlob("tools/EnterWorktreeTool/EnterWorktreeTool.ts") },
+          { label: "ExitWorktreeTool.ts", href: ghBlob("tools/ExitWorktreeTool/ExitWorktreeTool.ts") },
+          { label: "remote/", href: ghTree("remote") },
+        ]}
+      >
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
           {executionModes.map(({ icon: Icon, color, title, items }) => (
             <div key={title} className="p-4 rounded-xl bg-bg-tertiary/20 border border-border/50">
@@ -118,7 +141,15 @@ export default function AgentsPage() {
       </Card>
 
       {/* Cache Sharing */}
-      <Card title={tx("Zero-Cost Cache Sharing", "零成本缓存共享", "ゼロコストのキャッシュ共有")} className="mb-6" accent="var(--green)">
+      <Card
+        title={tx("Zero-Cost Cache Sharing", "零成本缓存共享", "ゼロコストのキャッシュ共有")}
+        className="mb-6"
+        accent="var(--green)"
+        links={[
+          { label: "forkedAgent.ts", href: ghBlob("utils/forkedAgent.ts") },
+          { label: "runAgent.ts", href: ghBlob("tools/AgentTool/runAgent.ts") },
+        ]}
+      >
         <p className="text-sm text-text-secondary mb-4">
           {tx(
             "The most important performance optimization. When spawning subagents, ",
@@ -150,7 +181,15 @@ export default function AgentsPage() {
       </Card>
 
       {/* Coordinator Mode */}
-      <Card title={tx("Coordinator Mode", "协调器模式", "コーディネーターモード")} className="mb-6" accent="var(--purple)">
+      <Card
+        title={tx("Coordinator Mode", "协调器模式", "コーディネーターモード")}
+        className="mb-6"
+        accent="var(--purple)"
+        links={[
+          { label: "coordinator/", href: ghTree("coordinator") },
+          { label: "spawnMultiAgent.ts", href: ghBlob("tools/shared/spawnMultiAgent.ts") },
+        ]}
+      >
         <p className="text-sm text-text-secondary mb-4">
           {tx(
             "Multi-worker orchestration via a central coordinator agent. Workers report results as ",
@@ -182,7 +221,14 @@ export default function AgentsPage() {
       </Card>
 
       {/* Agent Types */}
-      <Card title={tx("Built-in Agent Types", "内置代理类型", "組み込みエージェント種別")} className="mb-6">
+      <Card
+        title={tx("Built-in Agent Types", "内置代理类型", "組み込みエージェント種別")}
+        className="mb-6"
+        links={[
+          { label: "loadAgentsDir.ts", href: ghBlob("tools/AgentTool/loadAgentsDir.ts") },
+          { label: "skills/", href: ghTree("skills") },
+        ]}
+      >
         <Table
           headers={[
             tx("Type", "类型", "種類"),
@@ -194,7 +240,15 @@ export default function AgentsPage() {
       </Card>
 
       {/* Forked Agents */}
-      <Card title={tx("Forked Agents (Lightweight)", "分叉代理（轻量）", "フォーク型エージェント（軽量）")} className="mb-6">
+      <Card
+        title={tx("Forked Agents (Lightweight)", "分叉代理（轻量）", "フォーク型エージェント（軽量）")}
+        className="mb-6"
+        links={[
+          { label: "extractMemories.ts", href: ghBlob("services/extractMemories/extractMemories.ts") },
+          { label: "sessionMemory.ts", href: ghBlob("services/SessionMemory/sessionMemory.ts") },
+          { label: "speculation.ts", href: ghBlob("services/PromptSuggestion/speculation.ts") },
+        ]}
+      >
         <p className="text-sm text-text-secondary mb-4">
           {tx(
             "Lightweight background queries that share the parent&apos;s cache. Used for tasks you never see:",
@@ -214,7 +268,14 @@ export default function AgentsPage() {
       </Card>
 
       {/* Coordinator Quote */}
-      <Card title={tx("Coordinator's Golden Rule", "协调器黄金法则", "コーディネーターの黄金律")} accent="var(--orange)">
+      <Card
+        title={tx("Coordinator's Golden Rule", "协调器黄金法则", "コーディネーターの黄金律")}
+        accent="var(--orange)"
+        links={[
+          { label: "coordinator/", href: ghTree("coordinator") },
+          { label: "AgentTool.tsx", href: ghBlob("tools/AgentTool/AgentTool.tsx") },
+        ]}
+      >
         <div className="p-4 rounded-xl bg-bg-tertiary/20 border-l-2" style={{ borderLeftColor: "var(--orange)" }}>
           <p className="text-sm text-text-secondary italic leading-relaxed">
             {tx(

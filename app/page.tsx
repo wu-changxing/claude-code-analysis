@@ -25,6 +25,8 @@ import {
 } from "react-icons/hi2";
 import { useLang } from "@/lib/LangContext";
 import { t } from "@/lib/i18n";
+import { SourceLinks } from "@/components/Section";
+import { CLAUDE_CODE_REPO, ghBlob, ghTree } from "@/lib/sourceLinks";
 
 const STATS = (lang: "en" | "zh" | "ja") => [
   {
@@ -198,6 +200,16 @@ export default function HomePage() {
         <p className="text-text-muted text-xs sm:ml-[72px]">
           {t("home.desc", lang)}
         </p>
+        <SourceLinks
+          links={[
+            { label: lang === "zh" ? "仓库" : lang === "ja" ? "リポジトリ" : "Repo", href: CLAUDE_CODE_REPO },
+            { label: "query.ts", href: ghBlob("query.ts") },
+            { label: "Tool.ts", href: ghBlob("Tool.ts") },
+            { label: "services/", href: ghTree("services") },
+            { label: "tools/", href: ghTree("tools") },
+          ]}
+          className="mt-4 sm:ml-[72px]"
+        />
       </motion.div>
 
       {/* Stats */}

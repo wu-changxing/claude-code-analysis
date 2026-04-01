@@ -2,6 +2,7 @@
 
 import { PageHeader, Card, CodeBlock, FlowStep } from "@/components/Section";
 import { useTx } from "@/components/T";
+import { ghBlob, ghTree } from "@/lib/sourceLinks";
 import {
   VscShield,
   VscLock,
@@ -81,10 +82,23 @@ export default function PermissionsPage() {
           "Claude Code には、あらゆるツール実行を制御する5層の権限システムがあります。入力検証、ML分類器、ユーザー確認ダイアログまで含みます。"
         )}
         badge={tx("5 layers", "5 层", "5層")}
+        links={[
+          { label: "utils/permissions/", href: ghTree("utils/permissions") },
+          { label: "yoloClassifier.ts", href: ghBlob("utils/permissions/yoloClassifier.ts") },
+          { label: "bashPermissions.ts", href: ghBlob("tools/BashTool/bashPermissions.ts") },
+          { label: "filesystem.ts", href: ghBlob("utils/permissions/filesystem.ts") },
+        ]}
       />
 
       {/* Permission Modes */}
-      <Card title={tx("Permission Modes", "权限模式", "権限モード")} className="mb-6">
+      <Card
+        title={tx("Permission Modes", "权限模式", "権限モード")}
+        className="mb-6"
+        links={[
+          { label: "yoloClassifier.ts", href: ghBlob("utils/permissions/yoloClassifier.ts") },
+          { label: "utils/permissions/", href: ghTree("utils/permissions") },
+        ]}
+      >
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
           {modes.map(({ mode, desc, color, icon: Icon, safety }) => (
             <div key={mode} className="p-4 rounded-xl bg-bg-tertiary/30 border border-border/50">
@@ -118,7 +132,15 @@ export default function PermissionsPage() {
       </Card>
 
       {/* 5-Layer Flow */}
-      <Card title={tx("Permission Decision Flow", "权限决策流程", "権限判定フロー")} className="mb-6">
+      <Card
+        title={tx("Permission Decision Flow", "权限决策流程", "権限判定フロー")}
+        className="mb-6"
+        links={[
+          { label: "bashPermissions.ts", href: ghBlob("tools/BashTool/bashPermissions.ts") },
+          { label: "bashSecurity.ts", href: ghBlob("tools/BashTool/bashSecurity.ts") },
+          { label: "hooks/", href: ghTree("hooks") },
+        ]}
+      >
         <div className="pt-2">
           <FlowStep
             number={1}
@@ -185,7 +207,14 @@ export default function PermissionsPage() {
       </div>
 
       {/* Permission Rules */}
-      <Card title={tx("Permission Rules", "权限规则", "権限ルール")} className="mb-6">
+      <Card
+        title={tx("Permission Rules", "权限规则", "権限ルール")}
+        className="mb-6"
+        links={[
+          { label: "utils/permissions/", href: ghTree("utils/permissions") },
+          { label: "settings", href: ghTree("utils/permissions") },
+        ]}
+      >
         <p className="text-sm text-text-secondary mb-4">
           {tx(
             "Rules are defined in ",
@@ -224,7 +253,14 @@ export default function PermissionsPage() {
       </Card>
 
       {/* Permission Result */}
-      <Card title={tx("Permission Result Types", "权限结果类型", "権限結果の型")} className="mb-6">
+      <Card
+        title={tx("Permission Result Types", "权限结果类型", "権限結果の型")}
+        className="mb-6"
+        links={[
+          { label: "utils/permissions/", href: ghTree("utils/permissions") },
+          { label: "toolPermission/", href: ghTree("hooks/toolPermission") },
+        ]}
+      >
         <CodeBlock
           code={`type PermissionResult =
   | { behavior: 'allow'; message?: string }     // Auto-approve
@@ -243,7 +279,13 @@ pushToQueue()          // Queue management for UI`}
       </Card>
 
       {/* Filesystem Permissions */}
-      <Card title={tx("Filesystem Permission Checks", "文件系统权限检查", "ファイルシステム権限チェック")}>
+      <Card
+        title={tx("Filesystem Permission Checks", "文件系统权限检查", "ファイルシステム権限チェック")}
+        links={[
+          { label: "filesystem.ts", href: ghBlob("utils/permissions/filesystem.ts") },
+          { label: "FileReadTool.ts", href: ghBlob("tools/FileReadTool/FileReadTool.ts") },
+        ]}
+      >
         <p className="text-sm text-text-secondary mb-4">
           {tx(
             "File operations go through additional path-level security checks:",

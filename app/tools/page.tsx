@@ -2,6 +2,7 @@
 
 import { PageHeader, Card, CodeBlock } from "@/components/Section";
 import { useTx } from "@/components/T";
+import { ghBlob, ghTree } from "@/lib/sourceLinks";
 import {
   VscTerminalBash,
   VscEdit,
@@ -141,10 +142,23 @@ export default function ToolsPage() {
           "Claude Code には43個の組み込みツールがあり、すべてが統一された Tool<Input, Output, Progress> インターフェースを実装しています。buildTool() で構築され、実行時に Zod で検証されます。"
         )}
         badge={tx("43 tools", "43 个工具", "43ツール")}
+        links={[
+          { label: "Tool.ts", href: ghBlob("Tool.ts") },
+          { label: "tools/", href: ghTree("tools") },
+          { label: "services/tools/", href: ghTree("services/tools") },
+          { label: "tools/BashTool/", href: ghTree("tools/BashTool") },
+        ]}
       />
 
       {/* Tool Interface */}
-      <Card title={tx("Tool Interface (Tool.ts)", "工具接口（Tool.ts）", "ツールインターフェース（Tool.ts）")} className="mb-6">
+      <Card
+        title={tx("Tool Interface (Tool.ts)", "工具接口（Tool.ts）", "ツールインターフェース（Tool.ts）")}
+        className="mb-6"
+        links={[
+          { label: "Tool.ts", href: ghBlob("Tool.ts") },
+          { label: "buildTool()", href: ghBlob("Tool.ts") },
+        ]}
+      >
         <CodeBlock
           code={`interface Tool<Input, Output, Progress> {
   name: string
@@ -181,7 +195,15 @@ export default function ToolsPage() {
       </Card>
 
       {/* Tool Registry Visual */}
-      <Card title={tx("Built-in Tools (43 total)", "内置工具（共 43 个）", "組み込みツール（全43種）")} className="mb-6">
+      <Card
+        title={tx("Built-in Tools (43 total)", "内置工具（共 43 个）", "組み込みツール（全43種）")}
+        className="mb-6"
+        links={[
+          { label: "tools/", href: ghTree("tools") },
+          { label: "MCPTool/", href: ghTree("tools/MCPTool") },
+          { label: "AgentTool/", href: ghTree("tools/AgentTool") },
+        ]}
+      >
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-4">
           {toolCards.map((t) => (
             <div key={t.name} className="p-3 rounded-lg bg-bg-tertiary/30 border border-border/50 hover:border-accent/30 transition-colors">
@@ -202,7 +224,16 @@ export default function ToolsPage() {
       </Card>
 
       {/* BashTool Deep Dive */}
-      <Card title={tx("BashTool Deep Dive", "BashTool 深入解析", "BashTool 詳解")} className="mb-6" accent="var(--orange)">
+      <Card
+        title={tx("BashTool Deep Dive", "BashTool 深入解析", "BashTool 詳解")}
+        className="mb-6"
+        accent="var(--orange)"
+        links={[
+          { label: "BashTool.tsx", href: ghBlob("tools/BashTool/BashTool.tsx") },
+          { label: "bashPermissions.ts", href: ghBlob("tools/BashTool/bashPermissions.ts") },
+          { label: "bashSecurity.ts", href: ghBlob("tools/BashTool/bashSecurity.ts") },
+        ]}
+      >
         <p className="text-sm text-text-secondary mb-4">
           {tx(
             "The BashTool is the largest and most complex tool (~300KB across 5 files). It has multi-layered security to prevent dangerous command execution.",
@@ -250,7 +281,15 @@ shouldUseSandbox.ts — Sandbox decision logic`}
       </Card>
 
       {/* FileEdit Deep Dive */}
-      <Card title={tx("FileEditTool", "FileEditTool", "FileEditTool")} className="mb-6" accent="var(--accent)">
+      <Card
+        title={tx("FileEditTool", "FileEditTool", "FileEditTool")}
+        className="mb-6"
+        accent="var(--accent)"
+        links={[
+          { label: "FileEditTool.ts", href: ghBlob("tools/FileEditTool/FileEditTool.ts") },
+          { label: "FileReadTool.ts", href: ghBlob("tools/FileReadTool/FileReadTool.ts") },
+        ]}
+      >
         <CodeBlock
           code={`// Input schema:
 {
@@ -282,7 +321,13 @@ shouldUseSandbox.ts — Sandbox decision logic`}
       </Card>
 
       {/* Tool Execution */}
-      <Card title={tx("Tool Orchestration Strategy", "工具编排策略", "ツールオーケストレーション戦略")}>
+      <Card
+        title={tx("Tool Orchestration Strategy", "工具编排策略", "ツールオーケストレーション戦略")}
+        links={[
+          { label: "toolOrchestration.ts", href: ghBlob("services/tools/toolOrchestration.ts") },
+          { label: "StreamingToolExecutor.ts", href: ghBlob("services/tools/StreamingToolExecutor.ts") },
+        ]}
+      >
         <p className="text-sm text-text-secondary mb-4">
           {tx(
             "Tools declare ",
