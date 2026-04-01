@@ -49,6 +49,16 @@ const TOOL_CARDS = [
   { name: "Exit*", icon: VscSignOut, type: "Cleanup", color: "var(--red)", desc: "Exit worktree/plan with safety checks" },
 ];
 
+/* Group tools by category for visual clarity */
+const TOOL_GROUPS = [
+  { label: "Execution", color: "var(--orange)", types: ["Execution"] },
+  { label: "File I/O", color: "var(--accent)", types: ["Modification", "Read"] },
+  { label: "Search", color: "var(--green)", types: ["Search"] },
+  { label: "Agents", color: "var(--purple)", types: ["Spawning", "Invocation", "Comms"] },
+  { label: "Protocol", color: "var(--pink)", types: ["Proxy", "Integration"] },
+  { label: "Infra", color: "var(--red)", types: ["Isolation", "Management", "Discovery", "Utility", "Cleanup"] },
+];
+
 export default function ToolsPage() {
   const tx = useTx();
   const sections = [
@@ -58,6 +68,7 @@ export default function ToolsPage() {
     { id: "file-edit", label: tx("FileEditTool", "FileEditTool", "FileEditTool"), description: tx("How text edits are validated and applied safely.", "文本编辑如何被安全校验并应用。", "テキスト編集がどう安全に行われるか。") },
     { id: "tool-orchestration", label: tx("Orchestration", "编排", "オーケストレーション"), description: tx("How multiple tools run together without breaking state.", "多个工具如何协同运行而不破坏状态。", "複数ツールをどう安全に走らせるか。") },
   ];
+
   const toolCards = TOOL_CARDS.map((tool) => ({
     ...tool,
     type: tx(tool.type, ({
@@ -91,6 +102,7 @@ export default function ToolsPage() {
       Utility: "ユーティリティ",
       Cleanup: "終了処理",
     } as Record<string, string>)[tool.type]),
+    originalType: tool.type,
     desc: tx(
       tool.desc,
       ({
@@ -139,6 +151,7 @@ export default function ToolsPage() {
       } as Record<string, string>)[tool.desc],
     ),
   }));
+
   return (
     <div className="page-shell">
       <PageHeader
@@ -204,7 +217,7 @@ export default function ToolsPage() {
         />
       </Card>
 
-      {/* Tool Registry Visual */}
+      {/* Tool Registry Visual — grouped by category */}
       <Card
         id="tool-registry"
         title={tx("Built-in Tools (43 total)", "内置工具（共 43 个）", "組み込みツール（全43種）")}
@@ -216,20 +229,52 @@ export default function ToolsPage() {
           { label: "AgentTool/", href: ghTree("tools/AgentTool") },
         ]}
       >
-        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-4">
+        {/* Category legend pills */}
+        <div className="mb-4 flex flex-wrap gap-2">
+          {TOOL_GROUPS.map((g) => (
+            <span
+              key={g.label}
+              className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-medium border"
+              style={{
+                background: `color-mix(in srgb, ${g.color} 12%, transparent)`,
+                color: g.color,
+                borderColor: `color-mix(in srgb, ${g.color} 30%, transparent)`,
+              }}
+            >
+              <span className="h-1.5 w-1.5 rounded-full" style={{ background: g.color }} />
+              {g.label}
+            </span>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-3">
           {toolCards.map((t) => (
-            <div key={t.name} className="p-3 rounded-lg bg-bg-tertiary/30 border border-border/50 hover:border-accent/30 transition-colors">
-              <div className="flex items-center gap-2 mb-1.5">
-                <t.icon className="w-3.5 h-3.5 shrink-0" style={{ color: t.color }} />
-                <span className="text-xs font-semibold text-text-primary">{t.name}</span>
+            <div
+              key={t.name}
+              className="flex gap-3 rounded-xl border border-border/50 p-3 transition-colors hover:bg-bg-tertiary/30"
+              style={{ borderLeft: `3px solid ${t.color}` }}
+            >
+              <div
+                className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg"
+                style={{ background: `color-mix(in srgb, ${t.color} 14%, transparent)` }}
+              >
+                <t.icon className="h-4 w-4" style={{ color: t.color }} />
               </div>
-              <span className="inline-block px-1.5 py-0.5 rounded text-[9px] font-medium mb-1.5" style={{
-                background: `color-mix(in srgb, ${t.color} 12%, transparent)`,
-                color: t.color,
-              }}>
-                {t.type}
-              </span>
-              <p className="text-[10px] text-text-muted leading-relaxed">{t.desc}</p>
+              <div className="min-w-0 flex-1">
+                <div className="flex flex-wrap items-baseline gap-1.5 mb-0.5">
+                  <span className="text-xs font-semibold text-text-primary">{t.name}</span>
+                  <span
+                    className="inline-block rounded px-1.5 py-0.5 text-[9px] font-medium"
+                    style={{
+                      background: `color-mix(in srgb, ${t.color} 10%, transparent)`,
+                      color: t.color,
+                    }}
+                  >
+                    {t.type}
+                  </span>
+                </div>
+                <p className="text-[10px] text-text-muted leading-relaxed">{t.desc}</p>
+              </div>
             </div>
           ))}
         </div>
@@ -255,6 +300,38 @@ export default function ToolsPage() {
             "BashTool は最大かつ最も複雑なツールです（5ファイル合計約300KB）。危険なコマンド実行を防ぐため多層防御を備えています。"
           )}
         </p>
+
+        {/* Security layers visual */}
+        <div className="mb-4 space-y-2">
+          {[
+            { n: 1, label: tx("AST-based Parsing (tree-sitter)", "AST 解析（tree-sitter）", "AST解析（tree-sitter）"), detail: tx("Detects dangerous patterns: redirections, pipes, subshells", "检测危险模式：重定向、管道、子 shell", "危険なパターンを検出：リダイレクト、パイプ、サブシェル"), color: "var(--orange)" },
+            { n: 2, label: tx("ML Classifier (opt-in)", "ML 分类器（可选）", "ML分類器（オプション）"), detail: tx("AI evaluates command safety with confidence scoring, can auto-approve safe patterns", "AI 评估命令安全性并打置信分，可自动批准安全模式", "AIがコマンドを評価し安全パターンを自動承認"), color: "var(--red)" },
+            { n: 3, label: tx("Permission Rule Matching", "权限规则匹配", "権限ルールマッチング"), detail: tx("Exact, prefix (*), and wildcard (*test*) patterns", "精确、前缀（*）和通配符（*test*）模式", "完全一致・プレフィックス・ワイルドカードパターン"), color: "var(--purple)" },
+            { n: 4, label: tx("Semantic Analysis", "语义分析", "意味解析"), detail: tx("Detects dangerous redirections to system files, blocks shell config modifications", "检测对系统文件的危险重定向，阻止 shell 配置修改", "システムファイルへの危険なリダイレクトをブロック"), color: "var(--accent)" },
+            { n: 5, label: tx("Read-only Constraints", "只读约束", "読み取り専用制約"), detail: tx("Blocks write commands in non-privileged sessions, prevents privilege escalation", "在非特权会话中阻止写命令，防止权限提升", "非特権セッションで書き込みコマンドをブロック"), color: "var(--green)" },
+          ].map((layer) => (
+            <div
+              key={layer.n}
+              className="flex items-start gap-3 rounded-xl border p-3"
+              style={{
+                borderColor: `color-mix(in srgb, ${layer.color} 25%, transparent)`,
+                background: `color-mix(in srgb, ${layer.color} 5%, var(--bg-secondary))`,
+              }}
+            >
+              <div
+                className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-[11px] font-bold text-white"
+                style={{ background: layer.color }}
+              >
+                {layer.n}
+              </div>
+              <div className="min-w-0">
+                <span className="text-xs font-semibold text-text-primary">{layer.label}</span>
+                <p className="mt-0.5 text-[10px] text-text-muted leading-relaxed">{layer.detail}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
         <CodeBlock
           code={`// Execution flow:
 Input → validateInput()
@@ -263,27 +340,6 @@ Input → validateInput()
      → exec() via SandboxManager
      → Output parsing + image detection
      → Result persistence if >100K chars
-
-// Security layers:
-1. AST-based parsing (tree-sitter)
-   → Detects dangerous patterns: redirection, pipes, subshells
-
-2. ML classifier (opt-in)
-   → AI evaluates command safety with confidence scoring
-   → Can auto-approve safe patterns (git status, ls, etc.)
-
-3. Permission rule matching
-   → Exact: "git"
-   → Prefix: "git *" (any git subcommand)
-   → Wildcard: "*test*" (contains pattern)
-
-4. Semantic analysis
-   → Detects dangerous redirections to system files
-   → Blocks shell config modifications (.bashrc, .zshrc)
-
-5. Read-only constraints
-   → Blocks write commands in non-privileged sessions
-   → Prevents privilege escalation via package managers
 
 // Key files:
 bashPermissions.ts  — 98KB — Permission rules + classifier
@@ -346,12 +402,38 @@ shouldUseSandbox.ts — Sandbox decision logic`}
           { label: "StreamingToolExecutor.ts", href: ghBlob("services/tools/StreamingToolExecutor.ts") },
         ]}
       >
+        {/* Parallel vs serial visual */}
+        <div className="mb-5 overflow-hidden rounded-xl border border-border/50 bg-bg-primary p-4">
+          <div className="mb-3 grid grid-cols-2 gap-4">
+            <div>
+              <p className="mb-2 text-[11px] font-semibold text-green">
+                {tx("Read-only (parallel, up to 10)", "只读（并行，最多 10 个）", "読み取り専用（並列、最大10）")}
+              </p>
+              <div className="space-y-1.5">
+                {["Grep", "Glob", "FileRead"].map((t) => (
+                  <div key={t} className="h-5 rounded-md bg-green/20 border border-green/30 flex items-center px-2">
+                    <span className="text-[9px] text-green font-mono">{t}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div>
+              <p className="mb-2 text-[11px] font-semibold text-orange">
+                {tx("Write (serial)", "写（串行）", "書き込み（直列）")}
+              </p>
+              <div className="space-y-1.5">
+                {["FileEdit", "FileWrite", "Bash"].map((t) => (
+                  <div key={t} className="h-5 rounded-md bg-orange/20 border border-orange/30 flex items-center px-2">
+                    <span className="text-[9px] text-orange font-mono">{t}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
         <p className="text-sm text-text-secondary mb-4">
-          {tx(
-            "Tools declare ",
-            "工具通过声明 ",
-            "ツールは "
-          )}<code className="text-accent">isConcurrencySafe()</code>{tx(
+          {tx("Tools declare ", "工具通过声明 ", "ツールは ")}<code className="text-accent">isConcurrencySafe()</code>{tx(
             " to enable parallel execution. The orchestrator partitions tool calls into batches.",
             " 来启用并行执行。编排器会把工具调用拆分成多个批次。",
             " を宣言して並列実行可否を示します。オーケストレーターはそれを基にツール呼び出しをバッチ分割します。"
