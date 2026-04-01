@@ -208,6 +208,39 @@ export default function ArchitecturePage() {
         </Card>
       </div>
 
+      <Card
+        title={tx("Operational Control Plane", "运行时控制平面", "運用コントロールプレーン")}
+        className="mb-6"
+        accent="var(--purple)"
+        links={[
+          { label: "state/AppStateStore.ts", href: ghBlob("state/AppStateStore.ts") },
+          { label: "bridge/", href: ghTree("bridge") },
+          { label: "services/PromptSuggestion/", href: ghTree("services/PromptSuggestion") },
+        ]}
+      >
+        <p className="text-sm text-text-secondary mb-4">
+          {tx(
+            "A useful way to mentally model modern Claude Code is that it has grown an operational control plane beside the agent loop. AppState tracks remote bridge connectivity, background task counts, prompt suggestion/speculation state, plugin installation status, footer UI focus, tmux/browser integrations, and companion reactions. That means the product is no longer just 'query loop + tools'; it is a stateful terminal platform that happens to center on the query loop.",
+            "理解新版 Claude Code 的一个好方法，是把它看作在 agent loop 旁边长出了一层运行时控制平面。AppState 会跟踪 remote bridge 连接、后台任务数量、prompt suggestion/speculation 状态、插件安装状态、footer UI 焦点、tmux/browser 集成，以及 companion 反应。这说明它已经不再只是“查询循环 + 工具”，而是一个以查询循环为中心的有状态终端平台。",
+            "現代の Claude Code を理解する有効な見方は、agent loop の横に運用 control plane が育っていると捉えることです。AppState は remote bridge 接続、バックグラウンドタスク数、prompt suggestion/speculation 状態、plugin 導入状態、footer UI フォーカス、tmux/browser 連携、companion の反応まで追跡します。つまり、もはや『query loop + tools』ではなく、query loop を中心に据えた stateful なターミナルプラットフォームです。"
+          )}
+        </p>
+        <CodeBlock
+          code={`// representative state families
+runtime:
+  remoteConnectionStatus, replBridgeConnected, remoteBackgroundTaskCount
+
+agent orchestration:
+  tasks, agentNameRegistry, coordinatorTaskIndex, viewingAgentTaskId
+
+background intelligence:
+  promptSuggestionEnabled, speculationState, notifications, elicitation
+
+UX subsystems:
+  companionReaction, bagelActive, tungstenActiveSession, footerSelection`}
+        />
+      </Card>
+
       {/* Size Comparison */}
       <Card title={tx("Codebase Size Comparison", "代码库规模对比", "コードベース規模の比較")} className="mb-6" accent="var(--accent)">
         <p className="text-xs text-text-muted mb-4">

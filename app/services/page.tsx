@@ -23,6 +23,7 @@ export default function ServicesPage() {
     { icon: VscServerProcess, name: "LSP", files: 6, size: "~5K", color: "var(--orange)", desc: tx("Language Server Protocol", "语言服务器协议", "言語サーバープロトコル") },
     { icon: VscGraphLine, name: tx("Analytics", "分析", "分析"), files: 6, size: "~8K", color: "var(--purple)", desc: tx("Datadog + GrowthBook pipeline", "Datadog + GrowthBook 流水线", "Datadog + GrowthBook パイプライン") },
     { icon: VscLightbulb, name: tx("Memory", "记忆", "メモリ"), files: 5, size: "~6K", color: "var(--pink)", desc: tx("Auto-extraction + session memory", "自动提取 + 会话记忆", "自動抽出 + セッションメモリ") },
+    { icon: VscServerProcess, name: tx("API", "API", "API"), files: 8, size: "~45K", color: "var(--accent)", desc: tx("Streaming client, retries, betas, prompt caching", "流式客户端、重试、betas、提示缓存", "ストリーミングクライアント、再試行、betas、プロンプトキャッシュ") },
     { icon: VscExtensions, name: tx("Tools", "工具", "ツール"), files: 2, size: "~1K", color: "var(--orange)", desc: tx("StreamingToolExecutor + orchestration", "StreamingToolExecutor + 编排", "StreamingToolExecutor + オーケストレーション") },
     { icon: VscPackage, name: tx("Plugins", "插件", "プラグイン"), files: 8, size: "~10K", color: "var(--green)", desc: tx("Plugin install + marketplace", "插件安装 + 市场", "プラグイン導入 + マーケットプレイス") },
     { icon: VscSymbolNumeric, name: tx("Tokens", "Token", "トークン"), files: 1, size: "~2K", color: "var(--accent)", desc: tx("Multi-provider token counting", "多提供商 token 计数", "複数プロバイダーのトークン計数") },
@@ -214,6 +215,44 @@ checkStatsigFeatureGate_CACHED_MAY_BE_STALE()
 // → Cached gate values prevent blocking on init
 // → User attributes: ID, session, platform, org, subscription
 // → A/B experiment tracking with variation IDs`}
+        />
+      </Card>
+
+      <Card
+        title={tx("API Layer Is a Policy Engine", "API 层其实是策略引擎", "API 層は単なるクライアントではない")}
+        className="mb-6"
+        accent="var(--accent)"
+        links={[
+          { label: "services/api/claude.ts", href: ghBlob("services/api/claude.ts") },
+          { label: "services/api/withRetry.ts", href: ghBlob("services/api/withRetry.ts") },
+          { label: "utils/api.ts", href: ghBlob("utils/api.ts") },
+        ]}
+      >
+        <p className="text-sm text-text-secondary mb-4">
+          {tx(
+            "One of the easiest things to underestimate in Claude Code is the API client. claude.ts is not a thin transport wrapper: it decides which beta headers to send, how to split cacheable vs dynamic system prompt sections, how to retry recoverable failures, when to record quota/cost state, and how to normalize streamed content back into the internal message model.",
+            "Claude Code 最容易被低估的部分之一就是 API 客户端。claude.ts 并不是一个薄薄的传输封装层：它会决定发送哪些 beta headers、如何切分可缓存与动态 system prompt、怎样重试可恢复失败、何时记录配额/成本状态，以及如何把流式内容规范化回内部消息模型。",
+            "Claude Code で見落とされやすいのが API クライアントです。claude.ts は単なる転送ラッパーではなく、送る beta header、キャッシュ可能/動的システムプロンプトの分割、再試行方針、quota/cost 記録、ストリーム結果の内部メッセージ正規化まで担います。"
+          )}
+        </p>
+        <CodeBlock
+          code={`// services/api/claude.ts
+build request:
+  → normalizeMessagesForAPI(...)
+  → splitSysPromptPrefix(...) for prompt caching
+  → choose beta headers (fast mode, effort, structured outputs, tool search)
+  → attach attribution + client request IDs
+
+stream response:
+  → normalizeContentFromAPI(...)
+  → ensureToolResultPairing(...)
+  → capture usage deltas + request fingerprints
+  → update quota/cost/session activity
+
+failure path:
+  → withRetry(...)
+  → distinguish abort / timeout / 529 / fallback-triggered cases
+  → emit assistant-visible API error messages`}
         />
       </Card>
 

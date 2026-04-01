@@ -18,6 +18,7 @@ export default function ContextPage() {
         links={[
           { label: "QueryEngine.ts", href: ghBlob("QueryEngine.ts") },
           { label: "context/", href: ghTree("context") },
+          { label: "constants/prompts.ts", href: ghBlob("constants/prompts.ts") },
           { label: "memdir/", href: ghTree("memdir") },
           { label: "query/stopHooks.ts", href: ghBlob("query/stopHooks.ts") },
         ]}
@@ -31,6 +32,7 @@ export default function ContextPage() {
         links={[
           { label: "QueryEngine.ts", href: ghBlob("QueryEngine.ts") },
           { label: "context/", href: ghTree("context") },
+          { label: "constants/prompts.ts", href: ghBlob("constants/prompts.ts") },
         ]}
       >
         <div className="pt-2">
@@ -82,6 +84,45 @@ const systemPrompt = asSystemPrompt([
   ...(memoryMechanicsPrompt ? [memoryMechanicsPrompt] : []),
   ...(appendSystemPrompt ? [appendSystemPrompt] : []),
 ])`}
+        />
+        <p className="mt-4 text-sm text-text-secondary">
+          {tx(
+            "The more subtle implementation detail is that the prompt is assembled as ordered sections, not one giant string literal. constants/prompts.ts defines a hard SYSTEM_PROMPT_DYNAMIC_BOUNDARY marker so the prefix before that line can use global prompt caching while the tail can safely include user-, repo-, and session-specific data.",
+            "更微妙的实现细节是：prompt 是按有序 section 组装的，而不是一整块超长字符串。constants/prompts.ts 里定义了一个硬性的 SYSTEM_PROMPT_DYNAMIC_BOUNDARY 标记，使得它之前的前缀可以使用全局 prompt cache，而之后的尾部则可以安全地包含用户、仓库和会话特定数据。",
+            "より重要な実装詳細は、prompt が巨大な1本の文字列ではなく順序付き section として組み立てられていることです。constants/prompts.ts には SYSTEM_PROMPT_DYNAMIC_BOUNDARY という明確な境界があり、その前半はグローバル prompt cache を使え、後半にはユーザー/リポジトリ/セッション固有情報を安全に入れられます。"
+          )}
+        </p>
+      </Card>
+
+      <Card
+        title={tx("Prompt Boundary & Cache Topology", "Prompt 边界与缓存拓扑", "Prompt 境界とキャッシュ構造")}
+        className="mb-6"
+        accent="var(--orange)"
+        links={[
+          { label: "constants/prompts.ts", href: ghBlob("constants/prompts.ts") },
+          { label: "utils/api.ts", href: ghBlob("utils/api.ts") },
+          { label: "services/api/claude.ts", href: ghBlob("services/api/claude.ts") },
+        ]}
+      >
+        <p className="text-sm text-text-secondary mb-4">
+          {tx(
+            "This explains why Claude Code spends so much effort on prompt section ordering. The cacheable prefix is intended to stay byte-stable across turns and even across sessions, while the dynamic tail can change with user context, git state, memory, hooks, output style, and connected MCP servers.",
+            "这也解释了 Claude Code 为什么如此重视 prompt section 的顺序。可缓存前缀的目标是在多轮甚至跨会话之间保持字节级稳定，而动态尾部则可以随着用户上下文、git 状态、memory、hooks、输出风格以及已连接 MCP 服务器而变化。",
+            "Claude Code が prompt section の順序に強くこだわる理由もここにあります。キャッシュ可能な前半はターン間・セッション間でバイト安定を保ち、動的な後半だけが user context、git 状態、memory、hooks、output style、接続中 MCP サーバーに応じて変化します。"
+          )}
+        </p>
+        <CodeBlock
+          code={`// constants/prompts.ts
+SYSTEM_PROMPT_DYNAMIC_BOUNDARY = "__SYSTEM_PROMPT_DYNAMIC_BOUNDARY__"
+
+// invariant:
+// - everything before boundary can use scope: global
+// - everything after boundary may contain user/session-specific content
+
+// consequences:
+// - section order matters for cache hits
+// - "small prompt edits" can break expensive cache reuse
+// - prompt architecture is part of runtime performance design`}
         />
       </Card>
 
@@ -239,7 +280,16 @@ saveCacheSafeParams(createCacheSafeParams(stopHookContext))
       </Card>
 
       {/* State Management */}
-      <Card title={tx("AppState Store", "AppState 存储", "AppState ストア")} className="mb-6" accent="var(--orange)">
+      <Card
+        title={tx("AppState Store", "AppState 存储", "AppState ストア")}
+        className="mb-6"
+        accent="var(--orange)"
+        links={[
+          { label: "state/AppStateStore.ts", href: ghBlob("state/AppStateStore.ts") },
+          { label: "PromptSuggestion/", href: ghTree("services/PromptSuggestion") },
+          { label: "bridge/", href: ghTree("bridge") },
+        ]}
+      >
         <p className="text-sm text-text-secondary mb-4">
           {tx(
             "Central application state using Zustand-like pattern with ",
@@ -268,22 +318,39 @@ saveCacheSafeParams(createCacheSafeParams(stopHookContext))
   // Plugin System
   plugins: { enabled, disabled, installationStatus }
 
-  // Agent Features
+  // Agent / prompt suggestion state
   thinkingEnabled, promptSuggestionEnabled, speculation
 
-  // Coordinator Mode
-  coordinatorTaskIndex, workerTools, workerSandboxPermissions
+  // Bridge / remote control
+  remoteConnectionStatus
+  replBridgeEnabled
+  replBridgeConnected
+  replBridgeSessionActive
+  replBridgeSessionUrl
 
-  // Team Swarms (KAIROS feature)
-  teamContext, standaloneAgentContext, inbox
+  // Task orchestration + agent routing
+  tasks
+  agentNameRegistry
+  coordinatorTaskIndex
+  viewingAgentTaskId
 
-  // UI State
-  expandedView, footerSelection, fastMode, effortValue
+  // UI + side systems
+  expandedView, footerSelection
+  companionReaction
+  bagelActive
+  tungstenActiveSession
 }
 
 // Mutation: setAppState(prev => ({ ...prev, field: newValue }))
 // Triggers UI re-render in REPL mode`}
         />
+        <p className="mt-4 text-sm text-text-secondary">
+          {tx(
+            "The deeper lesson is that AppState is not only UI state. It is a runtime coordination surface that carries task orchestration, bridge connectivity, speculation lifecycle, plugin reload state, notifications, companion reactions, and tool permission context. The terminal UI is effectively reading from the same operational control plane the agent loop mutates.",
+            "更深一层的结论是：AppState 并不只是 UI 状态。它还是一个运行时协调面，承载任务编排、bridge 连接、speculation 生命周期、插件刷新状态、通知、companion 反应以及工具权限上下文。终端 UI 本质上是在读取与 agent loop 共同维护的同一个运行控制面。",
+            "より深いポイントは、AppState が単なる UI 状態ではないことです。タスク編成、bridge 接続、speculation のライフサイクル、plugin 再読込状態、通知、companion の反応、tool permission context まで運ぶ実行時の coordination surface です。つまりターミナル UI は agent loop と同じ運用 control plane を読んでいます。"
+          )}
+        </p>
       </Card>
 
       {/* Message Types */}

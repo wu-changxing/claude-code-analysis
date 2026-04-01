@@ -187,6 +187,7 @@ export default function AgentsPage() {
         accent="var(--purple)"
         links={[
           { label: "coordinator/", href: ghTree("coordinator") },
+          { label: "coordinatorMode.ts", href: ghBlob("coordinator/coordinatorMode.ts") },
           { label: "spawnMultiAgent.ts", href: ghBlob("tools/shared/spawnMultiAgent.ts") },
         ]}
       >
@@ -217,6 +218,38 @@ export default function AgentsPage() {
 - Prompt writing best practices
 - Continuation vs. spawn decisions
 - Failure handling`}
+        />
+        <p className="mt-4 text-sm text-text-secondary">
+          {tx(
+            "The important nuance in the real prompt is that the coordinator is not allowed to hand-wave research away. The system prompt explicitly says it must read worker findings, understand them itself, and then write follow-up prompts with concrete file paths and changes. In other words, Claude Code encodes a management style: synthesis stays with the leader, execution fans out to workers.",
+            "真实提示里最重要的细节是：协调器不能把研究结果含糊带过。系统提示明确要求它必须先阅读 worker 的发现、自己理解，再写出带有具体文件路径和改动说明的后续提示。换句话说，Claude Code 把一种“管理风格”编码进了系统：综合判断留在 leader，执行则分发给 workers。",
+            "実プロンプトで重要なのは、コーディネーターが調査結果を曖昧に受け流してはいけないことです。worker の発見を読み、自分で理解し、具体的なファイルパスと変更内容を含む follow-up prompt を書くことが明示されています。つまり Claude Code は一種のマネジメント様式を埋め込んでおり、統合判断は leader に残し、実行だけを workers に分散します。"
+          )}
+        </p>
+      </Card>
+
+      <Card
+        title={tx("Coordinator Prompt Contract", "协调器提示契约", "コーディネータープロンプト契約")}
+        className="mb-6"
+        accent="var(--orange)"
+        links={[
+          { label: "coordinatorMode.ts", href: ghBlob("coordinator/coordinatorMode.ts") },
+          { label: "constants/tools.ts", href: ghBlob("constants/tools.ts") },
+        ]}
+      >
+        <CodeBlock
+          code={`// coordinator/coordinatorMode.ts — notable rules
+getCoordinatorUserContext(...)
+  → enumerates worker tool access
+  → injects MCP server names
+  → may expose scratchpadDir for cross-worker knowledge
+
+getCoordinatorSystemPrompt()
+  → workers are async, launch independent work in parallel
+  → don't use workers for trivial file/command reporting
+  → don't say "based on your findings"
+  → always synthesize findings before delegating
+  → verification means proving behavior, not just presence of code`}
         />
       </Card>
 
