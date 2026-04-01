@@ -56,6 +56,16 @@ Microcompact (every API call), Autocompact (threshold trigger via forked agent, 
 - Magic Docs: files marked with "# MAGIC DOC:" are auto-updated by background agents
 - Session slugs from whimsical word lists: "fuzzy-dancing-capybara"
 - /stickers command: order physical merch from a CLI tool
+- Fast Mode internally called "Penguin Mode": penguinModeOrgEnabled, tengu_penguins_off, /api/claude_code_penguin_mode
+- Speculation engine: pre-executes likely next action in copy-on-write overlay at /tmp/claude/speculation/. Max 20 turns. Shows "Speculated 3 tool uses · +1m23s saved"
+- Auto-Dream: background memory consolidation with 3-gate system (24h time, 5+ sessions, lock). Fires /dream command
+- Buddy pets: Mulberry32 PRNG seeded with hash(userId), 60% common → 1% legendary, 1% shiny, stats: DEBUGGING/PATIENCE/CHAOS/WISDOM/SNARK
+- Commit attribution: 962 lines tracking character-level human vs Claude contribution. Documents quadratic growth bug fix
+- Compaction agent prompt SCREAMS: "CRITICAL: Do NOT call any tools. Tool calls will be REJECTED"
+- Computer scientists in session slug nouns: babbage, dijkstra, lovelace, turing, knuth, hopper
+- Prompt suggestion filter: 46+ blocked patterns, only 6 single-word suggestions allowed (yes, push, commit, deploy, continue, check)
+- Unicode symbol library in figures.ts: ↯ (fast mode), ○◐●◉ (effort), ◇◆ (running/done), ▎ (blockquote)
+- "DO NOT" comments as load-bearing constraints: "DO NOT ADD MORE STATE", "DO NOT CHANGE THIS TO CUMULATIVE"
 
 ## Source
 

@@ -1,6 +1,15 @@
 "use client";
 
 import { PageHeader, Card, CodeBlock, FlowStep } from "@/components/Section";
+import {
+  VscServerProcess,
+  VscExtensions,
+  VscDebugRestart,
+  VscCheck,
+  VscError,
+  VscWarning,
+} from "react-icons/vsc";
+import { HiOutlineArrowPath } from "react-icons/hi2";
 
 export default function QueryLoopPage() {
   return (
@@ -104,27 +113,46 @@ class StreamingToolExecutor {
         />
       </Card>
 
+      {/* Recovery Cascade */}
+      <Card title="Error Recovery Cascade" className="mb-6" accent="var(--orange)">
+        <p className="text-sm text-text-secondary mb-4">
+          When things go wrong, the loop tries 4 recovery strategies in order — each more aggressive:
+        </p>
+        <div className="grid grid-cols-4 gap-2">
+          {[
+            { step: "1", title: "Collapse Drain", desc: "Drain staged context collapses", color: "var(--accent)", icon: VscDebugRestart },
+            { step: "2", title: "Reactive Compact", desc: "Full conversation summary", color: "var(--orange)", icon: HiOutlineArrowPath },
+            { step: "3", title: "Token Escalation", desc: "8K → 64K one-shot", color: "var(--red)", icon: VscWarning },
+            { step: "4", title: "Multi-turn", desc: "Inject 'continue', max 3x", color: "var(--purple)", icon: VscServerProcess },
+          ].map(({ step, title, desc, color, icon: Icon }) => (
+            <div key={step} className="p-3 rounded-xl bg-bg-tertiary/20 border border-border/50 text-center">
+              <Icon className="w-5 h-5 mx-auto mb-2" style={{ color }} />
+              <div className="text-[10px] font-bold text-text-muted mb-0.5">Step {step}</div>
+              <div className="text-xs font-semibold text-text-primary mb-1">{title}</div>
+              <p className="text-[10px] text-text-muted">{desc}</p>
+            </div>
+          ))}
+        </div>
+      </Card>
+
       {/* Exit Conditions */}
       <Card title="Loop Exit Conditions" className="mb-6">
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-2">
           {[
-            { state: "completed", desc: "Natural end of response", color: "var(--green)" },
-            { state: "prompt_too_long", desc: "Unrecoverable context overflow", color: "var(--red)" },
-            { state: "max_output_tokens", desc: "Output limit exhausted after recovery", color: "var(--orange)" },
-            { state: "aborted_streaming", desc: "User interrupt during model call", color: "var(--red)" },
-            { state: "aborted_tools", desc: "User interrupt during tool execution", color: "var(--red)" },
-            { state: "stop_hook_prevented", desc: "Hook rejected continuation", color: "var(--orange)" },
-            { state: "blocking_limit", desc: "Hard context limit hit", color: "var(--red)" },
-            { state: "token_budget_completed", desc: "Token budget exhausted", color: "var(--purple)" },
-          ].map(({ state, desc, color }) => (
-            <div key={state} className="flex items-start gap-2 p-2 rounded bg-bg-tertiary/30">
-              <span
-                className="w-2 h-2 rounded-full mt-1.5 shrink-0"
-                style={{ background: color }}
-              />
+            { state: "completed", desc: "Natural end of response", icon: VscCheck, color: "var(--green)" },
+            { state: "prompt_too_long", desc: "Unrecoverable context overflow", icon: VscError, color: "var(--red)" },
+            { state: "max_output_tokens", desc: "Output limit exhausted after recovery", icon: VscWarning, color: "var(--orange)" },
+            { state: "aborted_streaming", desc: "User interrupt during model call", icon: VscError, color: "var(--red)" },
+            { state: "aborted_tools", desc: "User interrupt during tool execution", icon: VscError, color: "var(--red)" },
+            { state: "stop_hook_prevented", desc: "Hook rejected continuation", icon: VscWarning, color: "var(--orange)" },
+            { state: "blocking_limit", desc: "Hard context limit hit", icon: VscError, color: "var(--red)" },
+            { state: "token_budget_completed", desc: "Token budget exhausted", icon: VscExtensions, color: "var(--purple)" },
+          ].map(({ state, desc, icon: Icon, color }) => (
+            <div key={state} className="flex items-center gap-2.5 p-2 rounded-lg bg-bg-tertiary/20 border border-border/40">
+              <Icon className="w-3.5 h-3.5 shrink-0" style={{ color }} />
               <div>
-                <code className="text-xs text-accent">{state}</code>
-                <p className="text-xs text-text-muted mt-0.5">{desc}</p>
+                <code className="text-[11px] text-accent font-medium">{state}</code>
+                <p className="text-[10px] text-text-muted">{desc}</p>
               </div>
             </div>
           ))}
