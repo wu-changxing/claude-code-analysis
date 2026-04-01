@@ -49,14 +49,7 @@ const NAV_SECTIONS = (lang: Lang) => [
   {
     title: "Modules",
     items: [
-      { href: "/modules/tools", label: "Tools", icon: VscExtensions },
-      { href: "/modules/services", label: "Services", icon: VscDatabase },
-      { href: "/modules/utils", label: "Utils", icon: VscCode },
-      { href: "/modules/components", label: "Components", icon: VscSymbolStructure },
-      { href: "/modules/commands", label: "Commands", icon: VscTerminalBash },
-      { href: "/modules/query-engine", label: "Query/Engine", icon: VscServerProcess },
-      { href: "/modules/permissions", label: "Permissions", icon: VscShield },
-      { href: "/modules/bridge", label: "Bridge", icon: VscGitMerge },
+      { href: "/modules", label: "Module Map", icon: VscSymbolStructure },
     ],
   },
   {
