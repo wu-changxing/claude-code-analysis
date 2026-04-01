@@ -196,6 +196,13 @@ export default function ServicesPage() {
         </p>
 
         {/* Escalation ladder */}
+        <div className="mb-1.5 flex items-center justify-between">
+          <span className="text-[10px] text-text-muted font-semibold uppercase tracking-wider">{tx("least aggressive", "最温和", "最も穏やか")}</span>
+          <span className="text-[10px] text-text-muted font-semibold uppercase tracking-wider flex items-center gap-1">
+            <HiOutlineArrowRight className="w-3 h-3" />
+            {tx("most aggressive", "最激进", "最も積極的")}
+          </span>
+        </div>
         <div className="mb-5 space-y-2">
           {compactionStrategies.map((s, i) => (
             <motion.div

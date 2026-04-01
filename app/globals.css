@@ -211,6 +211,19 @@ pre .comment { color: #6b7280; font-style: italic; }
   }
 }
 
+/* Better mobile touch targets */
+@media (max-width: 639px) {
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Slightly larger base text on mobile for readability */
+  .page-shell {
+    font-size: 0.9375rem;
+  }
+}
+
 /* Section divider with gradient fade */
 .section-divider {
   height: 1px;

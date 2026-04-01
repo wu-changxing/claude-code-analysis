@@ -79,78 +79,78 @@ export default function QueryLoopPage() {
     {
       number: 1,
       icon: HiOutlineArrowsPointingIn,
-      title: tx("Context Projection", "上下文投影", "コンテキスト投影"),
+      title: tx("Context Projection — trim what the model sees", "上下文投影 — 裁减模型视野", "コンテキスト投影 — モデルが見る範囲を削る"),
       color: "var(--accent)",
       description: tx(
-        "Extract messages after compact boundary. Apply per-message tool result budget (content replacement). Apply history snipping, microcompact (single-turn compression), and context collapse.",
-        "提取 compact 边界之后的消息。为每条消息应用工具结果预算（内容替换），并执行历史裁剪、微压缩（单轮压缩）和上下文折叠。",
-        "compact 境界以降のメッセージを抽出し、メッセージ単位のツール結果予算（内容置換）を適用します。さらに履歴スニップ、マイクロ圧縮、コンテキスト折りたたみを行います。"
+        "Extract messages after the compact boundary. Apply tool-result budgets, history snipping, microcompact, and context collapse. Goal: fit within token limit before hitting the API.",
+        "提取 compact 边界后的消息，应用工具结果预算、历史裁剪、微压缩和上下文折叠。目标：在调用 API 前压进 token 上限内。",
+        "compact 境界後のメッセージを抽出し、ツール結果予算・履歴スニップ・マイクロ圧縮・折りたたみを適用。API 前にトークン上限内に収める。"
       ),
     },
     {
       number: 2,
       icon: HiOutlineCircleStack,
-      title: tx("Auto-Compaction Pre-Check", "自动压缩预检查", "自動圧縮の事前チェック"),
+      title: tx("Auto-Compaction Check — summarize if still too big", "自动压缩检查 — 若仍然过大则摘要", "自動圧縮チェック — まだ大きければ要約"),
       color: "var(--green)",
       description: tx(
-        "If context exceeds threshold (model context - max output - 13K buffer), trigger async autocompact. Replace messages with post-compact version. Track compaction info for analytics.",
-        "如果上下文超过阈值（模型上下文 - 最大输出 - 13K 缓冲区），触发异步自动压缩，并用压缩后的消息替换原消息，同时记录分析用压缩信息。",
-        "コンテキストが閾値（モデル文脈 - 最大出力 - 13K バッファ）を超えると、非同期の自動圧縮を起動します。"
+        "If context still exceeds threshold (model_ctx − max_output − 13K buffer), trigger async autocompact: fork a summarizer, replace messages with compact version.",
+        "如果上下文仍超过阈值（model_ctx − max_output − 13K buffer），触发异步 autocompact：fork 摘要代理，用压缩版本替换消息。",
+        "閾値（model_ctx − max_output − 13K バッファ）を超えていれば非同期 autocompact を起動。要約エージェントをフォークしてメッセージを置換。"
       ),
     },
     {
       number: 3,
       icon: HiOutlineCpuChip,
-      title: tx("API Call with Streaming", "流式 API 调用", "ストリーミング API 呼び出し"),
+      title: tx("API Streaming — model generates + tools start early", "流式 API 调用 — 模型生成，工具提前启动", "API ストリーミング — 生成中にツールを先行実行"),
       color: "var(--orange)",
       description: tx(
-        "Call queryModelWithStreaming() with messages, system prompt, tools, thinking config. Stream back text blocks, tool_use blocks, and thinking blocks. StreamingToolExecutor starts executing tools as they arrive — reducing latency by parallelizing tool execution with continued model streaming.",
-        "使用消息、系统提示、工具和思考配置调用 queryModelWithStreaming()。返回文本块、tool_use 块和 thinking 块。StreamingToolExecutor 会在工具块到达时立刻执行，从而把工具执行与模型持续输出并行化，降低整体延迟。",
-        "messages、system prompt、tools、thinking 設定を使って queryModelWithStreaming() を呼び出します。StreamingToolExecutor は到着した時点でツール実行を開始してレイテンシを削減します。"
+        "Stream text/tool_use/thinking blocks from the API. StreamingToolExecutor starts tools as blocks arrive — tools run in parallel with continued model streaming, cutting latency.",
+        "从 API 流式返回 text/tool_use/thinking 块。StreamingToolExecutor 在块到达时即刻执行工具——工具与模型流式输出并行运行，降低延迟。",
+        "API から text/tool_use/thinking ブロックをストリーミング。StreamingToolExecutor はブロックが届いた時点でツールを起動 — モデル生成と並列実行して低遅延化。"
       ),
     },
     {
       number: 4,
       icon: HiOutlineArrowPath,
-      title: tx("Error Recovery", "错误恢复", "エラー回復"),
+      title: tx("Error Recovery — 4 escalating strategies", "错误恢复 — 4 级递进策略", "エラー回復 — 4段階の戦略"),
       color: "var(--red)",
       description: tx(
-        "Multiple recovery strategies: (1) Collapse Drain — drain staged context collapses. (2) Reactive Compact — full summary if collapse insufficient. (3) Max Output Escalation — 8K → 64K one-shot. (4) Multi-turn — inject 'continue' message, max 3 attempts.",
-        "提供多种恢复策略：(1) Collapse Drain：排空已暂存的上下文折叠；(2) Reactive Compact：如果折叠不够，则生成完整摘要；(3) Max Output Escalation：一次性把输出上限从 8K 提升到 64K；(4) Multi-turn：注入 continue 消息，最多 3 次。",
-        "複数の回復戦略を順に試します。(1) Collapse Drain。(2) Reactive Compact。(3) Max Output Escalation: 8K→64K。(4) Multi-turn: 'continue' を注入し最大3回。"
+        "On overflow: (1) Drain staged collapses. (2) Reactive compact — full summary. (3) Escalate output limit 8K → 64K. (4) Inject 'continue', max 3×. Each tried before giving up.",
+        "溢出时：(1) 排空已暂存的折叠；(2) Reactive compact——完整摘要；(3) 输出上限 8K→64K；(4) 注入 continue，最多 3 次。逐级尝试，不到最后不放弃。",
+        "オーバー時：(1) staged collapse を消化。(2) reactive compact で完全要約。(3) 出力上限 8K→64K へ拡張。(4) 'continue' 注入を最大3回。順に試す。"
       ),
     },
     {
       number: 5,
       icon: HiOutlineBolt,
-      title: tx("Tool Execution", "工具执行", "ツール実行"),
+      title: tx("Tool Execution — reads parallel, writes serial", "工具执行 — 读并行，写串行", "ツール実行 — 読取は並列、書込は直列"),
       color: "var(--purple)",
       description: tx(
-        "Partition tool calls by concurrency safety. Read-only tools run in parallel (up to 10). Write tools run serially with context modifiers applied between batches. Results yielded as messages.",
-        "按并发安全性拆分工具调用。只读工具并行运行（最多 10 个），写工具串行运行，并在批次之间应用上下文修改器。结果以消息形式产出。",
-        "ツール呼び出しは並行安全性で分割されます。読み取り専用は最大10件まで並列、書き込み系は直列で実行されます。"
+        "Partition tool calls by concurrency safety. Read-only: up to 10 parallel. Write tools: serial with context modifiers between batches. Results yielded as messages.",
+        "按并发安全性拆分工具调用：只读工具最多 10 个并行；写工具串行，批次间应用上下文修改器。结果以消息形式产出。",
+        "並行安全性でツールを分割。読み取り専用：最大10並列。書き込み：直列で、バッチ間にコンテキスト修正を適用。結果をメッセージとして yield。"
       ),
     },
     {
       number: 6,
       icon: HiOutlinePaperClip,
-      title: tx("Attachment Processing", "附件处理", "添付処理"),
+      title: tx("Attachment Processing — inject queued context", "附件处理 — 注入排队中的上下文", "添付処理 — キュー済み文脈を注入"),
       color: "var(--pink)",
       description: tx(
-        "Memory prefetch results, skill discovery, queued command attachments (task notifications). All appended to messages before next API call.",
-        "处理记忆预取结果、技能发现结果，以及排队中的命令附件（任务通知），并在下一次 API 调用前全部追加到消息中。",
-        "メモリのプリフェッチ結果、スキル探索結果、キュー済みコマンド添付を処理し、次の API 呼び出し前にメッセージへ追加します。"
+        "Append memory prefetch results, skill discovery output, and queued task notifications before the next API call. Keeps the model informed without slowing the user turn.",
+        "在下次 API 调用前追加记忆预取结果、技能发现结果和排队中的任务通知。让模型保持最新信息，同时不拖慢用户回合。",
+        "次の API 呼び出し前にメモリのプリフェッチ結果、スキル探索、キュー済みタスク通知を追加。ユーザーターンを遅らせずにモデルを最新状態に。"
       ),
     },
     {
       number: 7,
       icon: HiOutlineCheckCircle,
-      title: tx("Continuation Decision", "继续判断", "継続判定"),
+      title: tx("Continuation Decision — exit or loop again", "继续判断 — 退出还是再循环", "継続判定 — 終了かループ再開か"),
       color: "var(--accent)",
       description: tx(
-        "If no tool use → check for natural completion. Run stop hooks for conditional continuation. Check token budget. Return terminal state or continue loop.",
-        "如果没有工具调用，则检查是否自然结束；随后运行 stop hooks 判断是否需要继续，再检查 token 预算，最后返回终止状态或继续循环。",
-        "ツール利用がなければ自然終了かを確認し、stop hooks で継続条件を判定し、トークン予算を確認したうえで終了状態を返すかループを続行します。"
+        "No tool use → check for natural completion. Run stop hooks (may force continuation). Check token budget. Return a terminal state or restart the loop.",
+        "无工具调用 → 检查是否自然完成。运行 stop hooks（可能强制继续）。检查 token 预算。返回终止状态或重启循环。",
+        "ツール利用なし → 自然終了を確認。stop hooks を実行（継続を強制する場合も）。トークン予算を確認。終了状態を返すかループ再開。"
       ),
     },
   ];

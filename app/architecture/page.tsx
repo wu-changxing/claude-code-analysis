@@ -195,9 +195,9 @@ export default function ArchitecturePage() {
         />
         <p className="mt-4 text-sm text-text-secondary">
           {tx(
-            "The important update from the current source tree is that Claude Code is no longer just a local REPL plus tools. It now has explicit bridge/remote subsystems, richer prompt-suggestion/speculation services, and much more session infrastructure around the original query loop.",
-            "当前源码树最重要的新变化是：Claude Code 已经不只是本地 REPL 加一组工具。它现在有明确的 bridge/remote 子系统、更完整的 prompt-suggestion/speculation 服务，以及围绕原始查询循环构建的大量会话基础设施。",
-            "現在のソースツリーで重要なのは、Claude Code がもはや「ローカル REPL + ツール」だけではないことです。bridge/remote サブシステム、より厚い prompt-suggestion/speculation サービス、そして元の query loop を取り巻く多くのセッション基盤が加わっています。"
+            "Claude Code is no longer just a REPL + tools. It now has bridge/remote subsystems, speculation services, and rich session infrastructure around the core query loop.",
+            "Claude Code 已不只是 REPL 加工具。它现在有 bridge/remote 子系统、推测服务和围绕核心 query loop 的丰富会话基础设施。",
+            "Claude Code はもはや REPL + ツールではありません。bridge/remote、speculation サービス、豊富なセッション基盤が中核ループを取り囲んでいます。"
           )}
         </p>
         <InsightCallout emoji="🏛️" title={tx("Key Insight", "核心洞察", "重要なポイント")} className="mt-4">
@@ -258,8 +258,8 @@ export default function ArchitecturePage() {
               },
             ].map((item) => (
               <div key={item.name} className="rounded-lg border border-border/50 bg-bg-primary/60 p-3">
-                <code className="text-accent text-[11px] font-semibold">{item.name}</code>
-                <p className="mt-1 text-[11px] text-text-muted leading-relaxed">{item.desc}</p>
+                <code className="text-accent text-xs font-semibold">{item.name}</code>
+                <p className="mt-1 text-xs text-text-muted leading-relaxed">{item.desc}</p>
               </div>
             ))}
           </div>

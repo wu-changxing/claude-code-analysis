@@ -344,42 +344,76 @@ SYSTEM_PROMPT_DYNAMIC_BOUNDARY = "__SYSTEM_PROMPT_DYNAMIC_BOUNDARY__"
       >
         <p className="text-sm text-text-secondary mb-4">
           {tx(
-            "Persistent project-scoped memory stored at ",
-            "持久化的项目级记忆存储在 ",
-            "永続的なプロジェクト単位のメモリは "
+            "Persistent project-scoped memory at ",
+            "持久化项目记忆存储路径：",
+            "永続的なプロジェクトメモリの保存先："
           )}{" "}
-          <code className="text-accent">~/.claude/projects/&lt;path&gt;/memory/</code>.
+          <code className="text-accent">~/.claude/projects/&lt;path&gt;/memory/</code>.{" "}
           {tx(
-            " Four memory types with structured format.",
-            " ，共有四种结构化记忆类型。",
-            " に保存され、4種類の構造化メモリに分かれます。"
+            "Four types, each serving a different purpose.",
+            "四种类型，各司其职。",
+            "4つの種別、それぞれ異なる目的。"
           )}
         </p>
+
+        {/* Memory types — WHY each matters */}
+        <div className="mb-5 grid grid-cols-1 gap-2 sm:grid-cols-2">
+          {[
+            {
+              type: "user/",
+              color: "var(--accent)",
+              why: tx("Your role & preferences — so Claude doesn't keep asking who you are.", "你的角色和偏好——让 Claude 不必反复询问你是谁。", "あなたの役割と好み — 毎回聞かれなくて済む。"),
+              example: "profile.md, preferences.md",
+            },
+            {
+              type: "feedback/",
+              color: "var(--red)",
+              why: tx("Corrections & validated rules — so Claude doesn't repeat mistakes you've corrected.", "修正和已验证规则——防止 Claude 重复你已纠正的错误。", "修正済みルール — 同じミスを繰り返さないため。"),
+              example: "testing_policy.md",
+            },
+            {
+              type: "project/",
+              color: "var(--green)",
+              why: tx("Active work context — current sprint, open tasks, recent decisions.", "当前工作上下文——当前迭代、未完成任务、近期决策。", "進行中の作業文脈 — 現在のスプリント、判断の記録。"),
+              example: "current_sprint.md",
+            },
+            {
+              type: "reference/",
+              color: "var(--purple)",
+              why: tx("External system pointers — so Claude can reference team resources without being told.", "外部系统指针——让 Claude 无需提示即可引用团队资源。", "外部システムのポインタ — 言わなくても参照できる。"),
+              example: "slack_channels.md",
+            },
+          ].map((m) => (
+            <div
+              key={m.type}
+              className="rounded-lg border p-3"
+              style={{
+                borderColor: `color-mix(in srgb, ${m.color} 20%, var(--border))`,
+                background: `color-mix(in srgb, ${m.color} 5%, var(--bg-secondary))`,
+              }}
+            >
+              <div className="flex items-center gap-1.5 mb-1.5">
+                <code className="text-[11px] font-bold" style={{ color: m.color }}>{m.type}</code>
+                <span className="text-[10px] text-text-muted font-mono italic">{m.example}</span>
+              </div>
+              <p className="text-xs text-text-secondary leading-relaxed">{m.why}</p>
+            </div>
+          ))}
+        </div>
+
         <CodeBlock
-          code={`// Directory structure:
-~/.claude/projects/<path>/memory/
-  MEMORY.md               # Index (200 lines max, 25KB max)
-  user/
-    profile.md            # Role, preferences
-    preferences.md
-  feedback/
-    testing_policy.md     # Corrections & validations
-  project/
-    current_sprint.md     # Ongoing work context
-  reference/
-    slack_channels.md     # External system pointers
+          code={`~/.claude/projects/<path>/memory/
+  MEMORY.md         # Index — always loaded, 200 lines max
+  user/profile.md   # Role, preferences
+  feedback/         # Corrections & validated rules
+  project/          # Active sprint / open tasks
+  reference/        # External system pointers
 
 // Memory file format (frontmatter):
 ---
-name: {{memory name}}
-description: {{one-line description}}
 type: user | feedback | project | reference
 ---
-{{content — fact, then **Why:** and **How to apply:** lines}}
-
-// MEMORY.md is always loaded into conversation context
-// Lines after 200 are truncated
-// Each entry is one line, under 150 chars`}
+{{fact}}  **Why:** ...  **How to apply:** ...`}
         />
       </Card>
 

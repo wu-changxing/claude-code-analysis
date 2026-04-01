@@ -11,6 +11,7 @@ export const LANG_LABELS: Record<Lang, string> = {
 const translations = {
   // Sidebar
   "nav.home": { en: "Home", zh: "首页", ja: "ホーム" },
+  "nav.about": { en: "About", zh: "关于", ja: "このサイトについて" },
   "nav.architecture": { en: "System Design", zh: "系统设计", ja: "システム設計" },
   "nav.queryLoop": { en: "Query Loop", zh: "查询循环", ja: "クエリループ" },
   "nav.tools": { en: "Tools", zh: "工具", ja: "ツール" },

@@ -270,7 +270,7 @@ export default function PermissionsPage() {
         {/* Visual funnel pipeline — widest at top, narrowest at bottom */}
         <div className="flex flex-col items-center gap-0">
           <div className="text-[9px] text-text-muted mb-1.5 text-center font-semibold uppercase tracking-wider">
-            {tx("← all requests enter here", "← 所有请求从这里进入", "← すべてのリクエスト")}
+            {tx("↓ all tool calls enter here — most are resolved before reaching the next layer", "↓ 所有工具调用从这里进入 — 大多数在到达下一层之前就已决策", "↓ すべてのツール呼び出しはここから入る — ほとんどは次の層に届く前に判定済み")}
           </div>
           {layers.map((layer, idx) => {
             const widthPct = [100, 92, 82, 72, 62][idx];
@@ -311,7 +311,7 @@ export default function PermissionsPage() {
             );
           })}
           <div className="mt-2 text-[9px] text-text-muted text-center font-semibold uppercase tracking-wider">
-            {tx("only unresolved requests reach user dialog ↑", "只有未决策的请求才到达用户对话框", "判定なければユーザーダイアログへ")}
+            {tx("↑ fewer requests reach each deeper layer — user dialog is last resort", "↑ 每深一层，到达的请求越少 — 用户对话框是最后手段", "↑ 深い層ほど届くリクエストは少ない — ユーザーダイアログは最終手段")}
           </div>
         </div>
 

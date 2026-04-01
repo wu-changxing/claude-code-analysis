@@ -20,6 +20,7 @@ import {
   VscCode,
   VscTerminalBash,
   VscShield,
+  VscInfo,
 } from "react-icons/vsc";
 import { useLang } from "@/lib/LangContext";
 import { t, LANG_LABELS, Lang } from "@/lib/i18n";
@@ -27,7 +28,10 @@ import { t, LANG_LABELS, Lang } from "@/lib/i18n";
 const NAV_SECTIONS = (lang: Lang) => [
   {
     title: t("nav.section.overview", lang),
-    items: [{ href: "/", label: t("nav.home", lang), icon: VscHome }],
+    items: [
+      { href: "/", label: t("nav.home", lang), icon: VscHome },
+      { href: "/about", label: t("nav.about", lang), icon: VscInfo },
+    ],
   },
   {
     title: t("nav.section.architecture", lang),

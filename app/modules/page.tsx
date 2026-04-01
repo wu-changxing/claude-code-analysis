@@ -331,6 +331,9 @@ function DependencyGraph() {
       </div>
 
       {/* Desktop view: visual dependency graph */}
+      <div className="hidden sm:block text-[9px] text-text-muted text-center font-semibold uppercase tracking-wider mb-2">
+        {tx("arrows point from caller → dependency · read top-down", "箭头从调用方指向依赖 · 从上往下阅读", "矢印は呼出元 → 依存先 · 上から下へ読む")}
+      </div>
       <div className="hidden sm:flex flex-col items-center gap-3">
 
         {/* Tier 0: Bridge (wraps query-engine from above) */}
