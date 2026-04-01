@@ -11,7 +11,15 @@ import {
   VscDatabase,
   VscShield,
   VscSymbolStructure,
+  VscArrowDown,
 } from "react-icons/vsc";
+import {
+  HiOutlineArrowDown,
+  HiOutlineCpuChip,
+  HiOutlineCommandLine,
+  HiOutlineCircleStack,
+  HiOutlineArrowPath,
+} from "react-icons/hi2";
 
 export default function ArchitecturePage() {
   const tx = useTx();
@@ -21,6 +29,56 @@ export default function ArchitecturePage() {
     { id: "control-plane", label: tx("Control Plane", "控制平面", "コントロールプレーン"), description: tx("Why Claude Code is more than a simple loop plus tools.", "为什么 Claude Code 不只是一个循环加工具。", "なぜ単なるループ+ツールではないのか。") },
     { id: "largest-files", label: tx("Largest Files", "最大文件", "最大ファイル"), description: tx("Where a lot of complexity is concentrated.", "复杂度最集中的地方。", "複雑さが集中する場所。") },
   ];
+
+  /* Visual data flow layers */
+  const dataFlowLayers = [
+    {
+      id: "entry",
+      label: tx("Entry Point", "入口点", "エントリーポイント"),
+      sublabel: "cli.tsx / SDK",
+      icon: HiOutlineCommandLine,
+      color: "var(--accent)",
+      items: tx(
+        "Fast-path: --version, daemon workers  |  Full init: MDM, keychain, GrowthBook (~135ms parallel)",
+        "快速路径：--version、daemon workers  |  完整初始化：MDM、keychain、GrowthBook（约135ms并行）",
+        "高速パス: --version、daemonワーカー  |  完全初期化: MDM、keychain、GrowthBook（~135ms並列）",
+      ),
+    },
+    {
+      id: "engine",
+      label: "QueryEngine",
+      sublabel: "QueryEngine.ts",
+      icon: HiOutlineCpuChip,
+      color: "var(--green)",
+      items: tx(
+        "System prompt assembly  ·  User input processing  ·  Skill & plugin loading  ·  Yield init message",
+        "系统提示构建  ·  用户输入处理  ·  技能与插件加载  ·  产出初始化消息",
+        "システムプロンプト構築  ·  ユーザー入力処理  ·  スキル読み込み  ·  初期化メッセージ出力",
+      ),
+    },
+    {
+      id: "loop",
+      label: tx("query() Loop", "query() 循环", "query() ループ"),
+      sublabel: "query.ts  ~1700 lines",
+      icon: HiOutlineArrowPath,
+      color: "var(--orange)",
+      isLoop: true,
+      items: tx(
+        "Context projection  ·  Auto-compaction  ·  API streaming  ·  Tool execution  ·  Attachments  ·  Continuation",
+        "上下文投影  ·  自动压缩  ·  API流式输出  ·  工具执行  ·  附件处理  ·  继续判断",
+        "コンテキスト投影  ·  自動圧縮  ·  APIストリーミング  ·  ツール実行  ·  添付処理  ·  継続判定",
+      ),
+    },
+    {
+      id: "terminal",
+      label: tx("Terminal State", "终止状态", "終了状態"),
+      sublabel: tx("Session ends", "会话结束", "セッション終了"),
+      icon: HiOutlineCircleStack,
+      color: "var(--purple)",
+      items: "completed  ·  prompt_too_long  ·  aborted  ·  token_budget_completed",
+    },
+  ];
+
   return (
     <div className="page-shell">
       <PageHeader
@@ -122,46 +180,45 @@ export default function ArchitecturePage() {
           ]}
         >
           <div className="space-y-3 text-sm text-text-secondary">
-            <div>
-              <code className="text-accent text-xs">QueryEngine</code>
-              <p className="mt-1 text-xs">
-                {tx(
+            {[
+              {
+                name: "QueryEngine",
+                desc: tx(
                   "Owns the complete conversation lifecycle. Async generator that yields SDKMessage objects. Handles system prompt assembly, user input processing, and delegates to query() loop.",
                   "负责完整的会话生命周期。它是会产出 SDKMessage 的异步生成器，处理系统提示构建、用户输入处理，并把执行委派给 query() 循环。",
                   "会話ライフサイクル全体を担います。SDKMessage を yield する async generator であり、システムプロンプト構築、ユーザー入力処理、query() ループへの委譲を行います。"
-                )}
-              </p>
-            </div>
-            <div>
-              <code className="text-accent text-xs">query()</code>
-              <p className="mt-1 text-xs">
-                {tx(
+                ),
+              },
+              {
+                name: "query()",
+                desc: tx(
                   "The main agentic loop — a state machine that streams API responses, executes tools, handles recovery, and decides whether to continue or exit.",
                   "主代理循环，是一个负责流式处理 API 响应、执行工具、处理恢复逻辑并决定继续还是退出的状态机。",
                   "メインのエージェントループであり、API 応答のストリーミング、ツール実行、回復処理、継続/終了判定を行う状態機械です。"
-                )}
-              </p>
-            </div>
-            <div>
-              <code className="text-accent text-xs">Tool&lt;Input, Output, Progress&gt;</code>
-              <p className="mt-1 text-xs">
-                {tx(
+                ),
+              },
+              {
+                name: "Tool<Input, Output, Progress>",
+                desc: tx(
                   "Unified interface for all tools. Built via buildTool() factory. Declares permissions, concurrency safety, and rendering.",
                   "所有工具统一遵循的接口。通过 buildTool() 工厂构建，并声明权限、并发安全性和渲染行为。",
                   "全ツール共通のインターフェースです。buildTool() ファクトリで構築され、権限、並行安全性、レンダリング方法を宣言します。"
-                )}
-              </p>
-            </div>
-            <div>
-              <code className="text-accent text-xs">ToolUseContext</code>
-              <p className="mt-1 text-xs">
-                {tx(
+                ),
+              },
+              {
+                name: "ToolUseContext",
+                desc: tx(
                   "Central communication channel between tools and the query loop. Contains options, state accessors, abort controller, analytics.",
                   "工具与查询循环之间的中央通信通道，包含选项、状态访问器、中止控制器和分析能力。",
                   "ツールとクエリループの中心的な通信経路です。options、状態アクセサ、abort controller、analytics を含みます。"
-                )}
-              </p>
-            </div>
+                ),
+              },
+            ].map((item) => (
+              <div key={item.name} className="rounded-lg border border-border/50 bg-bg-primary/60 p-3">
+                <code className="text-accent text-[11px] font-semibold">{item.name}</code>
+                <p className="mt-1 text-[11px] text-text-muted leading-relaxed">{item.desc}</p>
+              </div>
+            ))}
           </div>
         </Card>
 
@@ -174,84 +231,158 @@ export default function ArchitecturePage() {
             { label: "state/", href: ghTree("state") },
           ]}
         >
-          <div className="space-y-3 text-sm text-text-secondary">
-            <div>
-              <strong className="text-text-primary text-xs">Async Generator Architecture</strong>
-              <p className="mt-1 text-xs">
-                {tx(
+          <div className="space-y-3">
+            {[
+              {
+                name: tx("Async Generator Architecture", "异步生成器架构", "非同期ジェネレーターアーキテクチャ"),
+                color: "var(--green)",
+                desc: tx(
                   "Both QueryEngine and query() are async generators that yield intermediate results for real-time streaming.",
                   "QueryEngine 和 query() 都是 async generator，会产出中间结果以支持实时流式输出。",
                   "QueryEngine と query() はどちらも async generator であり、リアルタイム配信のために中間結果を yield します。"
-                )}
-              </p>
-            </div>
-            <div>
-              <strong className="text-text-primary text-xs">Streaming Concurrency</strong>
-              <p className="mt-1 text-xs">
-                {tx(
+                ),
+              },
+              {
+                name: tx("Streaming Concurrency", "流式并发", "ストリーミング並行処理"),
+                color: "var(--orange)",
+                desc: tx(
                   "Tools start executing while the model is still generating. StreamingToolExecutor queues tool_use blocks as they arrive.",
                   "模型仍在生成时工具就开始执行。StreamingToolExecutor 会在 tool_use 块到达时立即入队。",
                   "モデルがまだ生成中でもツール実行を開始します。StreamingToolExecutor は到着した tool_use ブロックを即座にキューへ入れます。"
-                )}
-              </p>
-            </div>
-            <div>
-              <strong className="text-text-primary text-xs">Cache Sharing (CacheSafeParams)</strong>
-              <p className="mt-1 text-xs">
-                {tx(
+                ),
+              },
+              {
+                name: tx("Cache Sharing (CacheSafeParams)", "缓存共享", "キャッシュ共有"),
+                color: "var(--accent)",
+                desc: tx(
                   "Frozen system prompt bytes enable zero-cost forked queries for subagents. Identical bytes = automatic prompt cache hit.",
                   "被冻结的系统提示字节使子代理的 fork 查询几乎零成本。字节完全一致就会自动命中 prompt cache。",
-                  "凍結されたシステムプロンプトのバイト列により、サブエージェントの fork クエリがほぼ無料になります。同一バイト列なら自動で prompt cache hit です。"
-                )}
-              </p>
-            </div>
-            <div>
-              <strong className="text-text-primary text-xs">DeepImmutable State</strong>
-              <p className="mt-1 text-xs">
-                {tx(
+                  "凍結されたシステムプロンプトのバイト列により、サブエージェントの fork クエリがほぼ無料になります。"
+                ),
+              },
+              {
+                name: tx("DeepImmutable State", "深度不可变状态", "DeepImmutable State"),
+                color: "var(--purple)",
+                desc: tx(
                   "Zustand-like AppState with type-safe mutations. setAppState(prev => {...prev, field: newValue}).",
-                  "类似 Zustand 的 AppState，并支持类型安全的状态变更，例如 setAppState(prev => {...prev, field: newValue})。",
-                  "Zustand 風の AppState と型安全な更新方式です。例: setAppState(prev => {...prev, field: newValue})。"
-                )}
-              </p>
-            </div>
+                  "类似 Zustand 的 AppState，并支持类型安全的状态变更。",
+                  "Zustand 風の AppState と型安全な更新方式です。"
+                ),
+              },
+            ].map((item) => (
+              <div
+                key={item.name}
+                className="rounded-lg border border-border/50 p-3"
+                style={{ borderLeft: `3px solid ${item.color}` }}
+              >
+                <strong className="text-[11px] font-semibold text-text-primary">{item.name}</strong>
+                <p className="mt-1 text-[11px] text-text-muted leading-relaxed">{item.desc}</p>
+              </div>
+            ))}
           </div>
         </Card>
       </div>
 
+      {/* Visual Data Flow Diagram */}
       <Card
         id="control-plane"
-        title={tx("Operational Control Plane", "运行时控制平面", "運用コントロールプレーン")}
+        title={tx("High-Level Data Flow", "高层数据流", "高レベルデータフロー")}
         className="mb-6"
         accent="var(--purple)"
-        summary={tx("This section explains the product-level runtime that surrounds the core agent loop.", "这一节解释围绕核心 agent loop 的产品级运行时结构。", "コア agent loop を取り巻く実行基盤です。")}
+        summary={tx("Visual walkthrough of a request from entry to terminal state.", "从入口到终止状态的可视化全流程。", "エントリーから終了状態までのビジュアルフロー。")}
         links={[
           { label: "state/AppStateStore.ts", href: ghBlob("state/AppStateStore.ts") },
           { label: "bridge/", href: ghTree("bridge") },
           { label: "services/PromptSuggestion/", href: ghTree("services/PromptSuggestion") },
         ]}
       >
-        <p className="text-sm text-text-secondary mb-4">
-          {tx(
-            "A useful way to mentally model modern Claude Code is that it has grown an operational control plane beside the agent loop. AppState tracks remote bridge connectivity, background task counts, prompt suggestion/speculation state, plugin installation status, footer UI focus, tmux/browser integrations, and companion reactions. That means the product is no longer just 'query loop + tools'; it is a stateful terminal platform that happens to center on the query loop.",
-            "理解新版 Claude Code 的一个好方法，是把它看作在 agent loop 旁边长出了一层运行时控制平面。AppState 会跟踪 remote bridge 连接、后台任务数量、prompt suggestion/speculation 状态、插件安装状态、footer UI 焦点、tmux/browser 集成，以及 companion 反应。这说明它已经不再只是“查询循环 + 工具”，而是一个以查询循环为中心的有状态终端平台。",
-            "現代の Claude Code を理解する有効な見方は、agent loop の横に運用 control plane が育っていると捉えることです。AppState は remote bridge 接続、バックグラウンドタスク数、prompt suggestion/speculation 状態、plugin 導入状態、footer UI フォーカス、tmux/browser 連携、companion の反応まで追跡します。つまり、もはや『query loop + tools』ではなく、query loop を中心に据えた stateful なターミナルプラットフォームです。"
-          )}
-        </p>
-        <CodeBlock
-          code={`// representative state families
-runtime:
-  remoteConnectionStatus, replBridgeConnected, remoteBackgroundTaskCount
+        <div className="flex flex-col items-stretch gap-0">
+          {dataFlowLayers.map((layer, i) => (
+            <div key={layer.id} className="flex flex-col items-center">
+              {/* Layer Box */}
+              <div
+                className="w-full rounded-xl border p-4"
+                style={{
+                  borderColor: `color-mix(in srgb, ${layer.color} 35%, transparent)`,
+                  background: `color-mix(in srgb, ${layer.color} 6%, var(--bg-secondary))`,
+                }}
+              >
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:gap-4">
+                  <div
+                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
+                    style={{
+                      background: `color-mix(in srgb, ${layer.color} 18%, transparent)`,
+                      border: `1.5px solid color-mix(in srgb, ${layer.color} 35%, transparent)`,
+                    }}
+                  >
+                    <layer.icon className="h-5 w-5" style={{ color: layer.color }} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex flex-wrap items-baseline gap-2 mb-1">
+                      <span className="text-sm font-semibold text-text-primary">{layer.label}</span>
+                      <code
+                        className="text-[10px] rounded px-1.5 py-0.5"
+                        style={{
+                          background: `color-mix(in srgb, ${layer.color} 14%, transparent)`,
+                          color: layer.color,
+                        }}
+                      >
+                        {layer.sublabel}
+                      </code>
+                      {layer.isLoop && (
+                        <span className="text-[9px] rounded-full border px-2 py-0.5 text-text-muted border-border">
+                          {tx("loops while tools called", "工具调用期间持续循环", "ツール呼び出し中はループ")}
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-[11px] text-text-muted leading-relaxed break-words">{layer.items}</p>
+                  </div>
+                </div>
+              </div>
+              {/* Connector arrow between layers */}
+              {i < dataFlowLayers.length - 1 && (
+                <div className="flex flex-col items-center py-1">
+                  <div className="h-4 w-px bg-border" />
+                  <HiOutlineArrowDown className="h-3.5 w-3.5 text-text-muted" />
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
 
-agent orchestration:
-  tasks, agentNameRegistry, coordinatorTaskIndex, viewingAgentTaskId
+        <div className="mt-5 rounded-xl border border-border/50 bg-bg-tertiary/30 p-4">
+          <p className="text-[11px] text-text-muted leading-relaxed">
+            {tx(
+              "A second top-level flow now exists beside the local REPL path: bridge/remote execution. In that mode, a bridge loop polls for work, spawns or reconnects sessions, and lets the same QueryEngine/query() core run inside managed remote capacity. Architecturally, that means the agent loop is the center, but not the whole product anymore.",
+              "现在除了本地 REPL 路径之外，还存在第二条顶层流程：bridge/remote 执行。在该模式下，bridge loop 负责轮询任务、生成或重连会话，并让同一套 QueryEngine/query() 核心运行在受管控的远程容量中。从架构上说，agent loop 仍然是中心，但它已经不再等于整个产品。",
+              "現在はローカル REPL の隣に、bridge/remote 実行というもう一つのトップレベル経路があります。bridge loop が作業をポーリングし、セッションを起動/再接続し、同じ QueryEngine/query() コアを管理された遠隔実行環境で動かします。つまり、agent loop は依然として中心ですが、もはや製品全体ではありません。"
+            )}
+          </p>
+        </div>
 
-background intelligence:
-  promptSuggestionEnabled, speculationState, notifications, elicitation
-
-UX subsystems:
-  companionReaction, bagelActive, tungstenActiveSession, footerSelection`}
-        />
+        {/* Control Plane AppState families */}
+        <div className="mt-5">
+          <p className="mb-3 text-[11px] font-semibold text-text-muted uppercase tracking-wider">
+            {tx("AppState Families", "AppState 状态族", "AppState のファミリー")}
+          </p>
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+            {[
+              { label: tx("Runtime", "运行时", "ランタイム"), color: "var(--accent)", items: "remoteConnectionStatus · replBridgeConnected · remoteBackgroundTaskCount" },
+              { label: tx("Agent Orchestration", "代理编排", "エージェント編成"), color: "var(--green)", items: "tasks · agentNameRegistry · coordinatorTaskIndex · viewingAgentTaskId" },
+              { label: tx("Background Intelligence", "后台智能", "バックグラウンド知性"), color: "var(--orange)", items: "promptSuggestionEnabled · speculationState · notifications · elicitation" },
+              { label: tx("UX Subsystems", "UX 子系统", "UXサブシステム"), color: "var(--purple)", items: "companionReaction · bagelActive · tungstenActiveSession · footerSelection" },
+            ].map((f) => (
+              <div
+                key={f.label}
+                className="rounded-lg border border-border/50 p-3"
+                style={{ borderLeft: `3px solid ${f.color}` }}
+              >
+                <span className="text-[11px] font-semibold" style={{ color: f.color }}>{f.label}</span>
+                <p className="mt-1 text-[10px] text-text-muted font-mono leading-relaxed">{f.items}</p>
+              </div>
+            ))}
+          </div>
+        </div>
       </Card>
 
       {/* Size Comparison */}
@@ -263,30 +394,31 @@ UX subsystems:
             "著名プロジェクトと比較した概算行数："
           )}
         </p>
-        <div className="space-y-2.5">
+        <div className="space-y-3">
           {[
             { name: "Linux 1.0 (1994)", lines: 176000, color: "var(--green)" },
-            { name: "jQuery 3.x", lines: 10000, color: "var(--orange)" },
-            { name: "Express.js", lines: 14000, color: "var(--orange)" },
+            { name: "jQuery 3.x", lines: 10000, color: "var(--text-muted)" },
+            { name: "Express.js", lines: 14000, color: "var(--text-muted)" },
             { name: "React (core)", lines: 200000, color: "var(--accent)" },
             { name: "Claude Code v2.1.88", lines: 512664, color: "var(--red)", highlight: true },
           ].map((p) => (
-            <div key={p.name} className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
-              <span className={`text-xs sm:w-40 sm:shrink-0 ${p.highlight ? "font-semibold text-text-primary" : "text-text-muted"}`}>
+            <div key={p.name} className="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:gap-3">
+              <span className={`text-xs sm:w-44 sm:shrink-0 ${p.highlight ? "font-semibold text-text-primary" : "text-text-muted"}`}>
                 {p.name}
               </span>
-              <div className="flex-1 h-5 bg-bg-primary rounded-full overflow-hidden border border-border/50">
-                <div
-                  className="h-full rounded-full transition-all flex items-center justify-end pr-2"
-                  style={{
-                    width: `${Math.min((p.lines / 512664) * 100, 100)}%`,
-                    background: p.color,
-                    minWidth: "40px",
-                  }}
-                >
-                  <span className="text-[10px] font-mono text-white font-medium">
-                    {(p.lines / 1000).toFixed(0)}K
-                  </span>
+              <div className="flex flex-1 items-center gap-2">
+                <div className="flex-1 h-6 bg-bg-primary rounded-lg overflow-hidden border border-border/50">
+                  <div
+                    className="h-full rounded-lg flex items-center justify-end pr-2 transition-all"
+                    style={{
+                      width: `${Math.max((p.lines / 512664) * 100, 4)}%`,
+                      background: p.highlight ? p.color : `color-mix(in srgb, ${p.color} 60%, transparent)`,
+                    }}
+                  >
+                    <span className="text-[10px] font-mono text-white font-medium">
+                      {(p.lines / 1000).toFixed(0)}K
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -297,7 +429,7 @@ UX subsystems:
       {/* Largest Files */}
       <Card id="largest-files" title={tx("Top 10 Largest Files", "最大文件 Top 10", "最大ファイル Top 10")} className="mb-6" accent="var(--red)" summary={tx("Use this table when you want to know where the codebase is densest and worth deeper reading.", "如果你想知道哪些文件最重、最值得深入阅读，就看这张表。", "密度の高いファイルを知るための表です。")}>
         <div className="overflow-x-auto">
-          <div className="min-w-[560px] space-y-1.5">
+          <div className="min-w-[520px] space-y-1">
           {[
             { file: "cli/print.ts", lines: 5594, desc: tx("Formatted terminal output", "格式化终端输出", "整形済みターミナル出力") },
             { file: "utils/messages.ts", lines: 5512, desc: tx("Message creation & formatting", "消息创建与格式化", "メッセージ生成と整形") },
@@ -310,17 +442,20 @@ UX subsystems:
             { file: "services/api/claude.ts", lines: 3419, desc: tx("API client + streaming", "API 客户端 + 流式处理", "API クライアント + ストリーミング") },
             { file: "services/mcp/client.ts", lines: 3348, desc: tx("MCP protocol client", "MCP 协议客户端", "MCP プロトコルクライアント") },
           ].map((f, i) => (
-            <div key={f.file} className="flex items-center gap-3 py-1">
-              <span className="text-[10px] text-text-muted w-4 text-right font-mono">{i + 1}</span>
-              <code className="text-[11px] text-accent flex-1 truncate">{f.file}</code>
-              <span className="text-[10px] text-text-muted w-24 text-right">{f.desc}</span>
-              <div className="w-20 h-3 bg-bg-primary rounded-full overflow-hidden border border-border/50">
+            <div key={f.file} className="flex items-center gap-3 py-1.5 rounded-lg hover:bg-bg-tertiary/30 px-2 transition-colors">
+              <span className="text-[10px] text-text-muted w-4 text-right font-mono shrink-0">{i + 1}</span>
+              <code className="text-[11px] text-accent flex-1 truncate min-w-0">{f.file}</code>
+              <span className="hidden sm:block text-[10px] text-text-muted shrink-0 w-28 text-right">{f.desc}</span>
+              <div className="w-20 h-2.5 bg-bg-primary rounded-full overflow-hidden border border-border/50 shrink-0">
                 <div
-                  className="h-full rounded-full bg-red"
-                  style={{ width: `${(f.lines / 5594) * 100}%`, opacity: 0.7 }}
+                  className="h-full rounded-full"
+                  style={{
+                    width: `${(f.lines / 5594) * 100}%`,
+                    background: `color-mix(in srgb, var(--red) ${50 + (f.lines / 5594) * 50}%, transparent)`,
+                  }}
                 />
               </div>
-              <span className="text-[10px] font-mono text-text-muted w-12 text-right">{f.lines.toLocaleString()}</span>
+              <span className="text-[10px] font-mono text-text-muted w-12 text-right shrink-0">{f.lines.toLocaleString()}</span>
             </div>
           ))}
           </div>
@@ -329,7 +464,7 @@ UX subsystems:
 
       {/* Module Size Breakdown */}
       <Card title={tx("Module Size Breakdown", "模块规模拆解", "モジュール別規模")} className="mb-6">
-        <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-4">
           {[
             { icon: VscExtensions, name: tx("Tools", "工具", "ツール"), files: 140, lines: "~65K", color: "var(--orange)" },
             { icon: VscDatabase, name: tx("Services", "服务", "サービス"), files: 110, lines: "~80K", color: "var(--green)" },
@@ -340,11 +475,20 @@ UX subsystems:
             { icon: VscShield, name: tx("Permissions", "权限", "権限"), files: 30, lines: "~20K", color: "var(--red)" },
             { icon: VscDatabase, name: tx("Bridge", "桥接层", "ブリッジ"), files: 12, lines: "~13K", color: "var(--pink)" },
           ].map((m) => (
-            <div key={m.name} className="p-3 rounded-lg bg-bg-tertiary/30 border border-border/50">
-              <m.icon className="w-4 h-4 mb-2" style={{ color: m.color }} />
+            <div
+              key={m.name}
+              className="rounded-xl border border-border/50 p-3"
+              style={{ borderTop: `2px solid ${m.color}` }}
+            >
+              <div
+                className="mb-2 flex h-8 w-8 items-center justify-center rounded-lg"
+                style={{ background: `color-mix(in srgb, ${m.color} 14%, transparent)` }}
+              >
+                <m.icon className="h-4 w-4" style={{ color: m.color }} />
+              </div>
               <div className="text-xs font-semibold text-text-primary">{m.name}</div>
-              <div className="text-[10px] text-text-muted mt-0.5">
-                {m.files} {tx("files", "个文件", "ファイル")} &middot; {m.lines} {tx("lines", "行", "行")}
+              <div className="mt-0.5 text-[10px] text-text-muted">
+                {m.files} {tx("files", "个文件", "ファイル")} · {m.lines}
               </div>
             </div>
           ))}
@@ -371,46 +515,6 @@ UX subsystems:
             ["GrowthBook", tx("Feature flags", "功能开关", "機能フラグ"), tx("A/B testing with cached gate values", "基于缓存 gate 值的 A/B 测试", "キャッシュ済み gate 値による A/B テスト")],
           ]}
         />
-      </Card>
-
-      {/* Data Flow */}
-      <Card title={tx("High-Level Data Flow", "高层数据流", "高レベルなデータフロー")}>
-        <CodeBlock
-          code={`┌─ Entry Point (cli.tsx / SDK) ─────────────────────────────────────┐
-│  Fast-path: --version, --dump-system-prompt, daemon workers       │
-│  Full init: MDM settings, keychain, GrowthBook (~135ms parallel)  │
-└──────────────────────────┬────────────────────────────────────────┘
-                           │
-┌─ QueryEngine ────────────▼────────────────────────────────────────┐
-│  1. Fetch system prompt parts (CLAUDE.md, tools, env)             │
-│  2. Process user input (slash commands, attachments)              │
-│  3. Load skills & plugins                                         │
-│  4. Yield system init message                                     │
-└──────────────────────────┬────────────────────────────────────────┘
-                           │
-┌─ query() Loop ───────────▼────────────────────────────────────────┐
-│  ┌─────────────────────────────────────────────────┐              │
-│  │ 1. Context projection (snip, microcompact)      │              │
-│  │ 2. Auto-compaction if threshold exceeded        │              │
-│  │ 3. API streaming call                           │              │
-│  │ 4. Tool execution (streaming or batch)          │              │
-│  │ 5. Attachments (memory, skills, tasks)          │              │
-│  │ 6. Continue or exit                             │              │
-│  └──────────────────┬──────────────────────────────┘              │
-│                     │ loop while tools called                     │
-└─────────────────────┴─────────────────────────────────────────────┘
-                           │
-┌─ Terminal ───────────────▼────────────────────────────────────────┐
-│  completed | prompt_too_long | aborted | token_budget_completed   │
-└───────────────────────────────────────────────────────────────────┘`}
-        />
-        <p className="mt-4 text-sm text-text-secondary">
-          {tx(
-            "A second top-level flow now exists beside the local REPL path: bridge/remote execution. In that mode, a bridge loop polls for work, spawns or reconnects sessions, and lets the same QueryEngine/query() core run inside managed remote capacity. Architecturally, that means the agent loop is the center, but not the whole product anymore.",
-            "现在除了本地 REPL 路径之外，还存在第二条顶层流程：bridge/remote 执行。在该模式下，bridge loop 负责轮询任务、生成或重连会话，并让同一套 QueryEngine/query() 核心运行在受管控的远程容量中。从架构上说，agent loop 仍然是中心，但它已经不再等于整个产品。",
-            "現在はローカル REPL の隣に、bridge/remote 実行というもう一つのトップレベル経路があります。bridge loop が作業をポーリングし、セッションを起動/再接続し、同じ QueryEngine/query() コアを管理された遠隔実行環境で動かします。つまり、agent loop は依然として中心ですが、もはや製品全体ではありません。"
-          )}
-        </p>
       </Card>
     </div>
   );
