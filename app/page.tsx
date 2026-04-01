@@ -671,28 +671,109 @@ export default function HomePage() {
           {lang === "zh" ? "核心创新" : lang === "ja" ? "主要な革新" : "Key Innovations"}
         </h2>
         <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
-          {innovations.map((item) => (
-            <div
-              key={item.title.en}
-              className="rounded-2xl border border-border bg-bg-secondary p-4 sm:p-5"
-              style={{ borderLeft: `3px solid ${item.color}` }}
-            >
-              <div className="mb-2 flex items-center gap-2">
-                <div
-                  className="flex h-7 w-7 items-center justify-center rounded-lg"
-                  style={{ background: `color-mix(in srgb, ${item.color} 14%, transparent)` }}
-                >
-                  <item.icon className="h-3.5 w-3.5" style={{ color: item.color }} />
-                </div>
-                <h3 className="text-xs font-semibold text-text-primary">
-                  {item.title[lang] || item.title.en}
-                </h3>
+          {/* Innovation 1: Streaming Tools */}
+          <div className="rounded-2xl border border-border bg-bg-secondary p-4 sm:p-5 flex flex-col gap-3" style={{ borderLeft: `3px solid var(--green)` }}>
+            <div className="flex items-center gap-2">
+              <div className="flex h-7 w-7 items-center justify-center rounded-lg" style={{ background: "color-mix(in srgb, var(--green) 14%, transparent)" }}>
+                <HiOutlineBolt className="h-3.5 w-3.5" style={{ color: "var(--green)" }} />
               </div>
-              <p className="text-[11px] text-text-muted leading-relaxed">
-                {item.desc[lang] || item.desc.en}
-              </p>
+              <h3 className="text-xs font-semibold text-text-primary">
+                {lang === "zh" ? "流式工具执行" : lang === "ja" ? "ストリーミングツール実行" : "Streaming Tool Execution"}
+              </h3>
             </div>
-          ))}
+            {/* Mini Gantt diagram */}
+            <div className="rounded-lg bg-bg-tertiary/60 p-2.5 space-y-1.5">
+              <div className="text-[8px] font-bold uppercase tracking-widest text-text-muted mb-1.5">{lang === "zh" ? "时间线" : lang === "ja" ? "タイムライン" : "TIMELINE"}</div>
+              {[
+                { label: lang === "zh" ? "模型" : lang === "ja" ? "モデル" : "Model", bars: [{ w: "65%", c: "var(--green)", start: "0%" }, { w: "20%", c: "color-mix(in srgb, var(--green) 30%, transparent)", start: "65%" }] },
+                { label: lang === "zh" ? "工具1" : lang === "ja" ? "ツール1" : "Tool 1", bars: [{ w: "30%", c: "var(--orange)", start: "40%" }] },
+                { label: lang === "zh" ? "工具2" : lang === "ja" ? "ツール2" : "Tool 2", bars: [{ w: "25%", c: "var(--purple)", start: "60%" }] },
+              ].map((row) => (
+                <div key={row.label} className="flex items-center gap-2">
+                  <span className="text-[8px] text-text-muted w-8 shrink-0">{row.label}</span>
+                  <div className="flex-1 h-3 rounded bg-bg-primary border border-border/40 relative overflow-hidden">
+                    {row.bars.map((b, i) => (
+                      <div key={i} className="absolute top-0 h-full rounded" style={{ left: b.start, width: b.w, background: b.c }} />
+                    ))}
+                  </div>
+                </div>
+              ))}
+              <div className="text-[8px] text-green font-semibold pt-0.5">{lang === "zh" ? "→ 工具与模型并行运行" : lang === "ja" ? "→ モデルと並列で実行" : "→ tools overlap with model generation"}</div>
+            </div>
+            <p className="text-[11px] text-text-muted leading-relaxed">
+              {lang === "zh" ? "StreamingToolExecutor 在 tool_use 块到达时立即入队执行，显著降低延迟。" : lang === "ja" ? "StreamingToolExecutorはtool_useブロックが届いた時点で即座にキューへ入れ、レイテンシを削減。" : "StreamingToolExecutor queues tool_use blocks as they arrive, cutting end-to-end latency."}
+            </p>
+          </div>
+
+          {/* Innovation 2: Cache Sharing */}
+          <div className="rounded-2xl border border-border bg-bg-secondary p-4 sm:p-5 flex flex-col gap-3" style={{ borderLeft: `3px solid var(--accent)` }}>
+            <div className="flex items-center gap-2">
+              <div className="flex h-7 w-7 items-center justify-center rounded-lg" style={{ background: "color-mix(in srgb, var(--accent) 14%, transparent)" }}>
+                <HiOutlineSparkles className="h-3.5 w-3.5" style={{ color: "var(--accent)" }} />
+              </div>
+              <h3 className="text-xs font-semibold text-text-primary">
+                {lang === "zh" ? "零成本缓存共享" : lang === "ja" ? "ゼロコストキャッシュ共有" : "Zero-Cost Cache Sharing"}
+              </h3>
+            </div>
+            {/* Mini cache diagram */}
+            <div className="rounded-lg bg-bg-tertiary/60 p-2.5">
+              <div className="text-[8px] font-bold uppercase tracking-widest text-text-muted mb-2">{lang === "zh" ? "原理" : lang === "ja" ? "仕組み" : "HOW IT WORKS"}</div>
+              <div className="flex items-center gap-2">
+                <div className="flex-1 rounded border-2 p-2 text-center" style={{ borderColor: "var(--accent)" }}>
+                  <div className="text-[9px] font-bold" style={{ color: "var(--accent)" }}>{lang === "zh" ? "父代理" : lang === "ja" ? "親" : "Parent"}</div>
+                  <div className="text-[8px] text-text-muted mt-0.5">10K tokens</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-[8px] font-bold" style={{ color: "var(--green)" }}>= bytes</div>
+                  <HiOutlineArrowRight className="h-3 w-3 mx-auto" style={{ color: "var(--green)" }} />
+                  <div className="text-[8px] font-bold" style={{ color: "var(--green)" }}>FREE</div>
+                </div>
+                <div className="flex-1 rounded border-2 p-2 text-center" style={{ borderColor: "var(--green)" }}>
+                  <div className="text-[9px] font-bold" style={{ color: "var(--green)" }}>{lang === "zh" ? "子代理" : lang === "ja" ? "子" : "Child"}</div>
+                  <div className="text-[8px] text-text-muted mt-0.5">cache hit ✓</div>
+                </div>
+              </div>
+            </div>
+            <p className="text-[11px] text-text-muted leading-relaxed">
+              {lang === "zh" ? "CacheSafeParams 冻结字节，相同字节 = 自动命中 prompt cache，子代理几乎免费。" : lang === "ja" ? "CacheSafeParamsがバイト列を固定。同一バイト = 自動キャッシュヒット → サブエージェントはほぼ無料。" : "CacheSafeParams frozen at fork time. Identical bytes = automatic prompt cache hit, making subagents nearly free."}
+            </p>
+          </div>
+
+          {/* Innovation 3: Compaction */}
+          <div className="rounded-2xl border border-border bg-bg-secondary p-4 sm:p-5 flex flex-col gap-3" style={{ borderLeft: `3px solid var(--purple)` }}>
+            <div className="flex items-center gap-2">
+              <div className="flex h-7 w-7 items-center justify-center rounded-lg" style={{ background: "color-mix(in srgb, var(--purple) 14%, transparent)" }}>
+                <VscDatabase className="h-3.5 w-3.5" style={{ color: "var(--purple)" }} />
+              </div>
+              <h3 className="text-xs font-semibold text-text-primary">
+                {lang === "zh" ? "多级压缩" : lang === "ja" ? "マルチレベルコンパクション" : "Multi-Level Compaction"}
+              </h3>
+            </div>
+            {/* Mini ladder diagram */}
+            <div className="rounded-lg bg-bg-tertiary/60 p-2.5 space-y-1">
+              <div className="text-[8px] font-bold uppercase tracking-widest text-text-muted mb-1.5">
+                {lang === "zh" ? "递进策略" : lang === "ja" ? "段階戦略" : "ESCALATION"}
+              </div>
+              {[
+                { label: "Microcompact", intensity: 1, c: "var(--accent)" },
+                { label: "Snipping", intensity: 2, c: "var(--green)" },
+                { label: "Autocompact", intensity: 3, c: "var(--orange)" },
+                { label: "Collapse", intensity: 4, c: "var(--red)" },
+              ].map((s) => (
+                <div key={s.label} className="flex items-center gap-2">
+                  <span className="text-[8px] text-text-muted w-16 shrink-0 truncate">{s.label}</span>
+                  <div className="flex gap-0.5">
+                    {[1,2,3,4].map(n => (
+                      <div key={n} className="w-2 h-2 rounded-sm" style={{ background: n <= s.intensity ? s.c : `color-mix(in srgb, ${s.c} 15%, var(--bg-primary))` }} />
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+            <p className="text-[11px] text-text-muted leading-relaxed">
+              {lang === "zh" ? "4种递进策略维持无限会话长度，不会撞上 token 墙。" : lang === "ja" ? "4段階の戦略で無制限のセッション長を実現。トークン上限に達しません。" : "4 escalating strategies keep conversations going indefinitely without hitting hard token walls."}
+            </p>
+          </div>
         </div>
       </motion.div>
 

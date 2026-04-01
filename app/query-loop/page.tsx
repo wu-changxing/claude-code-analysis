@@ -497,7 +497,36 @@ handleStopHooks(...)
       </Card>
 
       {/* Exit Conditions */}
-      <Card title={tx("Loop Exit Conditions", "循环退出条件", "ループ終了条件")} className="mb-6">
+      <Card title={tx("Loop Exit Conditions", "循环退出条件", "ループ終了条件")} className="mb-6" summary={tx("8 ways the loop can end. Only 'completed' is truly happy-path.", "循环只有 8 种退出方式，只有 'completed' 才是真正的成功路径。", "ループの終わり方は8種類。本当のハッピーパスは 'completed' のみ。")}>
+        {/* Two tracks: success vs. forced */}
+        <div className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+          {/* Happy path */}
+          <div className="rounded-xl border p-3" style={{ borderColor: "color-mix(in srgb, var(--green) 30%, var(--border))", background: "color-mix(in srgb, var(--green) 5%, var(--bg-tertiary))" }}>
+            <div className="mb-2 flex items-center gap-2">
+              <div className="h-2 w-2 rounded-full" style={{ background: "var(--green)" }} />
+              <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: "var(--green)" }}>
+                {tx("Happy path", "成功路径", "ハッピーパス")}
+              </span>
+            </div>
+            <div className="rounded-lg border p-2.5" style={{ borderColor: "color-mix(in srgb, var(--green) 25%, var(--border))" }}>
+              <code className="text-[11px] font-semibold" style={{ color: "var(--green)" }}>completed</code>
+              <p className="mt-0.5 text-[10px] text-text-muted">{tx("Natural end of response — no more tool calls, no forced stop", "自然完成响应 — 没有更多工具调用，也没有强制停止", "自然な応答終了 — ツール呼び出しも強制停止もない")}</p>
+            </div>
+          </div>
+          {/* Forced terminations */}
+          <div className="rounded-xl border p-3" style={{ borderColor: "color-mix(in srgb, var(--red) 25%, var(--border))", background: "color-mix(in srgb, var(--red) 4%, var(--bg-tertiary))" }}>
+            <div className="mb-2 flex items-center gap-2">
+              <div className="h-2 w-2 rounded-full" style={{ background: "var(--red)" }} />
+              <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: "var(--red)" }}>
+                {tx("Forced terminations (7 types)", "强制终止（7种）", "強制終了（7種類）")}
+              </span>
+            </div>
+            <p className="text-[10px] text-text-muted">
+              {tx("User abort · context overflow · token limits · hook rejection", "用户中断 · 上下文溢出 · token 限制 · hook 拒绝", "ユーザー中断 · コンテキスト超過 · トークン制限 · hook 拒否")}
+            </p>
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
           {exitConditions.map(({ state, desc, icon: Icon, color }) => (
             <div

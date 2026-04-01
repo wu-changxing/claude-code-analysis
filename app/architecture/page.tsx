@@ -128,6 +128,86 @@ export default function ArchitecturePage() {
         <KeyFact label={tx("Built-in Tools", "内置工具", "組み込みツール")} value="43" sub={tx("Bash → MCP", "Bash → MCP", "Bash → MCP")} color="var(--orange)" />
         <KeyFact label={tx("Slash Commands", "斜杠命令", "スラッシュコマンド")} value="101" sub={tx("/compact → /stickers", "/compact → /stickers", "/compact → /stickers")} color="var(--purple)" />
       </div>
+      {/* ── Visual System Architecture Poster ── */}
+      <div className="mb-8 rounded-2xl border border-border overflow-hidden">
+        <div className="border-b border-border px-4 py-3 flex items-center justify-between bg-bg-secondary">
+          <span className="text-[10px] font-bold uppercase tracking-widest text-text-muted">
+            {tx("System Architecture — at a glance", "系统架构一览", "システムアーキテクチャ概観")}
+          </span>
+          <span className="text-[9px] text-text-muted">{tx("outer → inner = higher abstraction", "外 → 内 = 更高抽象层", "外→内 = 高い抽象度")}</span>
+        </div>
+        <div className="p-3 sm:p-4 bg-bg-primary">
+          {/* Outermost: CLI entry */}
+          <div className="rounded-xl border-2 p-3 sm:p-4" style={{ borderColor: "color-mix(in srgb, var(--accent) 35%, var(--border))", background: "color-mix(in srgb, var(--accent) 4%, var(--bg-primary))" }}>
+            <div className="flex items-center gap-2 mb-3">
+              <div className="h-2 w-2 rounded-full" style={{ background: "var(--accent)" }} />
+              <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: "var(--accent)" }}>
+                {tx("Entry — cli.tsx / SDK", "入口 — cli.tsx / SDK", "エントリ — cli.tsx / SDK")}
+              </span>
+              <span className="text-[9px] text-text-muted ml-auto">{tx("fast-path + parallel init", "快速路径 + 并行初始化", "高速パス + 並列初期化")}</span>
+            </div>
+            {/* QueryEngine */}
+            <div className="rounded-xl border-2 p-3" style={{ borderColor: "color-mix(in srgb, var(--green) 35%, var(--border))", background: "color-mix(in srgb, var(--green) 4%, var(--bg-secondary))" }}>
+              <div className="flex items-center gap-2 mb-3">
+                <div className="h-2 w-2 rounded-full" style={{ background: "var(--green)" }} />
+                <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: "var(--green)" }}>QueryEngine.ts</span>
+                <span className="text-[9px] text-text-muted ml-auto">{tx("conversation lifecycle · system prompt · skills", "会话生命周期 · 系统提示 · 技能", "会話ライフサイクル · プロンプト · スキル")}</span>
+              </div>
+              {/* query() loop */}
+              <div className="rounded-xl border-2 p-3" style={{ borderColor: "color-mix(in srgb, var(--orange) 40%, var(--border))", background: "color-mix(in srgb, var(--orange) 5%, var(--bg-tertiary))" }}>
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="h-2 w-2 rounded-full animate-pulse" style={{ background: "var(--orange)" }} />
+                  <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: "var(--orange)" }}>
+                    {tx("query() loop — ~1700 lines", "query() 循环 — 约1700行", "query() ループ — 約1700行")}
+                  </span>
+                </div>
+                {/* 7 phases */}
+                <div className="flex flex-wrap gap-1.5">
+                  {[
+                    { n: 1, label: tx("Project Context", "投影上下文", "文脈投影"), c: "var(--accent)" },
+                    { n: 2, label: tx("Compact Check", "压缩检查", "圧縮確認"), c: "var(--green)" },
+                    { n: 3, label: tx("API Stream", "API流式", "APIストリーム"), c: "var(--orange)" },
+                    { n: 4, label: tx("Recovery", "错误恢复", "エラー回復"), c: "var(--red)" },
+                    { n: 5, label: tx("Tool Exec", "工具执行", "ツール実行"), c: "var(--purple)" },
+                    { n: 6, label: tx("Attachments", "附件注入", "添付注入"), c: "var(--pink)" },
+                    { n: 7, label: tx("Continue?", "继续？", "継続？"), c: "var(--accent)" },
+                  ].map(({ n, label, c }) => (
+                    <div key={n} className="flex items-center gap-1 rounded-lg px-2 py-1 text-[9px]" style={{ background: `color-mix(in srgb, ${c} 12%, var(--bg-primary))`, border: `1px solid color-mix(in srgb, ${c} 25%, var(--border))` }}>
+                      <span className="font-black" style={{ color: c }}>{n}</span>
+                      <span className="text-text-muted font-medium hidden sm:inline">{label}</span>
+                    </div>
+                  ))}
+                  <div className="flex items-center gap-1 rounded-lg px-2 py-1 text-[9px] border border-dashed border-border">
+                    <span className="text-[9px]" style={{ color: "var(--text-muted)" }}>↻ {tx("loop", "循环", "ループ")}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Bottom row: Tools | Services | Bridge */}
+            <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-3">
+              {[
+                { label: tx("Tools Layer", "工具层", "ツール層"), sub: tx("43 tools · Bash, Edit, Agent…", "43个工具 · Bash/Edit/Agent…", "43ツール · Bash/Edit/Agent…"), c: "var(--orange)" },
+                { label: tx("Services", "服务层", "サービス層"), sub: tx("MCP 470KB · Compact · LSP · Analytics", "MCP 470KB · 压缩 · LSP · 分析", "MCP 470KB · 圧縮 · LSP · 分析"), c: "var(--pink)" },
+                { label: tx("Bridge / Remote", "桥接/远程", "ブリッジ/リモート"), sub: tx("Remote sessions via CCR", "通过CCR的远程会话", "CCR経由のリモートセッション"), c: "var(--purple)" },
+              ].map(({ label, sub, c }) => (
+                <div key={label} className="rounded-lg border p-2.5" style={{ borderColor: `color-mix(in srgb, ${c} 25%, var(--border))`, background: `color-mix(in srgb, ${c} 5%, var(--bg-secondary))` }}>
+                  <div className="text-[10px] font-semibold mb-0.5" style={{ color: c }}>{label}</div>
+                  <div className="text-[9px] text-text-muted leading-snug">{sub}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Utils foundation */}
+          <div className="mt-2 rounded-xl border border-dashed border-border/70 px-4 py-2.5 flex items-center gap-3">
+            <div className="h-2 w-2 rounded-full bg-border shrink-0" />
+            <span className="text-[10px] font-semibold text-text-muted uppercase tracking-wider">Utils</span>
+            <span className="text-[9px] text-text-muted">{tx("— 220 files · zero inbound dependencies · everything imports from utils, nothing imports into it", "— 220个文件 · 零入向依赖 · 一切从utils引入，无任何向utils输入", "— 220ファイル · 入向依存ゼロ · すべてがutilsからインポートし、utilsへのインポートはゼロ")}</span>
+          </div>
+        </div>
+      </div>
+
       <SectionNav title={tx("Jump To", "跳转到", "移動先")} sections={sections} />
 
       {/* Directory Map */}

@@ -280,82 +280,102 @@ export default function PermissionsPage() {
           { label: "hooks/", href: ghTree("hooks") },
         ]}
       >
-        <p className="text-xs text-text-muted mb-5">
+        <p className="text-xs text-text-muted mb-4">
           {tx(
-            "When you run rm -rf, here is what happens at each layer before execution.",
-            "当你运行 rm -rf 时，执行前每一层到底做了什么。",
-            "rm -rf を実行すると、各レイヤーでどんな判断が行われるか。"
+            "When you run rm -rf, here is what happens at each layer before execution. Most calls are resolved before reaching Layer 5.",
+            "当你运行 rm -rf 时，执行前每一层到底做了什么。大多数调用在到达第 5 层前就已决策。",
+            "rm -rf を実行すると各レイヤーでどんな判断が行われるか。ほとんどの呼び出しは第5層に届く前に判定済みです。"
           )}
         </p>
 
-        {/* Visual funnel pipeline — widest at top, narrowest at bottom */}
-        <div className="flex flex-col items-center gap-0">
-          <div className="text-[9px] text-text-muted mb-1.5 text-center font-semibold uppercase tracking-wider">
-            {tx("↓ all tool calls enter here — most are resolved before reaching the next layer", "↓ 所有工具调用从这里进入 — 大多数在到达下一层之前就已决策", "↓ すべてのツール呼び出しはここから入る — ほとんどは次の層に届く前に判定済み")}
+        {/* Gate pipeline — every layer can produce an exit */}
+        <div className="relative">
+          {/* Entry label */}
+          <div className="mb-2 flex items-center gap-2">
+            <div className="flex h-7 px-3 items-center rounded-full text-[9px] font-bold uppercase tracking-wider text-white" style={{ background: "var(--text-secondary)" }}>
+              {tx("tool call arrives", "工具调用到达", "ツール呼び出し")}
+            </div>
+            <div className="h-px flex-1 border-t border-dashed border-border" />
           </div>
-          {layers.map((layer, idx) => {
-            const widthPct = [100, 92, 82, 72, 62][idx];
-            return (
-              <div key={layer.num} className="flex flex-col items-center w-full">
-                <div
-                  className="rounded-xl border p-3 sm:p-4 transition-all hover:shadow-sm"
-                  style={{
-                    width: `${widthPct}%`,
-                    background: `color-mix(in srgb, ${layer.color} 6%, var(--bg-tertiary))`,
-                    borderColor: `color-mix(in srgb, ${layer.color} 25%, var(--border))`,
-                    borderLeft: `4px solid ${layer.color}`,
-                  }}
-                >
-                  <div className="flex items-start gap-3">
-                    <div
-                      className="w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold text-white shrink-0 mt-0.5"
-                      style={{ background: layer.color }}
-                    >
-                      {layer.num}
+
+          <div className="space-y-0">
+            {layers.map((layer, idx) => (
+              <div key={layer.num}>
+                {/* Gate row: layer card + exit path */}
+                <div className="flex items-stretch gap-2">
+                  {/* Layer card */}
+                  <div
+                    className="flex-1 rounded-xl border p-3 sm:p-4"
+                    style={{
+                      background: `color-mix(in srgb, ${layer.color} 6%, var(--bg-tertiary))`,
+                      borderColor: `color-mix(in srgb, ${layer.color} 25%, var(--border))`,
+                      borderLeft: `4px solid ${layer.color}`,
+                    }}
+                  >
+                    <div className="flex items-start gap-3">
+                      <div
+                        className="w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold text-white shrink-0 mt-0.5"
+                        style={{ background: layer.color }}
+                      >
+                        {layer.num}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex flex-wrap items-center gap-2 mb-1">
+                          <code className="text-xs font-semibold" style={{ color: layer.color }}>
+                            {layer.fn}
+                          </code>
+                        </div>
+                        <p className="text-[11px] text-text-muted leading-relaxed">{layer.desc}</p>
+                      </div>
                     </div>
-                    <div className="min-w-0">
-                      <code className="text-sm font-semibold block mb-0.5" style={{ color: layer.color }}>
-                        {layer.fn}
-                      </code>
-                      <p className="text-[11px] text-text-muted leading-relaxed">{layer.desc}</p>
+                  </div>
+
+                  {/* Exit path — right side */}
+                  <div className="flex flex-col items-center justify-center gap-1 w-20 shrink-0">
+                    <div
+                      className="w-full rounded-lg px-2 py-1.5 text-center"
+                      style={{
+                        background: `color-mix(in srgb, var(--green) 10%, var(--bg-secondary))`,
+                        border: `1px solid color-mix(in srgb, var(--green) 25%, var(--border))`,
+                      }}
+                    >
+                      <div className="text-[8px] font-bold uppercase tracking-wide" style={{ color: "var(--green)" }}>ALLOW</div>
+                      <div className="text-[8px] text-text-muted">{tx("exit ✓", "通过 ✓", "通過 ✓")}</div>
+                    </div>
+                    <div
+                      className="w-full rounded-lg px-2 py-1.5 text-center"
+                      style={{
+                        background: `color-mix(in srgb, var(--red) 8%, var(--bg-secondary))`,
+                        border: `1px solid color-mix(in srgb, var(--red) 20%, var(--border))`,
+                      }}
+                    >
+                      <div className="text-[8px] font-bold uppercase tracking-wide" style={{ color: "var(--red)" }}>DENY</div>
+                      <div className="text-[8px] text-text-muted">{tx("exit ✗", "拒绝 ✗", "拒否 ✗")}</div>
                     </div>
                   </div>
                 </div>
+
+                {/* Connector to next layer */}
                 {idx < layers.length - 1 && (
-                  <div className="flex flex-col items-center py-1">
-                    <div className="h-2 w-px bg-border" />
-                    <span className="text-[9px] text-text-muted italic">{tx("if no decision...", "若无决策...", "判定なければ...")}</span>
-                    <div className="h-2 w-px bg-border" />
+                  <div className="flex items-center gap-2 py-1 pl-4">
+                    <div className="flex flex-col items-center">
+                      <div className="h-3 w-px bg-border" />
+                    </div>
+                    <span className="text-[9px] text-text-muted italic">
+                      {tx("no decision → pass to next layer", "无决策 → 传递至下一层", "判定なし → 次の層へ")}
+                    </span>
                   </div>
                 )}
               </div>
-            );
-          })}
-          <div className="mt-2 text-[9px] text-text-muted text-center font-semibold uppercase tracking-wider">
-            {tx("↑ fewer requests reach each deeper layer — user dialog is last resort", "↑ 每深一层，到达的请求越少 — 用户对话框是最后手段", "↑ 深い層ほど届くリクエストは少ない — ユーザーダイアログは最終手段")}
-          </div>
-        </div>
-
-        {/* Result bar */}
-        <div className="mt-4 rounded-xl border border-border bg-bg-tertiary/40 p-3 sm:p-4">
-          <div className="text-[10px] text-text-muted uppercase tracking-wider mb-2 font-semibold">
-            {tx("Possible outcomes", "可能的结果", "判定結果")}
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {[
-              { label: tx("allow", "允许", "許可"), color: "var(--green)" },
-              { label: tx("deny", "拒绝", "拒否"), color: "var(--red)" },
-              { label: tx("ask", "询问", "確認"), color: "var(--accent)" },
-              { label: tx("passthrough", "透传", "パススルー"), color: "var(--text-muted)" },
-            ].map(({ label, color }) => (
-              <span
-                key={label}
-                className="px-3 py-1 rounded-full text-xs font-semibold"
-                style={{ background: `color-mix(in srgb, ${color} 12%, transparent)`, color }}
-              >
-                {label}
-              </span>
             ))}
+          </div>
+
+          {/* Final label */}
+          <div className="mt-3 flex items-center gap-2">
+            <div className="h-px flex-1 border-t border-dashed border-border" />
+            <div className="flex h-7 px-3 items-center rounded-full text-[9px] font-bold uppercase tracking-wider text-white" style={{ background: "var(--purple)" }}>
+              {tx("layer 5: user dialog (last resort)", "第5层：用户对话框（最后手段）", "第5層：ユーザーダイアログ（最終手段）")}
+            </div>
           </div>
         </div>
       </Card>
