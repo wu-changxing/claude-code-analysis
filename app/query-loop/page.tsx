@@ -1,6 +1,6 @@
 "use client";
 
-import { PageHeader, Card, CodeBlock, FlowStep, SectionNav } from "@/components/Section";
+import { PageHeader, Card, CodeBlock, SectionNav } from "@/components/Section";
 import { useTx } from "@/components/T";
 import { ghBlob } from "@/lib/sourceLinks";
 import {
@@ -11,7 +11,16 @@ import {
   VscError,
   VscWarning,
 } from "react-icons/vsc";
-import { HiOutlineArrowPath } from "react-icons/hi2";
+import {
+  HiOutlineArrowPath,
+  HiOutlineArrowDown,
+  HiOutlineBolt,
+  HiOutlineCpuChip,
+  HiOutlineCircleStack,
+  HiOutlinePaperClip,
+  HiOutlineArrowsPointingIn,
+  HiOutlineCheckCircle,
+} from "react-icons/hi2";
 
 export default function QueryLoopPage() {
   const tx = useTx();
@@ -22,6 +31,7 @@ export default function QueryLoopPage() {
     { id: "token-budget", label: tx("Token Budget", "Token 预算", "トークン予算"), description: tx("Why the loop sometimes nudges itself to continue.", "为什么循环有时会主动提示自己继续。", "なぜ自分で継続を促すことがあるのか。") },
     { id: "stop-hooks", label: tx("Stop Hooks", "停止 Hooks", "停止フック"), description: tx("What still runs after the answer looks finished.", "答案看似结束后还会执行什么。", "応答後にも走る処理。") },
   ];
+
   const recoverySteps = [
     {
       step: "1",
@@ -47,7 +57,7 @@ export default function QueryLoopPage() {
     {
       step: "4",
       title: tx("Multi-turn", "多轮续写", "マルチターン"),
-      desc: tx("Inject 'continue', max 3x", "注入“continue”，最多 3 次", "「continue」を注入、最大3回"),
+      desc: tx("Inject 'continue', max 3x", "注入 continue，最多 3 次", "「continue」を注入、最大3回"),
       color: "var(--purple)",
       icon: VscServerProcess,
     },
@@ -62,6 +72,87 @@ export default function QueryLoopPage() {
     { state: "stop_hook_prevented", desc: tx("Hook rejected continuation", "Hook 拒绝继续", "Hook が継続を拒否"), icon: VscWarning, color: "var(--orange)" },
     { state: "blocking_limit", desc: tx("Hard context limit hit", "触及硬性上下文上限", "厳格なコンテキスト上限に到達"), icon: VscError, color: "var(--red)" },
     { state: "token_budget_completed", desc: tx("Token budget exhausted", "Token 预算耗尽", "トークン予算を使い切った"), icon: VscExtensions, color: "var(--purple)" },
+  ];
+
+  /* Visual iteration flow steps */
+  const iterationSteps = [
+    {
+      number: 1,
+      icon: HiOutlineArrowsPointingIn,
+      title: tx("Context Projection", "上下文投影", "コンテキスト投影"),
+      color: "var(--accent)",
+      description: tx(
+        "Extract messages after compact boundary. Apply per-message tool result budget (content replacement). Apply history snipping, microcompact (single-turn compression), and context collapse.",
+        "提取 compact 边界之后的消息。为每条消息应用工具结果预算（内容替换），并执行历史裁剪、微压缩（单轮压缩）和上下文折叠。",
+        "compact 境界以降のメッセージを抽出し、メッセージ単位のツール結果予算（内容置換）を適用します。さらに履歴スニップ、マイクロ圧縮、コンテキスト折りたたみを行います。"
+      ),
+    },
+    {
+      number: 2,
+      icon: HiOutlineCircleStack,
+      title: tx("Auto-Compaction Pre-Check", "自动压缩预检查", "自動圧縮の事前チェック"),
+      color: "var(--green)",
+      description: tx(
+        "If context exceeds threshold (model context - max output - 13K buffer), trigger async autocompact. Replace messages with post-compact version. Track compaction info for analytics.",
+        "如果上下文超过阈值（模型上下文 - 最大输出 - 13K 缓冲区），触发异步自动压缩，并用压缩后的消息替换原消息，同时记录分析用压缩信息。",
+        "コンテキストが閾値（モデル文脈 - 最大出力 - 13K バッファ）を超えると、非同期の自動圧縮を起動します。"
+      ),
+    },
+    {
+      number: 3,
+      icon: HiOutlineCpuChip,
+      title: tx("API Call with Streaming", "流式 API 调用", "ストリーミング API 呼び出し"),
+      color: "var(--orange)",
+      description: tx(
+        "Call queryModelWithStreaming() with messages, system prompt, tools, thinking config. Stream back text blocks, tool_use blocks, and thinking blocks. StreamingToolExecutor starts executing tools as they arrive — reducing latency by parallelizing tool execution with continued model streaming.",
+        "使用消息、系统提示、工具和思考配置调用 queryModelWithStreaming()。返回文本块、tool_use 块和 thinking 块。StreamingToolExecutor 会在工具块到达时立刻执行，从而把工具执行与模型持续输出并行化，降低整体延迟。",
+        "messages、system prompt、tools、thinking 設定を使って queryModelWithStreaming() を呼び出します。StreamingToolExecutor は到着した時点でツール実行を開始してレイテンシを削減します。"
+      ),
+    },
+    {
+      number: 4,
+      icon: HiOutlineArrowPath,
+      title: tx("Error Recovery", "错误恢复", "エラー回復"),
+      color: "var(--red)",
+      description: tx(
+        "Multiple recovery strategies: (1) Collapse Drain — drain staged context collapses. (2) Reactive Compact — full summary if collapse insufficient. (3) Max Output Escalation — 8K → 64K one-shot. (4) Multi-turn — inject 'continue' message, max 3 attempts.",
+        "提供多种恢复策略：(1) Collapse Drain：排空已暂存的上下文折叠；(2) Reactive Compact：如果折叠不够，则生成完整摘要；(3) Max Output Escalation：一次性把输出上限从 8K 提升到 64K；(4) Multi-turn：注入 continue 消息，最多 3 次。",
+        "複数の回復戦略を順に試します。(1) Collapse Drain。(2) Reactive Compact。(3) Max Output Escalation: 8K→64K。(4) Multi-turn: 'continue' を注入し最大3回。"
+      ),
+    },
+    {
+      number: 5,
+      icon: HiOutlineBolt,
+      title: tx("Tool Execution", "工具执行", "ツール実行"),
+      color: "var(--purple)",
+      description: tx(
+        "Partition tool calls by concurrency safety. Read-only tools run in parallel (up to 10). Write tools run serially with context modifiers applied between batches. Results yielded as messages.",
+        "按并发安全性拆分工具调用。只读工具并行运行（最多 10 个），写工具串行运行，并在批次之间应用上下文修改器。结果以消息形式产出。",
+        "ツール呼び出しは並行安全性で分割されます。読み取り専用は最大10件まで並列、書き込み系は直列で実行されます。"
+      ),
+    },
+    {
+      number: 6,
+      icon: HiOutlinePaperClip,
+      title: tx("Attachment Processing", "附件处理", "添付処理"),
+      color: "var(--pink)",
+      description: tx(
+        "Memory prefetch results, skill discovery, queued command attachments (task notifications). All appended to messages before next API call.",
+        "处理记忆预取结果、技能发现结果，以及排队中的命令附件（任务通知），并在下一次 API 调用前全部追加到消息中。",
+        "メモリのプリフェッチ結果、スキル探索結果、キュー済みコマンド添付を処理し、次の API 呼び出し前にメッセージへ追加します。"
+      ),
+    },
+    {
+      number: 7,
+      icon: HiOutlineCheckCircle,
+      title: tx("Continuation Decision", "继续判断", "継続判定"),
+      color: "var(--accent)",
+      description: tx(
+        "If no tool use → check for natural completion. Run stop hooks for conditional continuation. Check token budget. Return terminal state or continue loop.",
+        "如果没有工具调用，则检查是否自然结束；随后运行 stop hooks 判断是否需要继续，再检查 token 预算，最后返回终止状态或继续循环。",
+        "ツール利用がなければ自然終了かを確認し、stop hooks で継続条件を判定し、トークン予算を確認したうえで終了状態を返すかループを続行します。"
+      ),
+    },
   ];
 
   return (
@@ -117,79 +208,57 @@ export default function QueryLoopPage() {
         </p>
       </Card>
 
-      {/* Flow Steps */}
+      {/* Visual Iteration Flow */}
       <Card id="loop-flow" title={tx("Loop Iteration Flow", "循环迭代流程", "ループ反復フロー")} className="mb-6" summary={tx("This is the operational walkthrough of a single turn, from message projection to exit or continuation.", "这是单轮执行的操作式讲解，从消息投影到退出或继续。", "1ターン分の処理を、投影から終了/継続まで順に追います。")}>
-        <div className="pt-2">
-          <FlowStep
-            number={1}
-            title={tx("Context Projection", "上下文投影", "コンテキスト投影")}
-            description={tx(
-              "Extract messages after compact boundary. Apply per-message tool result budget (content replacement). Apply history snipping, microcompact (single-turn compression), and context collapse.",
-              "提取 compact 边界之后的消息。为每条消息应用工具结果预算（内容替换），并执行历史裁剪、微压缩（单轮压缩）和上下文折叠。",
-              "compact 境界以降のメッセージを抽出し、メッセージ単位のツール結果予算（内容置換）を適用します。さらに履歴スニップ、マイクロ圧縮、コンテキスト折りたたみを行います。"
-            )}
-            color="var(--accent)"
-          />
-          <FlowStep
-            number={2}
-            title={tx("Auto-Compaction Pre-Check", "自动压缩预检查", "自動圧縮の事前チェック")}
-            description={tx(
-              "If context exceeds threshold (model context - max output - 13K buffer), trigger async autocompact. Replace messages with post-compact version. Track compaction info for analytics.",
-              "如果上下文超过阈值（模型上下文 - 最大输出 - 13K 缓冲区），触发异步自动压缩，并用压缩后的消息替换原消息，同时记录分析用压缩信息。",
-              "コンテキストが閾値（モデル文脈 - 最大出力 - 13K バッファ）を超えると、非同期の自動圧縮を起動します。メッセージは圧縮後の版に置き換えられ、分析用メトリクスも追跡されます。"
-            )}
-            color="var(--green)"
-          />
-          <FlowStep
-            number={3}
-            title={tx("API Call with Streaming", "流式 API 调用", "ストリーミング API 呼び出し")}
-            description={tx(
-              "Call queryModelWithStreaming() with messages, system prompt, tools, thinking config. Stream back text blocks, tool_use blocks, and thinking blocks. StreamingToolExecutor starts executing tools as they arrive — reducing latency by parallelizing tool execution with continued model streaming.",
-              "使用消息、系统提示、工具和思考配置调用 queryModelWithStreaming()。返回文本块、tool_use 块和 thinking 块。StreamingToolExecutor 会在工具块到达时立刻执行，从而把工具执行与模型持续输出并行化，降低整体延迟。",
-              "messages、system prompt、tools、thinking 設定を使って queryModelWithStreaming() を呼び出します。返ってくる text / tool_use / thinking ブロックを受け取り、StreamingToolExecutor は到着した時点でツール実行を開始してレイテンシを削減します。"
-            )}
-            color="var(--orange)"
-          />
-          <FlowStep
-            number={4}
-            title={tx("Error Recovery", "错误恢复", "エラー回復")}
-            description={tx(
-              "Multiple recovery strategies: (1) Collapse Drain — drain staged context collapses. (2) Reactive Compact — full summary if collapse insufficient. (3) Max Output Escalation — 8K → 64K one-shot. (4) Multi-turn — inject 'continue' message, max 3 attempts.",
-              "提供多种恢复策略：(1) Collapse Drain：排空已暂存的上下文折叠；(2) Reactive Compact：如果折叠不够，则生成完整摘要；(3) Max Output Escalation：一次性把输出上限从 8K 提升到 64K；(4) Multi-turn：注入“continue”消息，最多 3 次。",
-              "複数の回復戦略を順に試します。(1) Collapse Drain: 段階的な折りたたみを消化。(2) Reactive Compact: 不足時は完全要約。(3) Max Output Escalation: 8K→64K へ一時拡張。(4) Multi-turn: 'continue' を注入し最大3回継続。"
-            )}
-            color="var(--red)"
-          />
-          <FlowStep
-            number={5}
-            title={tx("Tool Execution", "工具执行", "ツール実行")}
-            description={tx(
-              "Partition tool calls by concurrency safety. Read-only tools run in parallel (up to 10). Write tools run serially with context modifiers applied between batches. Results yielded as messages.",
-              "按并发安全性拆分工具调用。只读工具并行运行（最多 10 个），写工具串行运行，并在批次之间应用上下文修改器。结果以消息形式产出。",
-              "ツール呼び出しは並行安全性で分割されます。読み取り専用は最大10件まで並列、書き込み系はコンテキスト修飾を挟みつつ直列で実行され、結果はメッセージとして返されます。"
-            )}
-            color="var(--purple)"
-          />
-          <FlowStep
-            number={6}
-            title={tx("Attachment Processing", "附件处理", "添付処理")}
-            description={tx(
-              "Memory prefetch results, skill discovery, queued command attachments (task notifications). All appended to messages before next API call.",
-              "处理记忆预取结果、技能发现结果，以及排队中的命令附件（任务通知），并在下一次 API 调用前全部追加到消息中。",
-              "メモリのプリフェッチ結果、スキル探索結果、キュー済みコマンド添付（タスク通知）を処理し、次の API 呼び出し前にメッセージへ追加します。"
-            )}
-            color="var(--pink)"
-          />
-          <FlowStep
-            number={7}
-            title={tx("Continuation Decision", "继续判断", "継続判定")}
-            description={tx(
-              "If no tool use → check for natural completion. Run stop hooks for conditional continuation. Check token budget. Return terminal state or continue loop.",
-              "如果没有工具调用，则检查是否自然结束；随后运行 stop hooks 判断是否需要继续，再检查 token 预算，最后返回终止状态或继续循环。",
-              "ツール利用がなければ自然終了かを確認し、stop hooks で継続条件を判定し、トークン予算を確認したうえで終了状態を返すかループを続行します。"
-            )}
-            color="var(--accent)"
-          />
+        <div className="mt-2 flex flex-col gap-0">
+          {iterationSteps.map((step, i) => (
+            <div key={step.number} className="flex flex-col items-center">
+              {/* Step card */}
+              <div
+                className="w-full rounded-xl border p-4"
+                style={{
+                  borderColor: `color-mix(in srgb, ${step.color} 30%, transparent)`,
+                  background: `color-mix(in srgb, ${step.color} 5%, var(--bg-secondary))`,
+                }}
+              >
+                <div className="flex gap-3">
+                  {/* Icon + number */}
+                  <div className="flex flex-col items-center gap-1.5 shrink-0">
+                    <div
+                      className="flex h-10 w-10 items-center justify-center rounded-xl shadow-sm"
+                      style={{
+                        background: `color-mix(in srgb, ${step.color} 18%, transparent)`,
+                        border: `1.5px solid color-mix(in srgb, ${step.color} 40%, transparent)`,
+                      }}
+                    >
+                      <step.icon className="h-5 w-5" style={{ color: step.color }} />
+                    </div>
+                    <span
+                      className="text-[10px] font-bold rounded px-1.5 py-0.5"
+                      style={{
+                        background: `color-mix(in srgb, ${step.color} 18%, transparent)`,
+                        color: step.color,
+                      }}
+                    >
+                      {step.number}
+                    </span>
+                  </div>
+                  {/* Content */}
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-sm font-semibold text-text-primary mb-1">{step.title}</h3>
+                    <p className="text-[11px] text-text-muted leading-relaxed">{step.description}</p>
+                  </div>
+                </div>
+              </div>
+              {/* Connector */}
+              {i < iterationSteps.length - 1 && (
+                <div className="flex flex-col items-center py-1">
+                  <div className="h-3 w-px bg-border" />
+                  <HiOutlineArrowDown className="h-3 w-3 text-text-muted" />
+                </div>
+              )}
+            </div>
+          ))}
         </div>
       </Card>
 
@@ -205,12 +274,44 @@ export default function QueryLoopPage() {
           { label: "toolOrchestration.ts", href: ghBlob("services/tools/toolOrchestration.ts") },
         ]}
       >
+        {/* Visual timeline showing overlap */}
+        <div className="mb-5 overflow-hidden rounded-xl border border-border/50 bg-bg-primary p-4">
+          <p className="mb-3 text-[11px] text-text-muted font-medium">
+            {tx("Timeline — tools start before model finishes", "时间线：工具在模型结束前就开始", "タイムライン — モデル完了前にツールが開始")}
+          </p>
+          <div className="space-y-2">
+            <div>
+              <div className="mb-1 flex items-center gap-2">
+                <span className="text-[10px] text-text-muted w-20 shrink-0">{tx("Model", "模型", "モデル")}</span>
+                <div className="flex-1 h-6 rounded-lg overflow-hidden bg-bg-secondary border border-border/50 flex">
+                  <div className="h-full bg-green/70 rounded-l-lg" style={{ width: "70%" }} />
+                  <div className="h-full bg-green/20" style={{ width: "30%" }} />
+                </div>
+              </div>
+              <div className="mb-1 flex items-center gap-2">
+                <span className="text-[10px] text-text-muted w-20 shrink-0">{tx("Tool 1", "工具 1", "ツール1")}</span>
+                <div className="flex-1 h-6 rounded-lg overflow-hidden bg-bg-secondary border border-border/50 flex">
+                  <div className="h-full" style={{ width: "55%" }} />
+                  <div className="h-full bg-orange/70 rounded-lg" style={{ width: "35%" }} />
+                  <div className="h-full" style={{ width: "10%" }} />
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] text-text-muted w-20 shrink-0">{tx("Tool 2", "工具 2", "ツール2")}</span>
+                <div className="flex-1 h-6 rounded-lg overflow-hidden bg-bg-secondary border border-border/50 flex">
+                  <div className="h-full" style={{ width: "70%" }} />
+                  <div className="h-full bg-purple/70 rounded-lg" style={{ width: "30%" }} />
+                </div>
+              </div>
+              <div className="mt-2 flex items-center gap-3 pl-20">
+                <div className="flex items-center gap-1"><span className="h-2.5 w-2.5 rounded bg-green/70" /><span className="text-[9px] text-text-muted">{tx("streaming", "流式输出", "ストリーミング")}</span></div>
+                <div className="flex items-center gap-1"><span className="h-2.5 w-2.5 rounded bg-orange/70" /><span className="text-[9px] text-text-muted">{tx("tool exec", "工具执行", "ツール実行")}</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
         <p className="text-sm text-text-secondary mb-4">
-          {tx(
-            "The ",
-            "",
-            ""
-          )}<code className="text-accent">StreamingToolExecutor</code>{tx(
+          {tx("The ", "", "")}<code className="text-accent">StreamingToolExecutor</code>{tx(
             " is a key innovation — tools start executing while the model is still generating tokens. This significantly reduces end-to-end latency.",
             " 是一个关键创新：模型还在生成 token 时，工具就已经开始执行，从而显著降低端到端延迟。",
             " は重要な発明です。モデルがまだトークンを生成している間にツール実行を始められるため、エンドツーエンドの待ち時間を大きく減らします。"
@@ -245,13 +346,26 @@ class StreamingToolExecutor {
             "問題が起きたとき、ループはより強力な4段階の回復戦略を順番に試します："
           )}
         </p>
-        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
           {recoverySteps.map(({ step, title, desc, color, icon: Icon }) => (
-            <div key={step} className="p-3 rounded-xl bg-bg-tertiary/20 border border-border/50 text-center">
-              <Icon className="w-5 h-5 mx-auto mb-2" style={{ color }} />
-              <div className="text-[10px] font-bold text-text-muted mb-0.5">{tx("Step", "步骤", "ステップ")} {step}</div>
-              <div className="text-xs font-semibold text-text-primary mb-1">{title}</div>
-              <p className="text-[10px] text-text-muted">{desc}</p>
+            <div
+              key={step}
+              className="rounded-xl border p-4 text-center"
+              style={{
+                borderColor: `color-mix(in srgb, ${color} 30%, transparent)`,
+                background: `color-mix(in srgb, ${color} 6%, var(--bg-secondary))`,
+                borderTop: `3px solid ${color}`,
+              }}
+            >
+              <div
+                className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-xl"
+                style={{ background: `color-mix(in srgb, ${color} 18%, transparent)` }}
+              >
+                <Icon className="h-5 w-5" style={{ color }} />
+              </div>
+              <div className="text-[10px] font-bold text-text-muted mb-1">{tx("Step", "步骤", "ステップ")} {step}</div>
+              <div className="text-xs font-semibold text-text-primary mb-1.5">{title}</div>
+              <p className="text-[10px] text-text-muted leading-relaxed">{desc}</p>
             </div>
           ))}
         </div>
@@ -302,7 +416,7 @@ startedAt`}
         title={tx("Stop Hooks & Background Work", "停止 Hook 与后台任务", "停止フックとバックグラウンド処理")}
         className="mb-6"
         accent="var(--accent)"
-        summary={tx("Use this section to understand why 'done' in the loop is not the true end of a turn.", "如果你想理解为什么循环里的“结束”并不是真正的回合终点，就看这节。", "ループの『完了』が本当の終点ではない理由を説明します。")}
+        summary={tx("Use this section to understand why 'done' in the loop is not the true end of a turn.", "如果你想理解为什么循环里的结束并不是真正的回合终点，就看这节。", "ループの完了が本当の終点ではない理由を説明します。")}
         links={[
           { label: "query/stopHooks.ts", href: ghBlob("query/stopHooks.ts") },
           { label: "speculation.ts", href: ghBlob("services/PromptSuggestion/speculation.ts") },
@@ -312,7 +426,7 @@ startedAt`}
         <p className="text-sm text-text-secondary mb-4">
           {tx(
             "The loop's 'done' path is not really the end. handleStopHooks() can still prevent continuation, summarize hook output, snapshot cache-safe params for fork reuse, kick off prompt suggestions, extract memories, and run auto-dream style background maintenance.",
-            "循环走到“完成”分支并不意味着真正结束。handleStopHooks() 仍然可能阻止继续、汇总 hook 输出、保存 cache-safe 参数以供 fork 复用、触发 prompt suggestion、抽取 memories，以及运行 auto-dream 之类的后台维护。",
+            "循环走到完成分支并不意味着真正结束。handleStopHooks() 仍然可能阻止继续、汇总 hook 输出、保存 cache-safe 参数以供 fork 复用、触发 prompt suggestion、抽取 memories，以及运行 auto-dream 之类的后台维护。",
             "ループが「完了」に見えても本当の終点ではありません。handleStopHooks() は継続を止めたり、hook 出力を要約したり、fork 再利用用の cache-safe params を保存したり、prompt suggestion、memory extraction、auto-dream 的な保守処理を起動できます。"
           )}
         </p>
@@ -331,13 +445,21 @@ handleStopHooks(...)
 
       {/* Exit Conditions */}
       <Card title={tx("Loop Exit Conditions", "循环退出条件", "ループ終了条件")} className="mb-6">
-        <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
           {exitConditions.map(({ state, desc, icon: Icon, color }) => (
-            <div key={state} className="flex items-center gap-2.5 p-2 rounded-lg bg-bg-tertiary/20 border border-border/40">
-              <Icon className="w-3.5 h-3.5 shrink-0" style={{ color }} />
+            <div
+              key={state}
+              className="flex items-start gap-3 rounded-xl border border-border/50 p-3 transition-colors hover:bg-bg-tertiary/20"
+            >
+              <div
+                className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg"
+                style={{ background: `color-mix(in srgb, ${color} 14%, transparent)` }}
+              >
+                <Icon className="h-3.5 w-3.5" style={{ color }} />
+              </div>
               <div>
-                <code className="text-[11px] text-accent font-medium">{state}</code>
-                <p className="text-[10px] text-text-muted">{desc}</p>
+                <code className="text-[11px] text-accent font-semibold">{state}</code>
+                <p className="mt-0.5 text-[10px] text-text-muted leading-relaxed">{desc}</p>
               </div>
             </div>
           ))}
