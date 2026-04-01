@@ -1,6 +1,7 @@
 "use client";
 
 import { PageHeader, Card, CodeBlock, FlowStep } from "@/components/Section";
+import { useTx } from "@/components/T";
 import {
   VscServerProcess,
   VscExtensions,
@@ -12,11 +13,15 @@ import {
 import { HiOutlineArrowPath } from "react-icons/hi2";
 
 export default function QueryLoopPage() {
+  const tx = useTx();
   return (
     <div className="p-8 max-w-5xl">
       <PageHeader
-        title="Query Loop"
-        description="The core agentic execution cycle — how messages flow from user input through the API to tool execution and back. The main loop lives in query.ts (~1700 lines)."
+        title={tx("Query Loop", "查询循环")}
+        description={tx(
+          "The core agentic execution cycle — how messages flow from user input through the API to tool execution and back. The main loop lives in query.ts (~1700 lines).",
+          "核心代理执行循环 — 消息如何从用户输入流经 API 到工具执行再返回。主循环位于 query.ts（约 1700 行）。"
+        )}
         badge="query.ts"
       />
 

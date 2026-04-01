@@ -1,6 +1,7 @@
 "use client";
 
 import { PageHeader, Card, CodeBlock, Table } from "@/components/Section";
+import { useTx } from "@/components/T";
 import {
   VscGitMerge,
   VscServerProcess,
@@ -12,11 +13,15 @@ import {
 import { HiOutlineBolt, HiOutlineGlobeAlt, HiOutlineCpuChip } from "react-icons/hi2";
 
 export default function AgentsPage() {
+  const tx = useTx();
   return (
     <div className="p-8 max-w-5xl">
       <PageHeader
-        title="Agents & Subagents"
-        description="Claude Code can spawn isolated sub-agents with separate token budgets, custom prompts, and optional isolation (worktree or remote). The Agent system enables multi-agent coordination and parallel work."
+        title={tx("Agents & Subagents", "代理与子代理")}
+        description={tx(
+          "Claude Code can spawn isolated sub-agents with separate token budgets, custom prompts, and optional isolation (worktree or remote). The Agent system enables multi-agent coordination and parallel work.",
+          "Claude Code 可以生成隔离的子代理，拥有独立的 token 预算、自定义提示和可选隔离（工作树或远程）。代理系统支持多代理协调和并行工作。"
+        )}
         badge="AgentTool"
       />
 

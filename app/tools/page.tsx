@@ -1,6 +1,7 @@
 "use client";
 
 import { PageHeader, Card, CodeBlock, Table } from "@/components/Section";
+import { useTx } from "@/components/T";
 import {
   VscTerminalBash,
   VscEdit,
@@ -48,12 +49,16 @@ const TOOL_CARDS = [
 ];
 
 export default function ToolsPage() {
+  const tx = useTx();
   return (
     <div className="p-8 max-w-5xl">
       <PageHeader
-        title="Tools"
-        description="Claude Code has 50+ built-in tools, each implementing a unified Tool<Input, Output, Progress> interface. Tools are built via the buildTool() factory and validated with Zod schemas at runtime."
-        badge="50+ tools"
+        title={tx("Tools", "工具")}
+        description={tx(
+          "Claude Code has 43 built-in tools, each implementing a unified Tool<Input, Output, Progress> interface. Tools are built via the buildTool() factory and validated with Zod schemas at runtime.",
+          "Claude Code 有 43 个内置工具，每个都实现统一的 Tool<Input, Output, Progress> 接口。通过 buildTool() 工厂构建，运行时用 Zod schema 验证。"
+        )}
+        badge="43 tools"
       />
 
       {/* Tool Interface */}

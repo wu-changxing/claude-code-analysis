@@ -1,6 +1,7 @@
 "use client";
 
 import { PageHeader, Card, CodeBlock, Table } from "@/components/Section";
+import { useTx } from "@/components/T";
 import {
   VscCode,
   VscExtensions,
@@ -12,11 +13,15 @@ import {
 } from "react-icons/vsc";
 
 export default function ArchitecturePage() {
+  const tx = useTx();
   return (
     <div className="p-8 max-w-5xl">
       <PageHeader
-        title="Architecture"
-        description="High-level system design of Claude Code — how the TypeScript monolith is organized, key abstractions, and the data flow between components."
+        title={tx("Architecture", "系统架构")}
+        description={tx(
+          "High-level system design of Claude Code — how the TypeScript monolith is organized, key abstractions, and the data flow between components.",
+          "Claude Code 的高层系统设计 — TypeScript 单体应用的组织方式、核心抽象和组件间的数据流。"
+        )}
         badge="~1800 files"
       />
 

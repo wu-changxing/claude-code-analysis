@@ -1,6 +1,7 @@
 "use client";
 
 import { PageHeader, Card, CodeBlock, Table } from "@/components/Section";
+import { useTx } from "@/components/T";
 import {
   VscDatabase,
   VscPlug,
@@ -24,12 +25,16 @@ const SERVICE_CARDS = [
 ];
 
 export default function ServicesPage() {
+  const tx = useTx();
   return (
     <div className="p-8 max-w-5xl">
       <PageHeader
-        title="Services"
-        description="Claude Code's service layer handles compaction, MCP integration, LSP, analytics, memory extraction, and more. These run as background processes alongside the main query loop."
-        badge="20+ services"
+        title={tx("Services", "服务")}
+        description={tx(
+          "Claude Code's service layer handles compaction, MCP integration, LSP, analytics, memory extraction, and more. These run as background processes alongside the main query loop.",
+          "Claude Code 的服务层处理压缩、MCP 集成、LSP、分析、记忆提取等。这些作为后台进程与主查询循环并行运行。"
+        )}
+        badge={tx("20+ services", "20+ 服务")}
       />
 
       {/* Service Overview */}

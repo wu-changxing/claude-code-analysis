@@ -1,14 +1,19 @@
 "use client";
 
 import { PageHeader, Card, Table } from "@/components/Section";
+import { useTx } from "@/components/T";
 
 export default function FileMapPage() {
+  const tx = useTx();
   return (
     <div className="p-8 max-w-5xl">
       <PageHeader
-        title="File Map"
-        description="Complete reference of key files in the Claude Code source tree. Use this as a starting point for exploring specific areas of the codebase."
-        badge="1800+ files"
+        title={tx("File Map", "文件地图")}
+        description={tx(
+          "Complete reference of key files in the Claude Code source tree. Use this as a starting point for exploring specific areas of the codebase.",
+          "Claude Code 源码树中关键文件的完整参考。以此作为探索代码库特定区域的起点。"
+        )}
+        badge={tx("1800+ files", "1800+ 文件")}
       />
 
       {/* Critical Files */}

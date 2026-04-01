@@ -1,13 +1,18 @@
 "use client";
 
 import { PageHeader, Card, CodeBlock, FlowStep } from "@/components/Section";
+import { useTx } from "@/components/T";
 
 export default function ContextPage() {
+  const tx = useTx();
   return (
     <div className="p-8 max-w-5xl">
       <PageHeader
-        title="Context & Memory"
-        description="How Claude Code builds its system prompt, loads CLAUDE.md files, manages auto-memory, and provides context to the model at every turn."
+        title={tx("Context & Memory", "上下文与记忆")}
+        description={tx(
+          "How Claude Code builds its system prompt, loads CLAUDE.md files, manages auto-memory, and provides context to the model at every turn.",
+          "Claude Code 如何构建系统提示、加载 CLAUDE.md 文件、管理自动记忆，以及在每一轮对话中向模型提供上下文。"
+        )}
       />
 
       {/* System Prompt Assembly */}

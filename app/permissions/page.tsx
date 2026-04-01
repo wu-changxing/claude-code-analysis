@@ -1,6 +1,7 @@
 "use client";
 
 import { PageHeader, Card, CodeBlock, FlowStep } from "@/components/Section";
+import { useTx } from "@/components/T";
 import {
   VscShield,
   VscLock,
@@ -19,12 +20,16 @@ import {
 } from "react-icons/hi2";
 
 export default function PermissionsPage() {
+  const tx = useTx();
   return (
     <div className="p-8 max-w-5xl">
       <PageHeader
-        title="Permissions"
-        description="Claude Code has a sophisticated 5-layer permission system that gates every tool execution. From input validation to ML classifiers to user confirmation dialogs."
-        badge="5 layers"
+        title={tx("Permissions", "权限系统")}
+        description={tx(
+          "Claude Code has a sophisticated 5-layer permission system that gates every tool execution. From input validation to ML classifiers to user confirmation dialogs.",
+          "Claude Code 有一个精密的 5 层权限系统，控制每一次工具执行。从输入验证到 ML 分类器到用户确认对话框。"
+        )}
+        badge={tx("5 layers", "5 层")}
       />
 
       {/* Permission Modes */}
