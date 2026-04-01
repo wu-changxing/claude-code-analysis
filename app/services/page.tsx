@@ -1,6 +1,6 @@
 "use client";
 
-import { PageHeader, Card, CodeBlock, SectionNav, NextPage } from "@/components/Section";
+import { PageHeader, Card, CodeBlock, SectionNav, NextPage, RelatedPages, InsightCallout } from "@/components/Section";
 import { useTx } from "@/components/T";
 import { ghBlob, ghTree } from "@/lib/sourceLinks";
 import {
@@ -602,6 +602,20 @@ guards:
 //    siblingAbortController → kill sibling subprocesses on bash error`}
         />
       </Card>
+      <InsightCallout emoji="⚙️" title={tx("Memory extraction runs after every single query", "每次查询后都会运行记忆提取", "すべてのクエリの後にメモリ抽出が実行される")} className="mb-6">
+        {tx(
+          "After EVERY query, Claude runs extractMemories() in the background as a forked agent. After 24 hours + 5 sessions, autoDream() fires — a deeper memory consolidation pass. These agents are invisible to the user but silently make Claude smarter about your codebase over time.",
+          "每次查询后，Claude 都会以 fork 代理的形式在后台运行 extractMemories()。经过 24 小时 + 5 次会话后，autoDream() 触发——进行更深层次的记忆整合。这些代理对用户不可见，但会悄悄让 Claude 随着时间推移对你的代码库更了解。",
+          "すべてのクエリの後、ClaudeはバックグラウンドでforkエージェントとしてextractMemories()を実行します。24時間 + 5セッション後、autoDream()が起動し、より深いメモリ統合が行われます。これらのエージェントはユーザーには見えませんが、時間をかけてClaude があなたのコードベースについてより賢くなります。"
+        )}
+      </InsightCallout>
+
+      <RelatedPages pages={[
+        { href: "/agents", title: tx("Agents & Subagents", "代理与子代理", "エージェントとサブエージェント"), color: "var(--purple)", desc: tx("Services like extractMemories and compaction run as forked background agents — understand how spawning and cache sharing work.", "extractMemories や compaction などのサービスはforkされたバックグラウンドエージェントとして動作します。", "extractMemoriesやcompactionのようなサービスはforkバックグラウンドエージェントとして動作します。") },
+        { href: "/context", title: tx("Context & Memory", "上下文与记忆", "コンテキストとメモリ"), color: "var(--pink)", desc: tx("The memory system is powered by the extractMemories and autoDream services explained on this page.", "记忆系统由本页面介绍的 extractMemories 和 autoDream 服务驱动。", "メモリシステムはこのページで説明するextractMemoriesとautoDreamサービスによって動作します。") },
+        { href: "/file-map", title: tx("File Map", "文件地图", "ファイルマップ"), color: "var(--green)", desc: tx("Exact file paths for every service directory described on this page.", "本页面所有服务目录的精确文件路径。", "このページで説明するすべてのサービスディレクトリの正確なファイルパス。") },
+      ]} />
+
       <NextPage
         href="/context"
         title={tx("Context & Memory", "上下文与记忆", "コンテキストとメモリ")}

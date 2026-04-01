@@ -72,16 +72,37 @@ export default function FileMapPage() {
     ["services/PromptSuggestion/", tx("Prompt suggestion, speculation overlays, next-step prediction", "提示建议、推测 overlay、下一步预测", "プロンプト提案、推測 overlay、次手予測")],
   ];
 
-  const slashCommands = [
-    "/compact", "/model", "/clear", "/help", "/config",
-    "/permissions", "/memory", "/resume", "/diff", "/cost",
-    "/usage", "/export", "/share", "/review", "/plan",
-    "/fast", "/effort", "/context", "/mcp", "/skills",
-    "/doctor", "/feedback", "/vim", "/voice", "/theme",
-    "/login", "/logout", "/upgrade", "/status", "/tasks",
-    "/hooks", "/session", "/files", "/env", "/stats",
-    "/ide", "/desktop", "/branch", "/rename", "/copy",
-    "/tag", "/stickers", "/color", "/keybindings", "/exit",
+  const slashCommandGroups = [
+    {
+      label: tx("Core", "核心", "コア"),
+      color: "var(--accent)",
+      cmds: ["/compact", "/model", "/clear", "/help", "/config", "/exit", "/status"],
+    },
+    {
+      label: tx("Files & Context", "文件与上下文", "ファイルとコンテキスト"),
+      color: "var(--green)",
+      cmds: ["/memory", "/files", "/context", "/resume", "/session", "/export", "/branch", "/diff"],
+    },
+    {
+      label: tx("Security", "安全", "セキュリティ"),
+      color: "var(--red)",
+      cmds: ["/permissions", "/hooks", "/env", "/login", "/logout"],
+    },
+    {
+      label: tx("AI Features", "AI 功能", "AI機能"),
+      color: "var(--purple)",
+      cmds: ["/fast", "/effort", "/voice", "/plan", "/review", "/skills", "/mcp"],
+    },
+    {
+      label: tx("Monitoring", "监控", "モニタリング"),
+      color: "var(--orange)",
+      cmds: ["/cost", "/usage", "/stats", "/doctor", "/feedback", "/ide", "/desktop"],
+    },
+    {
+      label: tx("Customization", "个性化", "カスタマイズ"),
+      color: "var(--pink)",
+      cmds: ["/theme", "/stickers", "/color", "/vim", "/keybindings", "/share", "/tag", "/rename", "/copy", "/tasks", "/upgrade"],
+    },
   ];
 
   return (
@@ -199,9 +220,9 @@ export default function FileMapPage() {
         </div>
       </Card>
 
-      {/* Commands — terminal pill style */}
-      <Card title={tx("Slash Commands (90+)", "斜杠命令（90+）", "スラッシュコマンド（90+）")}>
-        <p className="text-sm text-text-secondary mb-4">
+      {/* Commands — categorized by type */}
+      <Card title={tx("Slash Commands (90+)", "斜杠命令（90+）", "スラッシュコマンド（90+）")} className="mb-6">
+        <p className="text-sm text-text-secondary mb-5">
           {tx(
             "Each command lives in its own directory under ",
             "每个命令都位于 ",
@@ -209,34 +230,45 @@ export default function FileMapPage() {
           )}
           <code className="text-accent">src/commands/</code>
           {tx(
-            ". Here are some notable ones:",
-            " 下的独立目录中。下面是一些值得注意的命令：",
-            " 配下の個別ディレクトリにあります。代表的なものは次の通りです："
+            ". 101 total — grouped by category:",
+            " 下的独立目录中，共 101 个，按类别分组：",
+            " 配下の個別ディレクトリにあります。合計101個、カテゴリ別："
           )}
         </p>
-        <div className="flex flex-wrap gap-1.5">
-          {slashCommands.map((cmd) => (
-            <motion.code
-              key={cmd}
-              whileHover={{ scale: 1.04 }}
-              className="inline-flex items-center gap-1 rounded px-2.5 py-1 text-xs font-mono cursor-default transition-colors"
-              style={{
-                background: "var(--bg-primary)",
-                color: "var(--accent)",
-                border: "1px solid var(--border)",
-                boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
-              }}
-            >
-              <span className="text-text-muted text-[10px] select-none">$</span>
-              {cmd}
-            </motion.code>
+        <div className="space-y-4">
+          {slashCommandGroups.map(({ label, color, cmds }) => (
+            <div key={label}>
+              <div
+                className="text-[10px] font-bold uppercase tracking-wider mb-2 flex items-center gap-1.5"
+                style={{ color }}
+              >
+                <span className="w-1.5 h-1.5 rounded-full inline-block" style={{ background: color }} />
+                {label}
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                {cmds.map((cmd) => (
+                  <motion.code
+                    key={cmd}
+                    whileHover={{ scale: 1.04 }}
+                    className="inline-flex items-center gap-1 rounded px-2.5 py-1 text-xs font-mono cursor-default transition-colors"
+                    style={{
+                      background: `color-mix(in srgb, ${color} 8%, var(--bg-primary))`,
+                      color,
+                      border: `1px solid color-mix(in srgb, ${color} 25%, var(--border))`,
+                    }}
+                  >
+                    {cmd}
+                  </motion.code>
+                ))}
+              </div>
+            </div>
           ))}
         </div>
         <p className="text-[11px] text-text-muted mt-4 italic">
           {tx(
-            "101 commands total. Each in its own directory. Some of the most interesting ones: /btw, /think-back, /stickers, /bughunter, /teleport, /good-claude.",
-            "共 101 个命令，各自独立目录。其中最有趣的包括：/btw、/think-back、/stickers、/bughunter、/teleport、/good-claude。",
-            "合計101コマンド。それぞれ独自ディレクトリを持つ。特に興味深いもの：/btw、/think-back、/stickers、/bughunter、/teleport、/good-claude。"
+            "Hidden gems worth finding: /btw, /think-back, /stickers, /bughunter, /teleport, /good-claude.",
+            "隐藏宝藏：/btw、/think-back、/stickers、/bughunter、/teleport、/good-claude。",
+            "隠れた名品：/btw、/think-back、/stickers、/bughunter、/teleport、/good-claude。"
           )}
         </p>
       </Card>

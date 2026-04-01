@@ -1,6 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useMotionValue, useSpring } from "framer-motion";
+import { useEffect, useRef } from "react";
 import Link from "next/link";
 import {
   VscSymbolStructure,
@@ -228,6 +229,49 @@ const LEARNING_PATHS = (lang: "en" | "zh" | "ja") => [
   },
 ];
 
+// Parses "512K" → 512000, "1,884" → 1884, "101" → 101, "43" → 43
+function parseStatValue(v: string): number {
+  const clean = v.replace(/,/g, "");
+  if (clean.endsWith("K")) return parseFloat(clean) * 1000;
+  return parseFloat(clean);
+}
+
+function formatStatValue(n: number, original: string): string {
+  if (original.endsWith("K")) return `${Math.round(n / 1000)}K`;
+  if (original.includes(",")) return Math.round(n).toLocaleString("en-US");
+  return String(Math.round(n));
+}
+
+function AnimatedStatNumber({ value, color }: { value: string; color: string }) {
+  const target = parseStatValue(value);
+  const motionVal = useMotionValue(0);
+  const spring = useSpring(motionVal, { stiffness: 60, damping: 18, mass: 0.8 });
+  const displayRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    motionVal.set(target);
+  }, [target, motionVal]);
+
+  useEffect(() => {
+    const unsub = spring.on("change", (v) => {
+      if (displayRef.current) {
+        displayRef.current.textContent = formatStatValue(v, value);
+      }
+    });
+    return unsub;
+  }, [spring, value]);
+
+  return (
+    <div
+      ref={displayRef}
+      className="text-3xl font-bold font-mono tracking-tight sm:text-4xl"
+      style={{ color }}
+    >
+      0
+    </div>
+  );
+}
+
 function LearningPaths({ lang }: { lang: "en" | "zh" | "ja" }) {
   const paths = LEARNING_PATHS(lang);
   return (
@@ -447,12 +491,7 @@ export default function HomePage() {
                   {s.label}
                 </span>
               </div>
-              <div
-                className="text-3xl font-bold font-mono tracking-tight sm:text-4xl"
-                style={{ color: s.color }}
-              >
-                {s.value}
-              </div>
+              <AnimatedStatNumber value={s.value} color={s.color} />
               <div className="mt-1 text-[11px] text-text-muted">{s.sub[lang] || s.sub.en}</div>
             </div>
             {/* Subtle bg decoration */}

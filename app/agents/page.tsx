@@ -1,6 +1,6 @@
 "use client";
 
-import { PageHeader, Card, CodeBlock, Table, SectionNav, NextPage } from "@/components/Section";
+import { PageHeader, Card, CodeBlock, Table, SectionNav, NextPage, InsightCallout, RelatedPages } from "@/components/Section";
 import { useTx } from "@/components/T";
 import { ghBlob, ghTree } from "@/lib/sourceLinks";
 import {
@@ -786,6 +786,20 @@ getCoordinatorSystemPrompt()
           </p>
         </div>
       </Card>
+
+      <InsightCallout emoji="💡" title={tx("Prompt caching makes subagents nearly free", "提示缓存让子代理几乎免费", "プロンプトキャッシュでサブエージェントはほぼ無料")} className="mb-6">
+        {tx(
+          "When you spawn a subagent with the same system prompt as the parent, the API cost for that entire prompt is literally $0 — the bytes match exactly, triggering an automatic prompt cache hit. You're only paying for the unique task description. This is why Claude Code can afford to run 6+ background agents per turn without the cost becoming prohibitive.",
+          "当你用与父代理相同的系统提示启动子代理时，整个提示的 API 成本实际上是 $0 —— 字节完全匹配，自动命中提示缓存。你只需为唯一的任务描述付费。这就是 Claude Code 每回合可以运行 6 个以上后台代理而不让成本高企的原因。",
+          "親と同じシステムプロンプトでサブエージェントを起動すると、そのプロンプト全体の API コストは文字通り $0 です。バイト列が完全に一致し、自動的にプロンプトキャッシュヒットが発生するため、ユニークなタスク記述分だけの課金になります。これが、Claude Code が1ターンに6つ以上のバックグラウンドエージェントを走らせても費用が天文学的にならない理由です。"
+        )}
+      </InsightCallout>
+
+      <RelatedPages pages={[
+        { href: "/services", title: tx("Services", "服务", "サービス"), color: "var(--green)", desc: tx("The compaction, MCP, memory extraction, and speculation services that power background agents.", "压缩、MCP、记忆提取和推测推理服务，支撑着后台代理的运行。", "バックグラウンドエージェントを支えるコンパクション、MCP、メモリ抽出、推測実行サービス。") },
+        { href: "/context", title: tx("Context & Memory", "上下文与记忆", "コンテキストとメモリ"), color: "var(--pink)", desc: tx("How the system prompt is assembled and why its exact byte content matters so much for cache sharing.", "系统提示如何组装，以及为什么其精确字节内容对缓存共享如此重要。", "システムプロンプトの組み立て方と、キャッシュ共有においてバイト列が重要な理由。") },
+        { href: "/permissions", title: tx("Permissions", "权限", "権限"), color: "var(--red)", desc: tx("How subagents inherit and are restricted by permission modes from the parent session.", "子代理如何继承父会话的权限模式并受其限制。", "サブエージェントが親セッションから権限モードを継承・制限される仕組み。") },
+      ]} />
 
       <NextPage
         href="/services"
