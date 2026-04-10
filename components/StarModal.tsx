@@ -4,20 +4,17 @@ import { useEffect, useState } from "react";
 import { VscChromeClose, VscGithubInverted, VscStarFull } from "react-icons/vsc";
 import { motion, AnimatePresence } from "framer-motion";
 
-const STORAGE_KEY = "star-modal-dismissed";
 const DELAY_MS = 8000;
 
 export function StarModal() {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    if (localStorage.getItem(STORAGE_KEY)) return;
     const t = setTimeout(() => setVisible(true), DELAY_MS);
     return () => clearTimeout(t);
   }, []);
 
   function dismiss() {
-    localStorage.setItem(STORAGE_KEY, "1");
     setVisible(false);
   }
 
@@ -29,7 +26,7 @@ export function StarModal() {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 20, scale: 0.95 }}
           transition={{ type: "spring", stiffness: 300, damping: 25 }}
-          className="fixed bottom-5 right-5 z-50 w-96 rounded-2xl border border-border bg-bg-secondary shadow-2xl"
+          className="fixed bottom-4 right-4 left-4 z-50 rounded-2xl border border-border bg-bg-secondary shadow-2xl sm:left-auto sm:w-96"
         >
           <div className="p-6">
             <button
@@ -42,7 +39,7 @@ export function StarModal() {
 
             {/* Header */}
             <div className="mb-4 flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-text-primary shadow-sm">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-text-primary shadow-sm">
                 <span className="text-lg">🧅</span>
               </div>
               <div>
